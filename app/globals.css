@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ============================
+   CSS Custom Properties
+   ============================ */
+:root {
+  --bg: #0b1929;
+  --bg-card: #0e2035;
+  --bg-card-hover: #122540;
+  --text: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --border: rgba(255, 255, 255, 0.08);
+  --header-bg: rgba(11, 25, 41, 0.95);
+  --nav-link: rgba(255, 255, 255, 0.7);
+  --nav-link-active: #ffffff;
+  --radius: 12px;
+  --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --duration: 400ms;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-theme='light'] {
+  --bg: #f5f0eb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0ebe4;
+  --text: #111111;
+  --text-secondary: rgba(17, 17, 17, 0.65);
+  --text-muted: rgba(17, 17, 17, 0.4);
+  --border: rgba(0, 0, 0, 0.08);
+  --header-bg: rgba(245, 240, 235, 0.95);
+  --nav-link: rgba(17, 17, 17, 0.65);
+  --nav-link-active: #111111;
+}
+
+/* ============================
+   Reset & Base
+   ============================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ============================
+   Skip Link
+   ============================ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: var(--text);
+  color: var(--bg);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 1rem;
+}

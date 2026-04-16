@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "familiar-vs-novel",
+    "title": "Familiar vs Novel",
+    "description": "A look into when it's acceptable and perhaps even advantageous to design for novelty.",
+    "image": "/images/familiar-vs-novel.jpg",
+    "body": "Familiarity enables the transfer of experience between similar products or services, allowing us to be productive without first learning how a system works. When we encounter familiar interface patterns and conventions, we intuitively understand them based on previous experience.\n\nHowever, novelty can be a powerful differentiator. When used intentionally, novel design can create memorable experiences and signal innovation. The key is understanding when to leverage familiarity for usability, and when to embrace novelty for impact."
+  },
+  {
+    "slug": "onboarding-for-active-users",
+    "title": "Onboarding for Active Users",
+    "description": "Onboarding should be designed with active users in mind, making guidance accessible throughout the product experience.",
+    "image": "/images/onboarding.jpg",
+    "body": "Most onboarding is designed for new users encountering a product for the first time. But users who return after a long absence, or who encounter a new feature mid-journey, need just-in-time guidance too.\n\nEffective onboarding surfaces contextual help at the moment of need — not just at first launch. Progressive disclosure, tooltips, and inline documentation help active users learn without disrupting their workflow."
+  },
+  {
+    "slug": "teslers-law",
+    "title": "Tesler's Law",
+    "description": "For any system there is a certain amount of complexity that cannot be reduced.",
+    "image": "/images/teslers-law.jpg",
+    "body": "Tesler's Law, also known as the Law of Conservation of Complexity, states that for any system there is a certain amount of complexity which cannot be reduced. This complexity must be handled by either the system or the user.\n\nAs designers, our job is to absorb as much complexity as possible on behalf of the user. But there are limits — some decisions inherently require user input, and hiding that complexity entirely can lead to loss of control and unexpected outcomes."
+  },
+  {
+    "slug": "ux-psychology-google-search",
+    "title": "UX Psychology: Google Search",
+    "description": "A closer look at the ubiquitous search utility.",
+    "image": "/images/ux-psychology-google.jpg",
+    "body": "Google Search is one of the most-used interfaces in the world, and its design reflects deep psychological principles. The single search input, centered on a minimal page, leverages Hick's Law by eliminating choices that might slow the user's decision.\n\nAuto-complete predictions reduce cognitive load by surfacing likely queries before the user finishes typing. Search result pages apply chunking and serial position effect to make results scannable and memorable."
+  },
+  {
+    "slug": "peak-end-rule",
+    "title": "Peak-End Rule",
+    "description": "Why designers should pay close attention to the key peak moments during an experience.",
+    "image": "/images/peak-end-rule.jpg",
+    "body": "The Peak-End Rule is a cognitive bias where people judge an experience largely based on how they felt at its most intense point (the peak) and at its end, rather than based on the sum or average of every moment.\n\nFor designers, this means that the overall impression of a product is disproportionately shaped by a few key moments. A delightful onboarding flow or a smooth checkout completion can define how users remember the entire experience — even if some steps along the way were frustrating."
+  },
+  {
+    "slug": "the-psychology-of-design",
+    "title": "The Psychology of Design",
+    "description": "A look at how designers can leverage psychology to build more intuitive, human-centered products and experiences.",
+    "image": "/images/psychology-of-design.jpg",
+    "body": "Design and psychology are deeply intertwined. Every design decision — from color choice to layout to interaction patterns — affects how users perceive, think, and feel. Understanding cognitive biases, Gestalt principles, and mental models gives designers a powerful toolkit.\n\nBy designing with human psychology in mind, we can reduce friction, build trust, and create products that feel intuitive rather than learned."
+  },
+  {
+    "slug": "designing-with-occams-razor",
+    "title": "Designing with Occam's Razor",
+    "description": "How a classic problem-solving principle can help improve our designs.",
+    "image": "/images/occams-razor.jpg",
+    "body": "Occam's Razor states that among competing hypotheses, the one with the fewest assumptions should be selected. Applied to design, this principle encourages us to favor simplicity over complexity when both solutions achieve the same goal.\n\nWhen faced with design decisions, ask: can this be achieved with fewer elements, fewer steps, or fewer interactions? Simpler designs are easier to understand, faster to use, and less prone to errors."
+  },
+  {
+    "slug": "design-principles-for-reducing-cognitive-load",
+    "title": "Design Principles for Reducing Cognitive Load",
+    "description": "A look at both the causes and ways to reduce extraneous mental processing for the user.",
+    "image": "/images/cognitive-load.jpg",
+    "body": "Cognitive load refers to the total amount of mental effort being used in the working memory. In UX design, extraneous cognitive load — load caused by poor design — is the enemy of usability.\n\nPrinciples like chunking information, using progressive disclosure, providing clear visual hierarchy, and removing unnecessary elements all help reduce the mental burden on users. When users spend less energy figuring out your interface, they have more capacity to achieve their actual goals."
+  }
+]

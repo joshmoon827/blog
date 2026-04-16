@@ -3,6 +3,7 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PageTransition from '@/components/PageTransition'
+import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 
 export const metadata: Metadata = {
   title: 'Articles | Laws of UX',
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" data-theme="dark">
       <body>
+        <ServiceWorkerRegistrar />
         <a className="skip-link" href="#main">Skip to main content</a>
         <Header />
         <PageTransition>

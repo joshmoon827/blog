@@ -12,17 +12,26 @@ interface Props {
   alt: string
 }
 
-const INTERVAL_MS = 2800
+const INTERVAL_MS = 5000
+
+function randomNext(current: number): number {
+  let next = Math.floor(Math.random() * posters.length)
+  // 같은 이미지 연속 방지
+  while (next === current) {
+    next = Math.floor(Math.random() * posters.length)
+  }
+  return next
+}
 
 export default function ImageCarousel({ offset, alt }: Props) {
   const [idx, setIdx] = useState(offset % posters.length)
 
   useEffect(() => {
-    // 각 카드마다 시작 타이밍을 다르게 (stagger)
-    const delay = (offset * 370) % INTERVAL_MS
+    // 카드마다 시작 타이밍 stagger
+    const delay = (offset * 600) % INTERVAL_MS
     const timer = setTimeout(() => {
       const interval = setInterval(() => {
-        setIdx((prev) => (prev + 1) % posters.length)
+        setIdx((prev) => randomNext(prev))
       }, INTERVAL_MS)
       return () => clearInterval(interval)
     }, delay)

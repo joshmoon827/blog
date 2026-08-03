@@ -562,6 +562,41 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
              * Oxide + skin:false often leaves iframe height stuck — sync explicitly.
              */
             const MIN_EDITOR_H = 400
+            const syncImageResizeHandles = () => {
+              const cs = editor.selection?.controlSelection as
+                | {
+                    showResizeRect?: (el: Element) => void
+                    hideResizeRect?: () => void
+                    isResizable?: (el: Element) => boolean
+                  }
+                | undefined
+              if (!cs?.showResizeRect) return
+              const body = editor.getBody()
+              const sel = editor.selection.getNode() as HTMLElement | null
+              const fig =
+                (body?.querySelector(
+                  'figure[data-ke-type="image"][data-mce-selected]',
+                ) as HTMLElement | null) || findImageFigure(sel)
+              if (
+                !fig ||
+                !(
+                  fig.getAttribute('data-mce-selected') ||
+                  fig === sel ||
+                  (sel && fig.contains(sel))
+                )
+              ) {
+                return
+              }
+              const img = fig.querySelector('img')
+              if (!img) return
+              try {
+                // CEF figure selection does not auto-show ObjectResizing handles;
+                // force them onto the <img> so drag-resize still works.
+                cs.showResizeRect(img)
+              } catch {
+                /* controlSelection unavailable */
+              }
+            }
             const syncIframeHeight = () => {
               const iframe = editor.iframeElement
               const body = editor.getBody()
@@ -569,6 +604,7 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
               const pad = 12
               const next = Math.max(MIN_EDITOR_H, body.scrollHeight + pad)
               if (Math.abs((parseFloat(iframe.style.height) || 0) - next) < 2) {
+                syncImageResizeHandles()
                 return
               }
               iframe.style.height = `${next}px`
@@ -578,6 +614,8 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
               }
               const root = editor.getContainer()
               if (root) root.style.height = 'auto'
+              // Re-anchor handles after iframe geometry changes
+              syncImageResizeHandles()
             }
             syncIframeHeight()
             editor.on('NodeChange SetContent KeyUp change input ResizeEditor', syncIframeHeight)
@@ -806,6 +844,43 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
                   editor.selection.select(fig)
                 }
               })
+              /*
+               * Image figures become contenteditable=false (CEF) when selected.
+               * TinyMCE paints data-mce-selected but skips ObjectResizing handles
+               * for CEF roots — re-show handles on the inner <img>.
+               */
+              const refreshImageResize = () => {
+                const cs = editor.selection?.controlSelection as
+                  | {
+                      showResizeRect?: (el: Element) => void
+                    }
+                  | undefined
+                if (!cs?.showResizeRect) return
+                const body = editor.getBody()
+                const sel = editor.selection.getNode() as HTMLElement | null
+                const fig =
+                  (body?.querySelector(
+                    'figure[data-ke-type="image"][data-mce-selected]',
+                  ) as HTMLElement | null) || findImageFigure(sel)
+                if (
+                  !fig ||
+                  !(
+                    fig.getAttribute('data-mce-selected') ||
+                    fig === sel ||
+                    (sel && fig.contains(sel))
+                  )
+                ) {
+                  return
+                }
+                const img = fig.querySelector('img')
+                if (!img) return
+                try {
+                  cs.showResizeRect(img)
+                } catch {
+                  /* ignore */
+                }
+              }
+              editor.on('NodeChange ObjectSelected click', refreshImageResize)
               editor.on('SetContent', () => {
                 const body = editor.getBody()
                 if (body) stripMoreLessForEdit(body)

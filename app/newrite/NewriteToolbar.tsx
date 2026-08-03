@@ -676,6 +676,12 @@ export default function NewriteToolbar({
     return () => link?.removeEventListener('load', preload)
   }, [])
 
+  /**
+   * Map an element inside the TinyMCE iframe → viewport coords for a
+   * position:fixed object bar. After the scroll-layout refactor the iframe
+   * does not scroll; `[data-newrite-canvas]` does, so `iframe.getBoundingClientRect()`
+   * must be re-read on every canvas scroll (fr is iframe-viewport-relative).
+   */
   const positionForEl = (editor: TinyMCEEditor, el: HTMLElement) => {
     const iframe =
       editor.iframeElement ||
@@ -684,10 +690,29 @@ export default function NewriteToolbar({
       ) as HTMLIFrameElement | null)
     const ir = iframe?.getBoundingClientRect()
     const fr = el.getBoundingClientRect()
-    if (!ir || fr.width <= 0) return null
+    if (!ir || fr.width <= 0 || fr.height <= 0) return null
+
+    const canvas = document.querySelector(
+      '[data-newrite-canvas]',
+    ) as HTMLElement | null
+    const cr = canvas?.getBoundingClientRect()
+    // Element top/bottom in the top-level viewport
+    const elTop = ir.top + fr.top
+    const elBottom = ir.top + fr.bottom
+    const elLeft = ir.left + fr.left
+    const elRight = ir.left + fr.right
+    // Hide when the block is fully outside the visible canvas stage
+    if (cr) {
+      if (elBottom < cr.top + 8 || elTop > cr.bottom - 8) return null
+      if (elRight < cr.left + 8 || elLeft > cr.right - 8) return null
+    }
+
+    const rawTop = elTop - 52
+    const minTop = cr ? cr.top + 4 : 8
+    const maxTop = cr ? Math.max(minTop, cr.bottom - 56) : rawTop
     return {
-      top: ir.top + fr.top - 52,
-      left: ir.left + fr.left + fr.width / 2,
+      top: Math.min(maxTop, Math.max(minTop, rawTop)),
+      left: elLeft + fr.width / 2,
     }
   }
 
@@ -911,6 +936,68 @@ export default function NewriteToolbar({
         /* already registered */
       }
 
+      /** Active object figure — kept so canvas scroll can reposition without NodeChange. */
+      let activeObjectFig: HTMLElement | null = null
+      let activeObjectKind: ObjectUi['kind'] | null = null
+      let rafPos = 0
+
+      const syncObjectUiPosition = () => {
+        if (!activeObjectFig || !activeObjectKind) return
+        if (!activeObjectFig.isConnected) {
+          activeObjectFig = null
+          activeObjectKind = null
+          setObjectUi(null)
+          return
+        }
+        const pos = positionForEl(editor, activeObjectFig)
+        if (!pos) {
+          setObjectUi(null)
+          return
+        }
+        if (activeObjectKind === 'image') {
+          const img = activeObjectFig.querySelector('img')
+          const w =
+            Number(img?.getAttribute('width')) ||
+            Math.round(img?.getBoundingClientRect().width || 0) ||
+            undefined
+          setObjectUi({
+            kind: 'image',
+            style: getImageKeStyle(activeObjectFig),
+            top: pos.top,
+            left: pos.left,
+            imgWidth: w,
+          })
+        } else if (activeObjectKind === 'emoticon') {
+          const raw =
+            activeObjectFig.getAttribute('data-ke-align') || 'alignCenter'
+          setObjectUi({
+            kind: 'emoticon',
+            style:
+              raw === 'alignLeft' || raw === 'alignRight' ? raw : 'alignCenter',
+            top: pos.top,
+            left: pos.left,
+          })
+        } else {
+          const raw =
+            activeObjectFig.getAttribute('data-ke-align') || 'alignCenter'
+          setObjectUi({
+            kind: 'location',
+            style:
+              raw === 'alignLeft' || raw === 'alignRight' ? raw : 'alignCenter',
+            top: pos.top,
+            left: pos.left,
+          })
+        }
+      }
+
+      const scheduleObjectUiPosition = () => {
+        if (rafPos) cancelAnimationFrame(rafPos)
+        rafPos = requestAnimationFrame(() => {
+          rafPos = 0
+          syncObjectUiPosition()
+        })
+      }
+
       const sync = () => {
         if (editor.queryCommandState('JustifyCenter')) setAlign('center')
         else if (editor.queryCommandState('JustifyRight')) setAlign('right')
@@ -960,49 +1047,44 @@ export default function NewriteToolbar({
           ) as HTMLElement | null) ||
           (selNode?.closest?.('figure[data-ke-type="location"]') as HTMLElement | null)
 
-        const activeFig = imageFig || emotFig || locFig
-        if (activeFig) {
-          const pos = positionForEl(editor, activeFig)
-          if (pos) {
-            if (imageFig) {
-              const img = imageFig.querySelector('img')
-              const w =
-                Number(img?.getAttribute('width')) ||
-                Math.round(img?.getBoundingClientRect().width || 0) ||
-                undefined
-              setObjectUi({
-                kind: 'image',
-                style: getImageKeStyle(imageFig),
-                top: pos.top,
-                left: pos.left,
-                imgWidth: w,
-              })
-            } else if (emotFig) {
-              const raw = emotFig.getAttribute('data-ke-align') || 'alignCenter'
-              setObjectUi({
-                kind: 'emoticon',
-                style:
-                  raw === 'alignLeft' || raw === 'alignRight'
-                    ? raw
-                    : 'alignCenter',
-                top: pos.top,
-                left: pos.left,
-              })
-            } else if (locFig) {
-              const raw = locFig.getAttribute('data-ke-align') || 'alignCenter'
-              setObjectUi({
-                kind: 'location',
-                style:
-                  raw === 'alignLeft' || raw === 'alignRight'
-                    ? raw
-                    : 'alignCenter',
-                top: pos.top,
-                left: pos.left,
-              })
-            }
-          } else {
-            setObjectUi(null)
-          }
+        // Prefer the figure that actually owns the selection / mce-selected,
+        // so a stale image[data-mce-selected] does not mask a place click.
+        let activeFig: HTMLElement | null = null
+        let kind: ObjectUi['kind'] | null = null
+        if (
+          imageFig &&
+          (imageFig.getAttribute('data-mce-selected') ||
+            imageFig === selNode ||
+            imageFig.contains(selNode))
+        ) {
+          activeFig = imageFig
+          kind = 'image'
+        } else if (
+          emotFig &&
+          (emotFig.getAttribute('data-mce-selected') ||
+            emotFig === selNode ||
+            emotFig.contains(selNode))
+        ) {
+          activeFig = emotFig
+          kind = 'emoticon'
+        } else if (
+          locFig &&
+          (locFig.getAttribute('data-mce-selected') ||
+            locFig === selNode ||
+            locFig.contains(selNode))
+        ) {
+          activeFig = locFig
+          kind = 'location'
+        } else if (imageFig || emotFig || locFig) {
+          // Fallback: mce-selected on body without sel ancestry (CEF edge cases)
+          activeFig = imageFig || emotFig || locFig
+          kind = imageFig ? 'image' : emotFig ? 'emoticon' : 'location'
+        }
+
+        activeObjectFig = activeFig
+        activeObjectKind = kind
+        if (activeFig && kind) {
+          syncObjectUiPosition()
         } else {
           setObjectUi(null)
           setPlaceSettingsOpen(false)
@@ -1025,6 +1107,14 @@ export default function NewriteToolbar({
           ae.blur()
         }
       }
+
+      const canvas = document.querySelector(
+        '[data-newrite-canvas]',
+      ) as HTMLElement | null
+      const onCanvasScroll = () => scheduleObjectUiPosition()
+      canvas?.addEventListener('scroll', onCanvasScroll, { passive: true })
+      window.addEventListener('resize', onCanvasScroll)
+
       editor.on('NodeChange', sync)
       editor.on('ObjectSelected', sync)
       editor.on('focus', closeToolbarMenus)
@@ -1032,6 +1122,9 @@ export default function NewriteToolbar({
       editor.on('click', closeToolbarMenus)
       sync()
       unbind = () => {
+        if (rafPos) cancelAnimationFrame(rafPos)
+        canvas?.removeEventListener('scroll', onCanvasScroll)
+        window.removeEventListener('resize', onCanvasScroll)
         editor.off('NodeChange', sync)
         editor.off('ObjectSelected', sync)
         editor.off('focus', closeToolbarMenus)

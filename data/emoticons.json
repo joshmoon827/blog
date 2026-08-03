@@ -1,0 +1,2613 @@
+{
+  "version": 1,
+  "source": "https://t1.daumcdn.net/axz_keditor/emoticon",
+  "sprite": "/images/emoticons/sprites-emoticon@2x.png",
+  "tabs": [
+    {
+      "id": "friends1",
+      "label": "프렌즈"
+    },
+    {
+      "id": "niniz",
+      "label": "니니즈"
+    },
+    {
+      "id": "friends2",
+      "label": "프렌즈2"
+    },
+    {
+      "id": "face",
+      "label": "얼굴"
+    }
+  ],
+  "packs": {
+    "friends1": [
+      {
+        "id": 0,
+        "name": "001",
+        "label": "도착한 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/001.png",
+        "src": "/images/emoticons/friends1/large/001.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 1,
+        "name": "002",
+        "label": "손인사 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/002.png",
+        "src": "/images/emoticons/friends1/large/002.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 2,
+        "name": "003",
+        "label": "눈하트 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/003.png",
+        "src": "/images/emoticons/friends1/large/003.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 3,
+        "name": "004",
+        "label": "하트 쏟는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/004.png",
+        "src": "/images/emoticons/friends1/large/004.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 4,
+        "name": "005",
+        "label": "라이언 탬버린",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/005.png",
+        "src": "/images/emoticons/friends1/large/005.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 5,
+        "name": "006",
+        "label": "무지와 도는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/006.png",
+        "src": "/images/emoticons/friends1/large/006.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 6,
+        "name": "007",
+        "label": "응원하는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/007.png",
+        "src": "/images/emoticons/friends1/large/007.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 7,
+        "name": "008",
+        "label": "경례하는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/008.png",
+        "src": "/images/emoticons/friends1/large/008.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 8,
+        "name": "009",
+        "label": "궁금한 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/009.png",
+        "src": "/images/emoticons/friends1/large/009.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 9,
+        "name": "010",
+        "label": "부끄러운 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/010.png",
+        "src": "/images/emoticons/friends1/large/010.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 10,
+        "name": "011",
+        "label": "공 미는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/011.png",
+        "src": "/images/emoticons/friends1/large/011.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 11,
+        "name": "012",
+        "label": "슬픈 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/012.png",
+        "src": "/images/emoticons/friends1/large/012.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 12,
+        "name": "013",
+        "label": "먹는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/013.png",
+        "src": "/images/emoticons/friends1/large/013.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 13,
+        "name": "014",
+        "label": "웃는 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/014.png",
+        "src": "/images/emoticons/friends1/large/014.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 14,
+        "name": "015",
+        "label": "난동 부리는 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/015.png",
+        "src": "/images/emoticons/friends1/large/015.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 15,
+        "name": "016",
+        "label": "머리 긁는 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/016.png",
+        "src": "/images/emoticons/friends1/large/016.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 16,
+        "name": "017",
+        "label": "놀라는 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/017.png",
+        "src": "/images/emoticons/friends1/large/017.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 17,
+        "name": "018",
+        "label": "콘 쓰다듬는 무지",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/018.png",
+        "src": "/images/emoticons/friends1/large/018.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 18,
+        "name": "019",
+        "label": "연주하는 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/019.png",
+        "src": "/images/emoticons/friends1/large/019.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 19,
+        "name": "020",
+        "label": "박수치는 튜브",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/020.png",
+        "src": "/images/emoticons/friends1/large/020.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 20,
+        "name": "021",
+        "label": "당황한 튜브",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/021.png",
+        "src": "/images/emoticons/friends1/large/021.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 21,
+        "name": "022",
+        "label": "놀라는 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/022.png",
+        "src": "/images/emoticons/friends1/large/022.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 22,
+        "name": "023",
+        "label": "빛나는 프로도",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/023.png",
+        "src": "/images/emoticons/friends1/large/023.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 23,
+        "name": "024",
+        "label": "부비는 라이언",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/024.png",
+        "src": "/images/emoticons/friends1/large/024.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 24,
+        "name": "025",
+        "label": "손인사 프로도",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/025.png",
+        "src": "/images/emoticons/friends1/large/025.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 25,
+        "name": "026",
+        "label": "춤추는 제이지",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/026.png",
+        "src": "/images/emoticons/friends1/large/026.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 26,
+        "name": "027",
+        "label": "반가운 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/027.png",
+        "src": "/images/emoticons/friends1/large/027.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 27,
+        "name": "028",
+        "label": "하트 뿅 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/028.png",
+        "src": "/images/emoticons/friends1/large/028.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 28,
+        "name": "029",
+        "label": "슬픈 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/029.png",
+        "src": "/images/emoticons/friends1/large/029.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 29,
+        "name": "030",
+        "label": "폭소하는 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/030.png",
+        "src": "/images/emoticons/friends1/large/030.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 30,
+        "name": "031",
+        "label": "윙크하는 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/031.png",
+        "src": "/images/emoticons/friends1/large/031.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 31,
+        "name": "032",
+        "label": "엄지척 튜브",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/032.png",
+        "src": "/images/emoticons/friends1/large/032.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 32,
+        "name": "033",
+        "label": "토라진 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/033.png",
+        "src": "/images/emoticons/friends1/large/033.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 33,
+        "name": "034",
+        "label": "지친 제이지",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/034.png",
+        "src": "/images/emoticons/friends1/large/034.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 34,
+        "name": "035",
+        "label": "우는 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/035.png",
+        "src": "/images/emoticons/friends1/large/035.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 35,
+        "name": "036",
+        "label": "음흉한 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/036.png",
+        "src": "/images/emoticons/friends1/large/036.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 36,
+        "name": "037",
+        "label": "NO 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/037.png",
+        "src": "/images/emoticons/friends1/large/037.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 37,
+        "name": "038",
+        "label": "빈정상한 프로도",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/038.png",
+        "src": "/images/emoticons/friends1/large/038.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 38,
+        "name": "039",
+        "label": "비는 튜브",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/039.png",
+        "src": "/images/emoticons/friends1/large/039.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 39,
+        "name": "040",
+        "label": "화난 프로도",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/040.png",
+        "src": "/images/emoticons/friends1/large/040.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 40,
+        "name": "041",
+        "label": "부끄러운 무지, 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/041.png",
+        "src": "/images/emoticons/friends1/large/041.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 41,
+        "name": "042",
+        "label": "기분좋은 프로도",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/042.png",
+        "src": "/images/emoticons/friends1/large/042.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 42,
+        "name": "043",
+        "label": "고마운 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/043.png",
+        "src": "/images/emoticons/friends1/large/043.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 43,
+        "name": "044",
+        "label": "졸린 어피치",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/044.png",
+        "src": "/images/emoticons/friends1/large/044.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 44,
+        "name": "045",
+        "label": "화난 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/045.png",
+        "src": "/images/emoticons/friends1/large/045.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 45,
+        "name": "046",
+        "label": "놀란 제이지",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/046.png",
+        "src": "/images/emoticons/friends1/large/046.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 46,
+        "name": "047",
+        "label": "지루한 콘",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/047.png",
+        "src": "/images/emoticons/friends1/large/047.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 47,
+        "name": "048",
+        "label": "비웃는 네오",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/friends1/small/048.png",
+        "src": "/images/emoticons/friends1/large/048.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      }
+    ],
+    "niniz": [
+      {
+        "id": 0,
+        "name": "001",
+        "label": "기분좋은 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/001.png",
+        "src": "/images/emoticons/niniz/large/001.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 1,
+        "name": "002",
+        "label": "인사하는 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/002.png",
+        "src": "/images/emoticons/niniz/large/002.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 2,
+        "name": "003",
+        "label": "우는 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/003.png",
+        "src": "/images/emoticons/niniz/large/003.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 3,
+        "name": "004",
+        "label": "춤추는 케로와 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/004.png",
+        "src": "/images/emoticons/niniz/large/004.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 4,
+        "name": "005",
+        "label": "뽀뽀 받는 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/005.png",
+        "src": "/images/emoticons/niniz/large/005.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 5,
+        "name": "006",
+        "label": "나른한 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/006.png",
+        "src": "/images/emoticons/niniz/large/006.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 6,
+        "name": "007",
+        "label": "경악하는 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/007.png",
+        "src": "/images/emoticons/niniz/large/007.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 7,
+        "name": "008",
+        "label": "기분좋은 콥, 빠냐",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/008.png",
+        "src": "/images/emoticons/niniz/large/008.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 8,
+        "name": "009",
+        "label": "폭소하는 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/009.png",
+        "src": "/images/emoticons/niniz/large/009.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 9,
+        "name": "010",
+        "label": "감사한 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/010.png",
+        "src": "/images/emoticons/niniz/large/010.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 10,
+        "name": "011",
+        "label": "화난 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/011.png",
+        "src": "/images/emoticons/niniz/large/011.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 11,
+        "name": "012",
+        "label": "OK 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/012.png",
+        "src": "/images/emoticons/niniz/large/012.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 12,
+        "name": "013",
+        "label": "힘내 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/013.png",
+        "src": "/images/emoticons/niniz/large/013.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 13,
+        "name": "014",
+        "label": "사랑에 빠진 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/014.png",
+        "src": "/images/emoticons/niniz/large/014.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 14,
+        "name": "015",
+        "label": "분위기 잡는 콥",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/015.png",
+        "src": "/images/emoticons/niniz/large/015.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 15,
+        "name": "016",
+        "label": "놀라는 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/016.png",
+        "src": "/images/emoticons/niniz/large/016.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 16,
+        "name": "017",
+        "label": "지친 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/017.png",
+        "src": "/images/emoticons/niniz/large/017.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 17,
+        "name": "018",
+        "label": "죄송한 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/018.png",
+        "src": "/images/emoticons/niniz/large/018.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 18,
+        "name": "019",
+        "label": "나른한 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/019.png",
+        "src": "/images/emoticons/niniz/large/019.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 19,
+        "name": "020",
+        "label": "궁금한 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/020.png",
+        "src": "/images/emoticons/niniz/large/020.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 20,
+        "name": "021",
+        "label": "부끄러운 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/021.png",
+        "src": "/images/emoticons/niniz/large/021.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 21,
+        "name": "022",
+        "label": "연주하는 콥, 빠냐",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/022.png",
+        "src": "/images/emoticons/niniz/large/022.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 22,
+        "name": "023",
+        "label": "촛불든 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/023.png",
+        "src": "/images/emoticons/niniz/large/023.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 23,
+        "name": "024",
+        "label": "급한 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/024.png",
+        "src": "/images/emoticons/niniz/large/024.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 24,
+        "name": "025",
+        "label": "죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/025.png",
+        "src": "/images/emoticons/niniz/large/025.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 25,
+        "name": "026",
+        "label": "부탁하는 콥, 빠냐",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/026.png",
+        "src": "/images/emoticons/niniz/large/026.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 26,
+        "name": "027",
+        "label": "파도타는 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/027.png",
+        "src": "/images/emoticons/niniz/large/027.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 27,
+        "name": "028",
+        "label": "사랑에 빠진 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/028.png",
+        "src": "/images/emoticons/niniz/large/028.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 28,
+        "name": "029",
+        "label": "좌절한 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/029.png",
+        "src": "/images/emoticons/niniz/large/029.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 29,
+        "name": "030",
+        "label": "노력하는 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/030.png",
+        "src": "/images/emoticons/niniz/large/030.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 30,
+        "name": "031",
+        "label": "굽신거리는 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/031.png",
+        "src": "/images/emoticons/niniz/large/031.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 31,
+        "name": "032",
+        "label": "맞는 콥",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/032.png",
+        "src": "/images/emoticons/niniz/large/032.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 32,
+        "name": "033",
+        "label": "아픈 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/033.png",
+        "src": "/images/emoticons/niniz/large/033.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 33,
+        "name": "034",
+        "label": "외면하는 스카피",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/034.png",
+        "src": "/images/emoticons/niniz/large/034.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 34,
+        "name": "035",
+        "label": "하이파이브하는 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/035.png",
+        "src": "/images/emoticons/niniz/large/035.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 35,
+        "name": "036",
+        "label": "연주하는 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/036.png",
+        "src": "/images/emoticons/niniz/large/036.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 36,
+        "name": "037",
+        "label": "손드는 케로, 베로니",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/037.png",
+        "src": "/images/emoticons/niniz/large/037.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 37,
+        "name": "038",
+        "label": "너를 위해 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/038.png",
+        "src": "/images/emoticons/niniz/large/038.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 38,
+        "name": "039",
+        "label": "놀란 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/039.png",
+        "src": "/images/emoticons/niniz/large/039.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 39,
+        "name": "040",
+        "label": "경례하는 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/040.png",
+        "src": "/images/emoticons/niniz/large/040.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 40,
+        "name": "041",
+        "label": "어쩌라고 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/041.png",
+        "src": "/images/emoticons/niniz/large/041.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 41,
+        "name": "042",
+        "label": "헤롱헤롱 빠냐",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/042.png",
+        "src": "/images/emoticons/niniz/large/042.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 42,
+        "name": "043",
+        "label": "박수치는 죠르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/043.png",
+        "src": "/images/emoticons/niniz/large/043.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 43,
+        "name": "044",
+        "label": "지친 콥",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/044.png",
+        "src": "/images/emoticons/niniz/large/044.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 44,
+        "name": "045",
+        "label": "슬픈 팬다 주니어",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/045.png",
+        "src": "/images/emoticons/niniz/large/045.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 45,
+        "name": "046",
+        "label": "사랑 전하는 앙몬드",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/046.png",
+        "src": "/images/emoticons/niniz/large/046.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 46,
+        "name": "047",
+        "label": "심각한 콥, 빠냐",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/047.png",
+        "src": "/images/emoticons/niniz/large/047.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 47,
+        "name": "048",
+        "label": "졸린 조르디",
+        "isAnimation": true,
+        "thumb": "/images/emoticons/niniz/small/048.png",
+        "src": "/images/emoticons/niniz/large/048.gif",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      }
+    ],
+    "friends2": [
+      {
+        "id": 0,
+        "name": "001",
+        "label": "사랑에 빠진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/001.png",
+        "src": "/images/emoticons/friends2/large/001.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 1,
+        "name": "002",
+        "label": "존경하는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/002.png",
+        "src": "/images/emoticons/friends2/large/002.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 2,
+        "name": "003",
+        "label": "토라진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/003.png",
+        "src": "/images/emoticons/friends2/large/003.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 3,
+        "name": "004",
+        "label": "궁금한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/004.png",
+        "src": "/images/emoticons/friends2/large/004.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 4,
+        "name": "005",
+        "label": "지루한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/005.png",
+        "src": "/images/emoticons/friends2/large/005.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 5,
+        "name": "006",
+        "label": "좌절한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/006.png",
+        "src": "/images/emoticons/friends2/large/006.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 6,
+        "name": "007",
+        "label": "흥겨운 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/007.png",
+        "src": "/images/emoticons/friends2/large/007.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 7,
+        "name": "008",
+        "label": "공포에 떠는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/008.png",
+        "src": "/images/emoticons/friends2/large/008.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 8,
+        "name": "009",
+        "label": "엄지척 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/009.png",
+        "src": "/images/emoticons/friends2/large/009.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 9,
+        "name": "010",
+        "label": "사랑하는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/010.png",
+        "src": "/images/emoticons/friends2/large/010.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 10,
+        "name": "011",
+        "label": "우는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/011.png",
+        "src": "/images/emoticons/friends2/large/011.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 11,
+        "name": "012",
+        "label": "OK 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/012.png",
+        "src": "/images/emoticons/friends2/large/012.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 12,
+        "name": "013",
+        "label": "신나는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/013.png",
+        "src": "/images/emoticons/friends2/large/013.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 13,
+        "name": "014",
+        "label": "좌절한 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/014.png",
+        "src": "/images/emoticons/friends2/large/014.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 14,
+        "name": "015",
+        "label": "놀라는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/015.png",
+        "src": "/images/emoticons/friends2/large/015.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 15,
+        "name": "016",
+        "label": "기쁜 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/016.png",
+        "src": "/images/emoticons/friends2/large/016.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 16,
+        "name": "017",
+        "label": "지친 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/017.png",
+        "src": "/images/emoticons/friends2/large/017.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 17,
+        "name": "018",
+        "label": "사랑하는 프로도, 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/018.png",
+        "src": "/images/emoticons/friends2/large/018.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 18,
+        "name": "019",
+        "label": "의심하는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/019.png",
+        "src": "/images/emoticons/friends2/large/019.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 19,
+        "name": "020",
+        "label": "잠자는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/020.png",
+        "src": "/images/emoticons/friends2/large/020.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 20,
+        "name": "021",
+        "label": "엄지척 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/021.png",
+        "src": "/images/emoticons/friends2/large/021.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 21,
+        "name": "022",
+        "label": "토라진 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/022.png",
+        "src": "/images/emoticons/friends2/large/022.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 22,
+        "name": "023",
+        "label": "사랑을 표현하는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/023.png",
+        "src": "/images/emoticons/friends2/large/023.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 23,
+        "name": "024",
+        "label": "OK 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/024.png",
+        "src": "/images/emoticons/friends2/large/024.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 24,
+        "name": "025",
+        "label": "놀라는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/025.png",
+        "src": "/images/emoticons/friends2/large/025.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 25,
+        "name": "026",
+        "label": "부끄러운 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/026.png",
+        "src": "/images/emoticons/friends2/large/026.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 26,
+        "name": "027",
+        "label": "좌절한 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/027.png",
+        "src": "/images/emoticons/friends2/large/027.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 27,
+        "name": "028",
+        "label": "폭소하는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/028.png",
+        "src": "/images/emoticons/friends2/large/028.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 28,
+        "name": "029",
+        "label": "머리 넘기는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/029.png",
+        "src": "/images/emoticons/friends2/large/029.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 29,
+        "name": "030",
+        "label": "신경질 내는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/030.png",
+        "src": "/images/emoticons/friends2/large/030.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 30,
+        "name": "031",
+        "label": "우는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/031.png",
+        "src": "/images/emoticons/friends2/large/031.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 31,
+        "name": "032",
+        "label": "발랄한 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/032.png",
+        "src": "/images/emoticons/friends2/large/032.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 32,
+        "name": "033",
+        "label": "OK 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/033.png",
+        "src": "/images/emoticons/friends2/large/033.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 33,
+        "name": "034",
+        "label": "응원하는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/034.png",
+        "src": "/images/emoticons/friends2/large/034.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 34,
+        "name": "035",
+        "label": "화난 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/035.png",
+        "src": "/images/emoticons/friends2/large/035.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 35,
+        "name": "036",
+        "label": "NO 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/036.png",
+        "src": "/images/emoticons/friends2/large/036.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 36,
+        "name": "037",
+        "label": "반짝이는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/037.png",
+        "src": "/images/emoticons/friends2/large/037.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 37,
+        "name": "038",
+        "label": "불 뿜는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/038.png",
+        "src": "/images/emoticons/friends2/large/038.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 38,
+        "name": "039",
+        "label": "신발 차는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/039.png",
+        "src": "/images/emoticons/friends2/large/039.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 39,
+        "name": "040",
+        "label": "머리 긁는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/040.png",
+        "src": "/images/emoticons/friends2/large/040.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 40,
+        "name": "041",
+        "label": "믿는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/041.png",
+        "src": "/images/emoticons/friends2/large/041.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 41,
+        "name": "042",
+        "label": "놀리는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/042.png",
+        "src": "/images/emoticons/friends2/large/042.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 42,
+        "name": "043",
+        "label": "배고픈 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/043.png",
+        "src": "/images/emoticons/friends2/large/043.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 43,
+        "name": "044",
+        "label": "좌절한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/044.png",
+        "src": "/images/emoticons/friends2/large/044.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 44,
+        "name": "045",
+        "label": "졸린 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/045.png",
+        "src": "/images/emoticons/friends2/large/045.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 45,
+        "name": "046",
+        "label": "운동하는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/046.png",
+        "src": "/images/emoticons/friends2/large/046.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 46,
+        "name": "047",
+        "label": "눈빛을 반짝이는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/047.png",
+        "src": "/images/emoticons/friends2/large/047.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 47,
+        "name": "048",
+        "label": "토라진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/048.png",
+        "src": "/images/emoticons/friends2/large/048.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 48,
+        "name": "049",
+        "label": "배부른 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/049.png",
+        "src": "/images/emoticons/friends2/large/049.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 49,
+        "name": "050",
+        "label": "인사하는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/050.png",
+        "src": "/images/emoticons/friends2/large/050.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 50,
+        "name": "051",
+        "label": "힘내는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/051.png",
+        "src": "/images/emoticons/friends2/large/051.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 51,
+        "name": "052",
+        "label": "홀린 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/052.png",
+        "src": "/images/emoticons/friends2/large/052.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 52,
+        "name": "053",
+        "label": "궁금한 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/053.png",
+        "src": "/images/emoticons/friends2/large/053.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 53,
+        "name": "054",
+        "label": "울며 인사하는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/054.png",
+        "src": "/images/emoticons/friends2/large/054.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 54,
+        "name": "055",
+        "label": "폭소하는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/055.png",
+        "src": "/images/emoticons/friends2/large/055.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 55,
+        "name": "056",
+        "label": "파이팅하는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/056.png",
+        "src": "/images/emoticons/friends2/large/056.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 56,
+        "name": "057",
+        "label": "가을 타는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/057.png",
+        "src": "/images/emoticons/friends2/large/057.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 57,
+        "name": "058",
+        "label": "얼굴 꼬집힌 프로도, 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/058.png",
+        "src": "/images/emoticons/friends2/large/058.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 58,
+        "name": "059",
+        "label": "꽃다발 든 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/059.png",
+        "src": "/images/emoticons/friends2/large/059.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 59,
+        "name": "060",
+        "label": "정신 없는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/060.png",
+        "src": "/images/emoticons/friends2/large/060.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 60,
+        "name": "061",
+        "label": "경악하는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/061.png",
+        "src": "/images/emoticons/friends2/large/061.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 61,
+        "name": "062",
+        "label": "포옹하는 프로도, 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/062.png",
+        "src": "/images/emoticons/friends2/large/062.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 62,
+        "name": "063",
+        "label": "우는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/063.png",
+        "src": "/images/emoticons/friends2/large/063.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 63,
+        "name": "064",
+        "label": "미안한 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/064.png",
+        "src": "/images/emoticons/friends2/large/064.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 64,
+        "name": "065",
+        "label": "부채질하는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/065.png",
+        "src": "/images/emoticons/friends2/large/065.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 65,
+        "name": "066",
+        "label": "화난 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/066.png",
+        "src": "/images/emoticons/friends2/large/066.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 66,
+        "name": "067",
+        "label": "거울 보는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/067.png",
+        "src": "/images/emoticons/friends2/large/067.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 67,
+        "name": "068",
+        "label": "열일하는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/068.png",
+        "src": "/images/emoticons/friends2/large/068.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 68,
+        "name": "069",
+        "label": "우는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/069.png",
+        "src": "/images/emoticons/friends2/large/069.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 69,
+        "name": "070",
+        "label": "기분 좋은 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/070.png",
+        "src": "/images/emoticons/friends2/large/070.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 70,
+        "name": "071",
+        "label": "쇼핑한 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/071.png",
+        "src": "/images/emoticons/friends2/large/071.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 71,
+        "name": "072",
+        "label": "영화 보는 프로도, 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/072.png",
+        "src": "/images/emoticons/friends2/large/072.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 72,
+        "name": "073",
+        "label": "TV 보는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/073.png",
+        "src": "/images/emoticons/friends2/large/073.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 73,
+        "name": "074",
+        "label": "즐거운 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/074.png",
+        "src": "/images/emoticons/friends2/large/074.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 74,
+        "name": "075",
+        "label": "맥주 마시는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/075.png",
+        "src": "/images/emoticons/friends2/large/075.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 75,
+        "name": "076",
+        "label": "바쁜 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/076.png",
+        "src": "/images/emoticons/friends2/large/076.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 76,
+        "name": "077",
+        "label": "감기 걸린 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/077.png",
+        "src": "/images/emoticons/friends2/large/077.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 77,
+        "name": "078",
+        "label": "콘 쓰다 듬는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/078.png",
+        "src": "/images/emoticons/friends2/large/078.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 78,
+        "name": "079",
+        "label": "지친 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/079.png",
+        "src": "/images/emoticons/friends2/large/079.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 79,
+        "name": "080",
+        "label": "의기양양한 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/080.png",
+        "src": "/images/emoticons/friends2/large/080.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 80,
+        "name": "081",
+        "label": "인사하는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/081.png",
+        "src": "/images/emoticons/friends2/large/081.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 81,
+        "name": "082",
+        "label": "엄지척 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/082.png",
+        "src": "/images/emoticons/friends2/large/082.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 82,
+        "name": "083",
+        "label": "지친 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/083.png",
+        "src": "/images/emoticons/friends2/large/083.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 83,
+        "name": "084",
+        "label": "축하하는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/084.png",
+        "src": "/images/emoticons/friends2/large/084.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 84,
+        "name": "085",
+        "label": "부끄러운 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/085.png",
+        "src": "/images/emoticons/friends2/large/085.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 85,
+        "name": "086",
+        "label": "졸린 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/086.png",
+        "src": "/images/emoticons/friends2/large/086.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 86,
+        "name": "087",
+        "label": "우는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/087.png",
+        "src": "/images/emoticons/friends2/large/087.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      },
+      {
+        "id": 87,
+        "name": "088",
+        "label": "춤추는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/friends2/small/088.png",
+        "src": "/images/emoticons/friends2/large/088.png",
+        "thumbHeight": 60,
+        "insertWidth": 150
+      }
+    ],
+    "face": [
+      {
+        "id": 0,
+        "name": "001",
+        "label": "사랑에 빠진 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/001.png",
+        "src": "/images/emoticons/face/large/001.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 1,
+        "name": "002",
+        "label": "웃는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/002.png",
+        "src": "/images/emoticons/face/large/002.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 2,
+        "name": "003",
+        "label": "놀라는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/003.png",
+        "src": "/images/emoticons/face/large/003.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 3,
+        "name": "004",
+        "label": "그늘진 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/004.png",
+        "src": "/images/emoticons/face/large/004.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 4,
+        "name": "005",
+        "label": "당황한 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/005.png",
+        "src": "/images/emoticons/face/large/005.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 5,
+        "name": "006",
+        "label": "우는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/006.png",
+        "src": "/images/emoticons/face/large/006.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 6,
+        "name": "007",
+        "label": "부끄러운 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/007.png",
+        "src": "/images/emoticons/face/large/007.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 7,
+        "name": "008",
+        "label": "윙크하는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/008.png",
+        "src": "/images/emoticons/face/large/008.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 8,
+        "name": "009",
+        "label": "쑥스러운 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/009.png",
+        "src": "/images/emoticons/face/large/009.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 9,
+        "name": "010",
+        "label": "앙칼진 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/010.png",
+        "src": "/images/emoticons/face/large/010.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 10,
+        "name": "011",
+        "label": "화난 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/011.png",
+        "src": "/images/emoticons/face/large/011.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 11,
+        "name": "012",
+        "label": "기분 나쁜 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/012.png",
+        "src": "/images/emoticons/face/large/012.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 12,
+        "name": "013",
+        "label": "상심한 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/013.png",
+        "src": "/images/emoticons/face/large/013.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 13,
+        "name": "014",
+        "label": "미소 짓는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/014.png",
+        "src": "/images/emoticons/face/large/014.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 14,
+        "name": "015",
+        "label": "폭소하는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/015.png",
+        "src": "/images/emoticons/face/large/015.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 15,
+        "name": "016",
+        "label": "퀭한 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/016.png",
+        "src": "/images/emoticons/face/large/016.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 16,
+        "name": "017",
+        "label": "화난 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/017.png",
+        "src": "/images/emoticons/face/large/017.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 17,
+        "name": "018",
+        "label": "토라진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/018.png",
+        "src": "/images/emoticons/face/large/018.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 18,
+        "name": "019",
+        "label": "우는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/019.png",
+        "src": "/images/emoticons/face/large/019.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 19,
+        "name": "020",
+        "label": "사랑에 빠진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/020.png",
+        "src": "/images/emoticons/face/large/020.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 20,
+        "name": "021",
+        "label": "퀭한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/021.png",
+        "src": "/images/emoticons/face/large/021.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 21,
+        "name": "022",
+        "label": "그늘진 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/022.png",
+        "src": "/images/emoticons/face/large/022.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 22,
+        "name": "023",
+        "label": "부끄러운 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/023.png",
+        "src": "/images/emoticons/face/large/023.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 23,
+        "name": "024",
+        "label": "기분 좋은 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/024.png",
+        "src": "/images/emoticons/face/large/024.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 24,
+        "name": "025",
+        "label": "웃는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/025.png",
+        "src": "/images/emoticons/face/large/025.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 25,
+        "name": "026",
+        "label": "엄지척 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/026.png",
+        "src": "/images/emoticons/face/large/026.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 26,
+        "name": "027",
+        "label": "슬픈 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/027.png",
+        "src": "/images/emoticons/face/large/027.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 27,
+        "name": "028",
+        "label": "기분 나쁜 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/028.png",
+        "src": "/images/emoticons/face/large/028.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 28,
+        "name": "029",
+        "label": "우는 무지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/029.png",
+        "src": "/images/emoticons/face/large/029.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 29,
+        "name": "030",
+        "label": "눈물나게 웃는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/030.png",
+        "src": "/images/emoticons/face/large/030.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 30,
+        "name": "031",
+        "label": "부끄러운 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/031.png",
+        "src": "/images/emoticons/face/large/031.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 31,
+        "name": "032",
+        "label": "홍조 띈 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/032.png",
+        "src": "/images/emoticons/face/large/032.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 32,
+        "name": "033",
+        "label": "스웩있는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/033.png",
+        "src": "/images/emoticons/face/large/033.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 33,
+        "name": "034",
+        "label": "퀭한 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/034.png",
+        "src": "/images/emoticons/face/large/034.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 34,
+        "name": "035",
+        "label": "웃는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/035.png",
+        "src": "/images/emoticons/face/large/035.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 35,
+        "name": "036",
+        "label": "손 흔드는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/036.png",
+        "src": "/images/emoticons/face/large/036.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 36,
+        "name": "037",
+        "label": "놀라는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/037.png",
+        "src": "/images/emoticons/face/large/037.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 37,
+        "name": "038",
+        "label": "엄지척 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/038.png",
+        "src": "/images/emoticons/face/large/038.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 38,
+        "name": "039",
+        "label": "기분 상한 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/039.png",
+        "src": "/images/emoticons/face/large/039.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 39,
+        "name": "040",
+        "label": "눈치 보는 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/040.png",
+        "src": "/images/emoticons/face/large/040.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 40,
+        "name": "041",
+        "label": "허탈한 무지, 콘",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/041.png",
+        "src": "/images/emoticons/face/large/041.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 41,
+        "name": "042",
+        "label": "분노한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/042.png",
+        "src": "/images/emoticons/face/large/042.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 42,
+        "name": "043",
+        "label": "호기심 어린 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/043.png",
+        "src": "/images/emoticons/face/large/043.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 43,
+        "name": "044",
+        "label": "피식하는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/044.png",
+        "src": "/images/emoticons/face/large/044.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 44,
+        "name": "045",
+        "label": "웃음 짓는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/045.png",
+        "src": "/images/emoticons/face/large/045.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 45,
+        "name": "046",
+        "label": "긴장한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/046.png",
+        "src": "/images/emoticons/face/large/046.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 46,
+        "name": "047",
+        "label": "우는 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/047.png",
+        "src": "/images/emoticons/face/large/047.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 47,
+        "name": "048",
+        "label": "당황한 어피치",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/048.png",
+        "src": "/images/emoticons/face/large/048.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 48,
+        "name": "049",
+        "label": "손인사하는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/049.png",
+        "src": "/images/emoticons/face/large/049.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 49,
+        "name": "050",
+        "label": "부끄러운 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/050.png",
+        "src": "/images/emoticons/face/large/050.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 50,
+        "name": "051",
+        "label": "윙크하는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/051.png",
+        "src": "/images/emoticons/face/large/051.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 51,
+        "name": "052",
+        "label": "궁금한 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/052.png",
+        "src": "/images/emoticons/face/large/052.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 52,
+        "name": "053",
+        "label": "기분 상한 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/053.png",
+        "src": "/images/emoticons/face/large/053.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 53,
+        "name": "054",
+        "label": "우는 제이지",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/054.png",
+        "src": "/images/emoticons/face/large/054.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 54,
+        "name": "055",
+        "label": "엄지척 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/055.png",
+        "src": "/images/emoticons/face/large/055.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 55,
+        "name": "056",
+        "label": "홍조 띈 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/056.png",
+        "src": "/images/emoticons/face/large/056.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 56,
+        "name": "057",
+        "label": "잘 생긴 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/057.png",
+        "src": "/images/emoticons/face/large/057.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 57,
+        "name": "058",
+        "label": "쉿 하는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/058.png",
+        "src": "/images/emoticons/face/large/058.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 58,
+        "name": "059",
+        "label": "무표정 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/059.png",
+        "src": "/images/emoticons/face/large/059.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 59,
+        "name": "060",
+        "label": "지친 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/060.png",
+        "src": "/images/emoticons/face/large/060.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 60,
+        "name": "061",
+        "label": "한숨 쉬는 프로도",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/061.png",
+        "src": "/images/emoticons/face/large/061.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 61,
+        "name": "062",
+        "label": "부끄러운 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/062.png",
+        "src": "/images/emoticons/face/large/062.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 62,
+        "name": "063",
+        "label": "OK 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/063.png",
+        "src": "/images/emoticons/face/large/063.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 63,
+        "name": "064",
+        "label": "폭소하는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/064.png",
+        "src": "/images/emoticons/face/large/064.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 64,
+        "name": "065",
+        "label": "머리 긁는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/065.png",
+        "src": "/images/emoticons/face/large/065.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 65,
+        "name": "066",
+        "label": "우는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/066.png",
+        "src": "/images/emoticons/face/large/066.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 66,
+        "name": "067",
+        "label": "째려보는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/067.png",
+        "src": "/images/emoticons/face/large/067.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 67,
+        "name": "068",
+        "label": "덜덜 떠는 네오",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/068.png",
+        "src": "/images/emoticons/face/large/068.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 68,
+        "name": "069",
+        "label": "화난 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/069.png",
+        "src": "/images/emoticons/face/large/069.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 69,
+        "name": "070",
+        "label": "졸린 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/070.png",
+        "src": "/images/emoticons/face/large/070.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 70,
+        "name": "071",
+        "label": "지목하는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/071.png",
+        "src": "/images/emoticons/face/large/071.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 71,
+        "name": "072",
+        "label": "당황한 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/072.png",
+        "src": "/images/emoticons/face/large/072.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 72,
+        "name": "073",
+        "label": "똑똑한 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/073.png",
+        "src": "/images/emoticons/face/large/073.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      },
+      {
+        "id": 73,
+        "name": "074",
+        "label": "폭소하는 튜브",
+        "isAnimation": false,
+        "thumb": "/images/emoticons/face/small/074.png",
+        "src": "/images/emoticons/face/large/074.png",
+        "thumbHeight": 40,
+        "insertWidth": 80
+      }
+    ]
+  }
+}

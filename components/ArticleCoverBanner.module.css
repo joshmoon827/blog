@@ -1,0 +1,33 @@
+.banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  background: var(--surface-muted, #f0f0f0);
+}
+
+.bannerPadded {
+  /* side gutters use sampled corner color via inline backgroundColor */
+}
+
+.imgCover {
+  object-fit: cover;
+  object-position: center;
+}
+
+.imgPadded {
+  /* 10% left + 10% right gutters; contain so 1:1 is not cropped. */
+  object-fit: contain;
+  object-position: center;
+  left: 10% !important;
+  right: 10% !important;
+  width: 80% !important;
+}
+
+@media (max-width: 640px) {
+  .banner {
+    aspect-ratio: 4 / 3;
+  }
+}

@@ -1,0 +1,420 @@
+.wrapper {
+  --tag-align: max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem));
+  --collapsed-width: min(920px, calc(100vw - var(--tag-align) - 1.5rem));
+  --tag-block-size: 48px;
+  --tag-row-gap: 0.65rem;
+  --tag-two-row-height: calc(var(--tag-block-size) * 2 + var(--tag-row-gap) + 10px);
+  --fade-width: 92px;
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.measureShell,
+.shellCollapsed {
+  width: var(--collapsed-width);
+  max-width: 920px;
+  margin-left: var(--tag-align);
+}
+
+.measureShell {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.fadeWrap {
+  position: relative;
+  width: 100%;
+  padding-block: 4px;
+  overflow: visible;
+}
+
+.collapsedList {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--tag-row-gap);
+  min-width: 0;
+  width: 100%;
+  max-height: var(--tag-two-row-height);
+  overflow: hidden;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+
+.collapsedList li {
+  display: flex;
+  overflow: visible;
+}
+
+.shellExpanded {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 0 10px;
+  overflow: visible;
+}
+
+.viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-block: 2px;
+  padding-right: calc(var(--fade-width) - 12px);
+}
+
+.viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tag-row-gap);
+  width: max-content;
+  min-height: calc(var(--tag-block-size) * 2 + var(--tag-row-gap));
+  overflow: visible;
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--tag-row-gap);
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row li {
+  display: flex;
+  overflow: visible;
+}
+
+.tagLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  height: var(--tag-block-size);
+  padding: 0 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.tagDot {
+  opacity: 0.55;
+  font-weight: 700;
+}
+
+.tagCount {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.72;
+  font-weight: 650;
+}
+
+.tagLink:hover,
+.tagActive {
+  color: var(--text) !important;
+  background: var(--bg-card-hover) !important;
+}
+
+.tagLink:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.tagActive {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+:global([data-theme='light']) .tagActive {
+  border-color: color-mix(in srgb, var(--text) 32%, transparent) !important;
+}
+
+.fadeEdge {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  z-index: 1;
+  width: var(--fade-width);
+  height: calc(var(--tag-block-size) + 8px);
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--bg) 58%);
+}
+
+.moreItem {
+  display: flex;
+  align-items: center;
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--tag-block-size);
+  min-width: 1.5rem;
+  margin: 0 10px;
+  padding: 0 0.35rem;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.more:hover {
+  color: var(--text);
+}
+
+.morePill {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tag-block-size);
+  height: var(--tag-block-size);
+  padding: 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, opacity 0.2s;
+}
+
+.morePill:hover {
+  color: var(--text);
+  opacity: 0.92;
+}
+
+/* Glass tag box variants — /tag1 … /tag10 */
+.glassFrost .tagLink {
+  border-color: color-mix(in srgb, var(--text) 14%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 52%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 14%, transparent);
+}
+
+.glassFrost .tagLink:hover,
+.glassFrost .tagActive {
+  background: color-mix(in srgb, var(--bg-card-hover) 62%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 30%, transparent) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text) 18%, transparent),
+    0 8px 24px color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.glassCrystal .tagLink {
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--text) 10%, transparent), transparent 55%),
+    color-mix(in srgb, var(--bg-card) 45%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text) 22%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.glassCrystal .tagLink:hover,
+.glassCrystal .tagActive {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--text) 14%, transparent), transparent 55%),
+    color-mix(in srgb, var(--bg-card-hover) 58%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 42%, transparent) !important;
+}
+
+.glassAurora .tagLink {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--bg-card) 58%, transparent), color-mix(in srgb, var(--bg-card) 58%, transparent)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, #7dd3fc 55%, transparent),
+      color-mix(in srgb, #c4b5fd 45%, transparent),
+      color-mix(in srgb, #fda4af 40%, transparent)
+    )
+    border-box;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+.glassAurora .tagLink:hover,
+.glassAurora .tagActive {
+  background:
+    linear-gradient(color-mix(in srgb, var(--bg-card-hover) 68%, transparent), color-mix(in srgb, var(--bg-card-hover) 68%, transparent)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, #7dd3fc 75%, transparent),
+      color-mix(in srgb, #c4b5fd 65%, transparent),
+      color-mix(in srgb, #fda4af 58%, transparent)
+    )
+    border-box !important;
+}
+
+.glassSatin .tagLink {
+  border-color: color-mix(in srgb, var(--text) 8%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 38%, transparent);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 5%, transparent);
+}
+
+.glassSatin .tagLink:hover,
+.glassSatin .tagActive {
+  background: color-mix(in srgb, var(--bg-card-hover) 48%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 18%, transparent) !important;
+}
+
+.glassDeep .tagLink {
+  border-color: color-mix(in srgb, var(--text) 10%, transparent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(22px) saturate(130%);
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text) 8%, transparent),
+    0 10px 28px color-mix(in srgb, var(--bg) 35%, transparent);
+}
+
+.glassDeep .tagLink:hover,
+.glassDeep .tagActive {
+  background: color-mix(in srgb, var(--bg-card) 78%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 24%, transparent) !important;
+}
+
+.glassPrism .tagLink {
+  border-color: color-mix(in srgb, var(--text) 16%, transparent);
+  background:
+    linear-gradient(125deg, color-mix(in srgb, var(--text) 8%, transparent), transparent 42%),
+    linear-gradient(305deg, color-mix(in srgb, var(--text) 6%, transparent), transparent 38%),
+    color-mix(in srgb, var(--bg-card) 50%, transparent);
+  backdrop-filter: blur(16px) saturate(190%);
+  -webkit-backdrop-filter: blur(16px) saturate(190%);
+}
+
+.glassPrism .tagLink:hover,
+.glassPrism .tagActive {
+  background:
+    linear-gradient(125deg, color-mix(in srgb, var(--text) 12%, transparent), transparent 42%),
+    linear-gradient(305deg, color-mix(in srgb, var(--text) 10%, transparent), transparent 38%),
+    color-mix(in srgb, var(--bg-card-hover) 62%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 34%, transparent) !important;
+}
+
+.glassBubble .tagLink {
+  border-color: color-mix(in srgb, var(--text) 12%, transparent);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 22%, color-mix(in srgb, var(--text) 16%, transparent), transparent 48%),
+    color-mix(in srgb, var(--bg-card) 44%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow:
+    inset 0 -8px 18px color-mix(in srgb, var(--bg) 18%, transparent),
+    0 6px 18px color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.glassBubble .tagLink:hover,
+.glassBubble .tagActive {
+  background:
+    radial-gradient(circle at 30% 22%, color-mix(in srgb, var(--text) 22%, transparent), transparent 48%),
+    color-mix(in srgb, var(--bg-card-hover) 56%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 28%, transparent) !important;
+  transform: translateY(-1px);
+}
+
+.glassPanel .tagLink {
+  border-color: color-mix(in srgb, var(--text) 14%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg-card) 56%, transparent);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.glassPanel .tagLink:hover,
+.glassPanel .tagActive {
+  background: color-mix(in srgb, var(--bg-card-hover) 66%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 32%, transparent) !important;
+}
+
+.glassGlow .tagLink {
+  border-color: color-mix(in srgb, var(--text) 12%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 48%, transparent);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  transition:
+    color 0.2s,
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.25s ease;
+}
+
+.glassGlow .tagLink:hover,
+.glassGlow .tagActive {
+  background: color-mix(in srgb, var(--bg-card-hover) 60%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 26%, transparent) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--text) 10%, transparent),
+    0 0 28px color-mix(in srgb, var(--text) 16%, transparent);
+}
+
+.glassMinimal .tagLink {
+  border-color: color-mix(in srgb, var(--text) 6%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 28%, transparent);
+  backdrop-filter: blur(28px) saturate(110%);
+  -webkit-backdrop-filter: blur(28px) saturate(110%);
+  box-shadow: none;
+}
+
+.glassMinimal .tagLink:hover,
+.glassMinimal .tagActive {
+  background: color-mix(in srgb, var(--bg-card-hover) 36%, transparent) !important;
+  border-color: color-mix(in srgb, var(--text) 16%, transparent) !important;
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    --tag-align: 1.25rem;
+    --collapsed-width: calc(100vw - var(--tag-align) - 1.25rem);
+    --tag-block-size: 38px;
+    --tag-row-gap: 0.55rem;
+    --fade-width: 76px;
+  }
+
+  .tagLink {
+    padding: 0 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .more,
+  .morePill {
+    font-size: 0.9rem;
+  }
+}

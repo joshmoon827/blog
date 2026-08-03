@@ -1,19 +1,39 @@
 {
-  "name": "laws-of-ux-clone",
+  "name": "joshlog",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "setup:image-env": "node scripts/setup-github-image-env.mjs",
+    "check:supabase": "node scripts/check-supabase-env.mjs",
+    "import:obsidian": "node scripts/import-obsidian.mjs",
+    "chrome:cdp": "node scripts/start-chrome-cdp.mjs",
+    "generate:cover": "node scripts/generate-cover.mjs"
   },
   "dependencies": {
+    "@muyajs/core": "^0.2.0",
+    "@supabase/supabase-js": "^2.110.7",
+    "@tinymce/tinymce-react": "^6.3.0",
+    "framer-motion": "^12.0.0",
+    "isomorphic-dompurify": "^3.21.0",
+    "katex": "^0.17.0",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "framer-motion": "^12.0.0"
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "sharp": "^0.34.2",
+    "tinymce": "^8.8.2"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
+    "@types/katex": "^0.16.8",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

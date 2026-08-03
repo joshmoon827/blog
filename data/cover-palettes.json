@@ -1,0 +1,206 @@
+{
+  "/images/aesthetic-usability-effect.jpg": [
+    "#506485",
+    "#f5f2d1",
+    "#8e999f",
+    "#445572"
+  ],
+  "/images/choice-overload.jpg": [
+    "#4897be",
+    "#f6f2d0",
+    "#b1cec9",
+    "#428bb0"
+  ],
+  "/images/chunking.jpg": [
+    "#f46250",
+    "#f1c5a8",
+    "#f4f4d3",
+    "#e65949"
+  ],
+  "/images/cognitive-bias.jpg": [
+    "#307ec8",
+    "#498cc7",
+    "#245c91",
+    "#245c91"
+  ],
+  "/images/cognitive-load.jpg": [
+    "#f46251",
+    "#d65344",
+    "#f2dcbd",
+    "#f4f3d2"
+  ],
+  "/images/doherty-threshold.jpg": [
+    "#c44f9d",
+    "#943c76",
+    "#ce77a8",
+    "#ce77a8"
+  ],
+  "/images/familiar-vs-novel.jpg": [
+    "#c44f9d",
+    "#cd6ba6",
+    "#dea4b8",
+    "#eacec5"
+  ],
+  "/images/fitts-law.jpg": [
+    "#7ab14c",
+    "#dfe6b9",
+    "#f7f3d3",
+    "#85b758"
+  ],
+  "/images/flow.jpg": [
+    "#c44f9d",
+    "#cd6ba6",
+    "#dea4b8",
+    "#eacec5"
+  ],
+  "/images/goal-gradient-effect.jpg": [
+    "#45948d",
+    "#73ac9f",
+    "#a7c9b2",
+    "#e0e7c8"
+  ],
+  "/images/hicks-law.jpg": [
+    "#4897be",
+    "#3f84a8",
+    "#85b8c5",
+    "#85b8c5"
+  ],
+  "/images/jakobs-law.jpg": [
+    "#cfba27",
+    "#dbcd62",
+    "#f4f1cf",
+    "#f4f1cf"
+  ],
+  "/images/law-of-common-region.jpg": [
+    "#26a26c",
+    "#40ab78",
+    "#1a734d",
+    "#1a734d"
+  ],
+  "/images/law-of-pragnanz.jpg": [
+    "#f27dab",
+    "#f2d7c8",
+    "#f094b2",
+    "#f094b2"
+  ],
+  "/images/law-of-proximity.jpg": [
+    "#e27835",
+    "#f3e7c2",
+    "#ea8441",
+    "#f4f3d3"
+  ],
+  "/images/law-of-similarity.jpg": [
+    "#80495e",
+    "#e3d9c0",
+    "#714053",
+    "#714053"
+  ],
+  "/images/mental-model.jpg": [
+    "#cfbb28",
+    "#d6ca6c",
+    "#bba823",
+    "#bba823"
+  ],
+  "/images/millers-law.jpg": [
+    "#f55f4e",
+    "#d65344",
+    "#f48a74",
+    "#f48a74"
+  ],
+  "/images/occams-razor.jpg": [
+    "#b64a48",
+    "#853634",
+    "#d7a693",
+    "#d7a693"
+  ],
+  "/images/onboarding.jpg": [
+    "#cfbb28",
+    "#a99920",
+    "#d9cd72",
+    "#f5f2d1"
+  ],
+  "/images/paradox-of-active-user.jpg": [
+    "#cfbb28",
+    "#a99920",
+    "#d9cd72",
+    "#f5f2d1"
+  ],
+  "/images/pareto-principle.jpg": [
+    "#1caac0",
+    "#1795a6",
+    "#a4d7ca",
+    "#a4d7ca"
+  ],
+  "/images/parkinsons-law.jpg": [
+    "#beaa49",
+    "#e7e0af",
+    "#e7e0af",
+    "#e7e0af"
+  ],
+  "/images/peak-end-rule.jpg": [
+    "#307ec8",
+    "#296baa",
+    "#629cca",
+    "#629cca"
+  ],
+  "/images/postels-law.jpg": [
+    "#41a851",
+    "#5fb466",
+    "#a8d39a",
+    "#e1e9c3"
+  ],
+  "/images/psychology-of-design.jpg": [
+    "#307ec8",
+    "#498cc7",
+    "#245c91",
+    "#245c91"
+  ],
+  "/images/selective-attention.jpg": [
+    "#77a77a",
+    "#9bbd93",
+    "#b5cda5",
+    "#d3dfbb"
+  ],
+  "/images/serial-position-effect.jpg": [
+    "#8958a7",
+    "#6e4e85",
+    "#ba9eba",
+    "#ba9eba"
+  ],
+  "/images/teslers-law.jpg": [
+    "#6fc9b7",
+    "#f9f3d1",
+    "#d0e6c9",
+    "#d0e6c9"
+  ],
+  "/images/uniform-connectedness.jpg": [
+    "#7f9cd5",
+    "#a2b5d5",
+    "#a2b5d5",
+    "#a2b5d5"
+  ],
+  "/images/ux-psychology-google.jpg": [
+    "#4897be",
+    "#3f84a8",
+    "#85b8c5",
+    "#85b8c5"
+  ],
+  "/images/von-restorff-effect.jpg": [
+    "#75a679",
+    "#90b68b",
+    "#5b815e",
+    "#5b815e"
+  ],
+  "/images/working-memory.jpg": [
+    "#f55f4e",
+    "#f4917b",
+    "#f4c3a7",
+    "#f5e5c6"
+  ],
+  "/images/zeigarnik-effect.jpg": [
+    "#41928c",
+    "#347572",
+    "#73ad9f",
+    "#73ad9f"
+  ]
+}

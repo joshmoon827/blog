@@ -1,0 +1,157 @@
+.popover {
+  position: fixed;
+  z-index: 10001;
+  width: 280px;
+  max-height: min(380px, 60vh);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  box-shadow: 0 8px 32px var(--overlay);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.4;
+  overflow: hidden;
+  /* Isolate from Muya core.css unscoped rules (e.g. global `button`) */
+  isolation: isolate;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  box-sizing: border-box;
+}
+
+.headerTitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.headerFilter,
+.headerHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.list {
+  overflow-y: auto;
+  padding: 0 0 8px;
+  box-sizing: border-box;
+}
+
+.section {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.sectionTitle {
+  margin: 0;
+  padding: 8px 12px 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/*
+ * Muya core.css ships unscoped `button{width:20px;height:20px;display:flex}` —
+ * override hard so menu rows aren't crushed.
+ */
+.item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  text-align: left !important;
+  cursor: pointer;
+  font-family: var(--font);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.item:hover,
+.itemActive {
+  background: color-mix(in srgb, var(--text) 6%, transparent) !important;
+}
+
+.itemIcon {
+  box-sizing: border-box;
+  flex: 0 0 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--text-muted);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.itemBody {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.itemTitle {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemSubtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empty {
+  margin: 0;
+  padding: 16px 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}

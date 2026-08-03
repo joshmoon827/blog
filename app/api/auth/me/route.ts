@@ -1,0 +1,13 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { AUTH_COOKIE, verifySessionToken } from '@/lib/auth-session'
+
+export async function GET(req: NextRequest) {
+  const session = await verifySessionToken(req.cookies.get(AUTH_COOKIE)?.value)
+  if (!session) {
+    return NextResponse.json({ authenticated: false })
+  }
+  return NextResponse.json({
+    authenticated: true,
+    user: { id: session.sub },
+  })
+}

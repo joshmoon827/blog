@@ -90,10 +90,29 @@ main  ← 배포 안정본
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 EDIT_SECRET=local-dev-secret   # 편집 권한 임시 비밀번호
 
-# .env.production (프로덕션)
+# Image paste upload (Method A — GitHub Contents API). See .env.example.
+# Server-only — never use NEXT_PUBLIC_ for the token.
+GITHUB_IMAGE_UPLOAD_TOKEN=ghp_xxx   # or GITHUB_TOKEN
+GITHUB_IMAGE_OWNER=your-user
+GITHUB_IMAGE_REPO=your-image-repo
+# GITHUB_IMAGE_BRANCH=main
+# GITHUB_IMAGE_PATH_PREFIX=images
+
+# .env.production / Vercel Environment Variables (same keys)
 NEXT_PUBLIC_API_URL=https://xxx.execute-api.ap-northeast-2.amazonaws.com
 NEXT_PUBLIC_CDN_URL=https://xxx.cloudfront.net
+GITHUB_IMAGE_UPLOAD_TOKEN=...
+GITHUB_IMAGE_OWNER=...
+GITHUB_IMAGE_REPO=...
 ```
+
+### 이미지 붙여넣기 업로드 (Method A)
+- Frontend: article body textarea paste → `POST /api/upload-image` (multipart `file`)
+- Server: Base64 + `PUT /repos/{owner}/{repo}/contents/{path}` with PAT
+- Returned URL: `/api/images/{path}` (Next.js proxy → private GitHub repo with server token)
+- Inserted markdown: `![image](/api/images/...)`
+- Image hosting repo can stay private; browsers never need raw.githubusercontent.com access.
+- Optional Method B (Issue attachments): not implemented; Contents API is more stable for Vercel.
 
 ---
 

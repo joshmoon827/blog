@@ -9,7 +9,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} data-site-chrome="footer">
       <div className={styles.inner}>
         <a href="#" className={styles.backToTop} onClick={handleBackToTop} aria-label="Back to Top">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

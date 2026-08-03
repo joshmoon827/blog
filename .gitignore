@@ -14,3 +14,14 @@ out/
 .DS_Store
 *.pem
 npm-debug.log*
+
+# local cover generation jobs/logs
+data/cover-jobs/
+data/cover-logs/
+data/cover-refs/
+.vercel
+.env*
+!.env.example
+
+# build caches
+*.tsbuildinfo

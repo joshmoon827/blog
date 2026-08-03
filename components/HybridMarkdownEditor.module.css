@@ -1,0 +1,459 @@
+/* Boxed form field (new article) — chrome only; type inherits page .body when nested */
+.editor {
+  width: 100%;
+  position: relative;
+  min-height: 16rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem 0.75rem;
+}
+
+.editor:focus-within {
+  border-color: var(--accent);
+}
+
+/* Inline ⌘E: invisible shell — parent .body owns all typography */
+.editorInline {
+  width: 100%;
+  position: relative;
+  min-height: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.editor[data-disabled],
+.editorInline[data-disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.editorError {
+  color: var(--accent);
+  padding: 1rem;
+  font-size: 0.95rem;
+}
+
+.placeholder {
+  position: absolute;
+  top: 0.85rem;
+  left: 1rem;
+  right: 1rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.placeholderInline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.host {
+  min-height: 14rem;
+  /* Muya float chrome tokens — keep content colors from parent .body */
+  --theme-color: var(--accent);
+  --highlight-color: var(--accent-soft);
+  --selection-color: var(--accent-soft);
+  --editor-color: inherit;
+  --editor-color-80: color-mix(in srgb, var(--text-secondary) 88%, transparent);
+  --editor-color-50: color-mix(in srgb, var(--text-muted) 92%, transparent);
+  --editor-color-30: color-mix(in srgb, var(--text-muted) 72%, transparent);
+  --editor-color-10: color-mix(in srgb, var(--text) 12%, transparent);
+  --editor-color-04: color-mix(in srgb, var(--text) 5%, transparent);
+  --editor-bg-color: transparent;
+  --delete-color: var(--danger);
+  --icon-color: var(--text-muted);
+  --code-block-bg-color: color-mix(in srgb, var(--text) 5%, transparent);
+  --table-border-color: var(--border);
+  --input-bg-color: color-mix(in srgb, var(--text) 8%, transparent);
+  --button-font-color: var(--text);
+  --button-bg-color: var(--bg-card);
+  --button-border: 1px solid var(--border);
+  --button-bg-color-hover: var(--bg-card-hover);
+  --button-border-hover: 1px solid var(--border);
+  --float-bg-color: var(--bg-card);
+  --float-hover-color: color-mix(in srgb, var(--text) 6%, transparent);
+  --float-border-color: var(--border);
+  --float-shadow: 0 4px 24px var(--overlay);
+}
+
+.editorInline .host {
+  min-height: 0;
+}
+
+.muyaRoot {
+  width: 100%;
+}
+
+.host :global(.mu-editor),
+.host :global(.mu-container) {
+  outline: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  font: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Kill Muya’s default block padding/margins inside the host */
+.host :global(.mu-container p),
+.host :global(.mu-container blockquote),
+.host :global(.mu-container ul),
+.host :global(.mu-container ol),
+.host :global(.mu-container dl),
+.host :global(.mu-container table),
+.host :global(.mu-container figure:not(.mu-table)) {
+  padding: 0 !important;
+}
+
+.host :global(.mu-container p),
+.host :global(.mu-paragraph) {
+  margin: 0 0 1.4rem !important;
+}
+
+.host :global(li .mu-paragraph),
+.host :global(.mu-list-item .mu-paragraph),
+.host :global(.mu-bullet-list-item .mu-paragraph),
+.host :global(.mu-order-list-item .mu-paragraph),
+.host :global(.mu-task-list-item .mu-paragraph) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.host :global(.mu-container ul),
+.host :global(.mu-container ol),
+.host :global(ul.mu-bullet-list),
+.host :global(ol.mu-order-list) {
+  margin: 0 0 1.4rem !important;
+  padding-left: 1.5rem !important;
+}
+
+.host :global(ul.mu-bullet-list) {
+  list-style: disc !important;
+}
+
+.host :global(ol.mu-order-list) {
+  list-style: decimal !important;
+}
+
+.host :global(a.mu-inline-rule),
+.host :global(span.mu-inline-rule.mu-link),
+.host :global(.mu-link) {
+  color: var(--accent) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+
+.host :global(.mu-inline-code),
+.host :global(code.mu-inline-code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.88em !important;
+  background: color-mix(in srgb, var(--text) 8%, transparent) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+  padding: 0.1em 0.35em !important;
+  color: var(--text) !important;
+}
+
+.host :global(.mu-thematic-break:before),
+.host :global(.mu-thematic-break:after) {
+  display: none !important;
+  content: none !important;
+}
+
+.host :global(.mu-container blockquote) {
+  margin: 0 0 1.4rem !important;
+  padding: 0.15rem 0 0.15rem 1rem !important;
+}
+
+.host :global(.mu-container table),
+.host :global(.mu-container figure:not(.mu-table)) {
+  margin: 0 0 1.4rem !important;
+}
+
+.host :global(.mu-container h1),
+.host :global(.mu-container h2),
+.host :global(.mu-container h3),
+.host :global(.mu-container h4),
+.host :global(.mu-container h5),
+.host :global(.mu-container h6) {
+  margin: 2rem 0 0.85rem !important;
+  padding: 0 !important;
+  color: var(--text) !important;
+  line-height: 1.25 !important;
+}
+
+.host :global(.mu-container blockquote:before) {
+  display: none !important;
+  content: none !important;
+}
+
+/* Tables in editor host — identical to read .body table */
+.host :global(figure.mu-table) {
+  margin: 0 0 1.4rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.host :global(.mu-table-inner),
+.host :global(table.mu-table-inner) {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  display: block !important;
+  overflow-x: auto !important;
+  font-size: 0.95rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  word-break: normal !important;
+}
+
+.host :global(.mu-table-inner tr),
+.host :global(.mu-table-row) {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.host :global(.mu-table-inner th),
+.host :global(.mu-table-inner td),
+.host :global(.mu-table-cell) {
+  text-align: left !important;
+  margin: 0 !important;
+  padding: 0.55rem 0.75rem !important;
+  vertical-align: top !important;
+  border: 1px solid var(--border) !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  min-width: 0 !important;
+  box-shadow: none !important;
+  font-weight: inherit;
+}
+
+.host :global(.mu-table-inner th),
+.host :global(.mu-table-row:first-child .mu-table-cell),
+.host :global(.mu-table-row:first-child th) {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.host :global(.mu-table-inner th:before),
+.host :global(.mu-table-inner td:before),
+.host :global(.mu-table-cell:before),
+.host :global(.mu-table-cell:after) {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+.host :global(.mu-table-cell-content) {
+  min-width: 0 !important;
+  font: inherit !important;
+  color: inherit !important;
+  line-height: inherit !important;
+  outline: none !important;
+}
+
+/* Hide markdown syntax markers in inline edit — match rendered read view */
+.editorInline .host :global(span.mu-hide.mu-remove),
+.editorInline .host :global(span.mu-gray.mu-remove),
+.editorInline .host :global(span.mu-highlight.mu-remove),
+.editorInline .host :global(span.mu-selection.mu-remove),
+.editorInline .host :global(span.mu-header-tight-space.mu-remove),
+.editorInline .host :global(span.mu-language),
+.editorInline .host :global(span.mu-language-input),
+.editorInline .host :global(span.mu-image-marked-text),
+.editorInline .host :global(span.mu-link-in-bracket),
+.editorInline .host :global(span.mu-emoji-marker),
+.editorInline .host :global(span.mu-emoji-marked-text),
+.editorInline .host :global(span.mu-reference-marker),
+.editorInline .host :global(span.mu-fence-code) {
+  display: none !important;
+  width: 0 !important;
+  max-width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+.editorInline .host :global(.mu-content) {
+  outline: none;
+}
+
+.editorInline .host :global(.mu-editor),
+.editorInline .host :global(.mu-content),
+.editorInline .host :global(.mu-content:focus),
+.editorInline .host :global([contenteditable]:focus) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.editorInline .host :global(.mu-editor) {
+  caret-color: var(--text);
+}
+
+/* Soft selection — readable while editing, not a “different mode” wash */
+.editorInline .host :global(.mu-editor *::selection) {
+  background: var(--accent-soft);
+  color: inherit;
+}
+
+.editorInline .host :global(span.mu-highlight),
+.editorInline .host :global(span.mu-selection) {
+  background: transparent !important;
+  color: inherit !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  animation: none !important;
+}
+
+.editorInline .host :global(span.mu-highlight.mu-remove),
+.editorInline .host :global(span.mu-selection.mu-remove) {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+/* Math (display): rendered preview by default; tap/focus → TeX source */
+.host :global(figure.mu-html-block:hover),
+.host :global(figure.mu-html-block:not(.mu-active):hover),
+.host :global(figure.mu-html-block),
+.host :global(figure.mu-math-block:not(.mu-active)),
+.host :global(figure.mu-math-block:not(.mu-active):hover) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.host :global(figure.mu-active.mu-math-block .mu-math-container) {
+  display: block !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+  margin: 0 0 0.75rem !important;
+  padding: 0.75rem 0.9rem !important;
+  overflow: visible !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border) !important;
+  background: color-mix(in srgb, var(--text) 5%, transparent) !important;
+  color: var(--text-secondary) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.9rem !important;
+  line-height: 1.55 !important;
+}
+
+.host :global(pre.mu-active.mu-math-container:before),
+.host :global(pre.mu-active.mu-math-container:after) {
+  display: block !important;
+  content: '$$' !important;
+  opacity: 1 !important;
+  color: var(--text-muted) !important;
+}
+
+.host :global(figure.mu-active.mu-math-block > .mu-math-preview) {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  margin: 0 0 1.4rem !important;
+  padding: 0.35rem 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Inline $…$ : hide raw when rendered; focus shows source (Muya .mu-hide toggle) */
+.host :global(.mu-hide.mu-math > .mu-math-render) {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+.host :global(.mu-math:not(.mu-hide) > .mu-math-text) {
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-secondary);
+}
+
+.editorInline .host :global(pre.mu-active:not(.mu-math-container):before),
+.editorInline .host :global(pre.mu-active:not(.mu-math-container):after),
+.editorInline .host :global(.mu-fenced-code.mu-active .mu-code:after),
+.editorInline .host :global(.mu-indented-code.mu-active .mu-code:after),
+.editorInline .host :global(figure.mu-footnote.mu-active:before),
+.editorInline .host :global(.mu-code-block.mu-active .mu-language-input) {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+}
+
+.editorInline .host :global(.mu-line-ghost),
+.editorInline .host :global(.mu-shadow) {
+  display: none !important;
+}
+
+/* Floating toolbars — keep custom QuickInsert (/) only */
+.host :global(.mu-inline-format-toolbar),
+.host :global(.mu-format-picker),
+.host :global(.mu-format-picker-container),
+.host :global(.mu-paragraph-front-menu),
+.host :global(.mu-front-menu),
+.host :global(.mu-front-button),
+.host :global(.mu-front-button-wrapper),
+.host :global(.mu-image-toolbar),
+.host :global(.mu-preview-tools),
+.host :global(.mu-table-column-tools),
+.host :global(.mu-table-drag-bar),
+.host :global(.mu-table-bar-tools),
+.host :global(.mu-table-drag-container) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

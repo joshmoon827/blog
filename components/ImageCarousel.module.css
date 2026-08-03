@@ -3,7 +3,7 @@
   width: 100%;
   aspect-ratio: 5 / 4;
   overflow: hidden;
-  background: #0e2035;
+  background: var(--bg-elevated);
 }
 
 .slide {

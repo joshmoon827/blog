@@ -1,0 +1,509 @@
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 5rem;
+}
+
+.header {
+  max-width: 720px;
+  margin-bottom: 1.75rem;
+}
+
+.kicker {
+  margin-bottom: 0.7rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin-bottom: 0.8rem;
+  color: var(--text);
+  font-size: clamp(2.25rem, 5vw, 4.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.header p:not(.kicker) {
+  color: var(--text-secondary);
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.exampleNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.exampleNav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 700;
+  transition: transform 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.exampleNav a:hover,
+.exampleNavActive {
+  border-color: color-mix(in srgb, var(--text) 24%, transparent) !important;
+  background: var(--bg-card-hover) !important;
+  color: var(--text) !important;
+  transform: translateY(-1px);
+}
+
+.preview {
+  overflow: hidden;
+  min-height: 360px;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--text) 8%, transparent), transparent 32rem),
+    var(--bg-card);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16);
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tagList button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tagList button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--text) 45%, transparent);
+  outline-offset: 3px;
+}
+
+.tagList button span,
+.tagList button small,
+.tagList button kbd {
+  position: relative;
+  z-index: 1;
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.pager a {
+  color: var(--text-secondary);
+  font-weight: 700;
+  transition: color 0.2s var(--ease);
+}
+
+.pager a:hover {
+  color: var(--text);
+}
+
+.softCapsule .tagList {
+  align-content: center;
+  min-height: 230px;
+}
+
+.softCapsule button {
+  min-height: 58px;
+  padding: 0 1.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--text) 7%, transparent), transparent), var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent);
+  transition: transform 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.softCapsule button:hover,
+.softCapsule .tagActive {
+  background: var(--bg-card-hover);
+  color: var(--text);
+  transform: translateY(-3px);
+}
+
+.segmentedRail .tagList {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--border) 85%, transparent);
+}
+
+.segmentedRail button {
+  width: 100%;
+  min-height: 64px;
+  padding: 0 1rem;
+  border-radius: 18px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 700;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.segmentedRail button:hover,
+.segmentedRail .tagActive {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.glassOutline .tagList {
+  gap: 0.95rem;
+  padding: 3.8rem 2rem;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--text) 10%, transparent), transparent),
+    color-mix(in srgb, var(--bg) 42%, transparent);
+}
+
+.glassOutline button {
+  min-height: 56px;
+  padding: 0 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg-card) 72%, transparent);
+  color: var(--text-secondary);
+  font-weight: 700;
+  backdrop-filter: blur(18px);
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.glassOutline button:hover,
+.glassOutline .tagActive {
+  border-color: color-mix(in srgb, var(--text) 52%, transparent);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.editorialUnderline .tagList {
+  align-items: flex-end;
+  gap: 1.6rem;
+  min-height: 230px;
+  border-bottom: 1px solid var(--border);
+}
+
+.editorialUnderline button {
+  position: relative;
+  padding: 0.35rem 0 1rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  transition: color 0.2s var(--ease);
+}
+
+.editorialUnderline button::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.24s var(--ease);
+}
+
+.editorialUnderline button:hover,
+.editorialUnderline .tagActive {
+  color: var(--text);
+}
+
+.editorialUnderline button:hover::after,
+.editorialUnderline .tagActive::after {
+  transform: scaleX(1);
+}
+
+.metricPills .tagList {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.metricPills button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 58px;
+  padding: 0 0.95rem 0 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 750;
+  text-align: left;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.metricPills small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.metricPills button:hover,
+.metricPills .tagActive {
+  border-color: color-mix(in srgb, var(--text) 28%, transparent);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.commandPalette .tagList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+.commandPalette button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 0.65rem 0 1rem;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-align: left;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.commandPalette kbd {
+  min-width: 1.75rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: 700 0.78rem var(--font);
+  text-align: center;
+}
+
+.commandPalette button:hover,
+.commandPalette .tagActive {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
+.layeredCards .tagList {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.layeredCards button {
+  position: relative;
+  width: 100%;
+  min-height: 94px;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: left;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.layeredCards button::before {
+  position: absolute;
+  inset: 0.55rem -0.45rem -0.45rem 0.55rem;
+  z-index: 0;
+  border: 1px solid var(--border);
+  border-radius: inherit;
+  background: var(--bg-card-hover);
+  content: '';
+  transition: transform 0.2s var(--ease);
+}
+
+.layeredCards button:hover,
+.layeredCards .tagActive {
+  transform: translate(-3px, -3px);
+  box-shadow: 0 1.35rem 2.5rem rgba(0, 0, 0, 0.16);
+}
+
+.layeredCards button:hover::before,
+.layeredCards .tagActive::before {
+  transform: translate(6px, 6px);
+}
+
+.sidebarStack .previewHeader {
+  margin-bottom: 1rem;
+}
+
+.sidebarStack .tagList {
+  display: grid;
+  max-width: 360px;
+  gap: 0.45rem;
+  padding: 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--bg) 58%, transparent);
+}
+
+.sidebarStack button {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 1rem;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 750;
+  text-align: left;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), padding 0.2s var(--ease);
+}
+
+.sidebarStack button:hover,
+.sidebarStack .tagActive {
+  background: var(--bg-card-hover);
+  color: var(--text);
+  padding-left: 1.35rem;
+}
+
+.neonRings .tagList {
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.neonRings button {
+  min-height: 56px;
+  padding: 0 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 800;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.neonRings button:hover,
+.neonRings .tagActive {
+  border-color: color-mix(in srgb, var(--text) 70%, transparent);
+  color: var(--text);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--text) 8%, transparent),
+    0 0 30px color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.denseToolbar .tagList {
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-card);
+}
+
+.denseToolbar button {
+  min-height: 38px;
+  padding: 0 0.85rem;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 800;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.denseToolbar button:hover,
+.denseToolbar .tagActive {
+  background: var(--text);
+  color: var(--bg);
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding-top: 3rem;
+  }
+
+  .segmentedRail .tagList,
+  .metricPills .tagList,
+  .layeredCards .tagList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .preview {
+    min-height: 0;
+    padding: 1rem;
+    border-radius: 22px;
+  }
+
+  .previewHeader,
+  .pager {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tagList,
+  .glassOutline .tagList,
+  .neonRings .tagList {
+    gap: 0.55rem;
+    padding: 0;
+  }
+
+  .segmentedRail .tagList,
+  .metricPills .tagList,
+  .commandPalette .tagList,
+  .layeredCards .tagList {
+    grid-template-columns: 1fr;
+  }
+
+  .tagList button {
+    min-height: 44px;
+  }
+}

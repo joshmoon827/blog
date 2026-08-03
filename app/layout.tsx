@@ -4,6 +4,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PageTransition from '@/components/PageTransition'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
+import { AuthProvider } from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
   title: 'Articles | Laws of UX',
@@ -12,15 +13,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="ko" data-theme="dark">
       <body>
-        <ServiceWorkerRegistrar />
-        <a className="skip-link" href="#main">Skip to main content</a>
-        <Header />
-        <PageTransition>
-          <main id="main">{children}</main>
-        </PageTransition>
-        <Footer />
+        <AuthProvider>
+          <ServiceWorkerRegistrar />
+          <a className="skip-link" href="#main">Skip to main content</a>
+          <Header />
+          <PageTransition>
+            <main id="main">{children}</main>
+          </PageTransition>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   )

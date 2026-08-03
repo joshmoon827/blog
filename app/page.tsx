@@ -1,15 +1,29 @@
-import { articles } from '@/data/articles'
 import ArticleCard from '@/components/ArticleCard'
+import TagFilterBar from '@/components/TagFilterBar'
+import { getListedArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
 
-export default function ArticlesPage() {
+interface ArticlesPageProps {
+  searchParams?: Promise<{
+    tag?: string | string[]
+  }>
+}
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+  const params = await searchParams
+  const selectedTag = typeof params?.tag === 'string' ? params.tag : undefined
+  const listed = getListedArticles()
+  const filteredArticles = selectedTag
+    ? listed.filter((article) => article.tags.includes(selectedTag))
+    : listed
+
   return (
     <>
       <section className={styles.hero}>
-        <h1>Selected articles on the intersection of psychology and user experience.</h1>
+        <TagFilterBar articles={listed} selectedTag={selectedTag} />
       </section>
       <section className={styles.grid} aria-label="Articles">
-        {articles.map((article, i) => (
+        {filteredArticles.map((article, i) => (
           <ArticleCard key={article.slug} article={article} index={i} />
         ))}
       </section>

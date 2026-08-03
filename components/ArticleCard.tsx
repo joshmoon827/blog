@@ -10,9 +10,10 @@ import styles from './ArticleCard.module.css'
 interface Props {
   article: Article
   index: number
+  variant?: 'default' | 'wide'
 }
 
-export default function ArticleCard({ article, index }: Props) {
+export default function ArticleCard({ article, index, variant = 'default' }: Props) {
   const router = useRouter()
 
   const handleClick = (e: React.MouseEvent) => {
@@ -29,7 +30,15 @@ export default function ArticleCard({ article, index }: Props) {
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
     >
       <Link href={`/articles/${article.slug}`} className={styles.thumbLink} onClick={handleClick} tabIndex={-1} aria-hidden>
-        <ImageCarousel offset={index} alt={article.title} />
+        <ImageCarousel
+          src={article.image}
+          alt={article.title}
+          aspectRatio={variant === 'wide' ? '3 / 1' : undefined}
+          priority={index < 3}
+        />
+        {article.draft ? (
+          <span className={styles.draftBadge}>임시저장</span>
+        ) : null}
       </Link>
       <div className={styles.body}>
         <h2 className={styles.title}>

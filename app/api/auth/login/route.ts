@@ -5,8 +5,12 @@ import {
   sessionCookieOptions,
   verifyCredentials,
 } from '@/lib/auth-session'
+import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
 export async function POST(req: NextRequest) {
+  if (!isAuthoringEnabled(req.nextUrl.hostname)) {
+    return NextResponse.json({ error: 'Login disabled' }, { status: 403 })
+  }
   try {
     const body = (await req.json()) as { id?: string; password?: string }
     const id = (body.id || '').trim()

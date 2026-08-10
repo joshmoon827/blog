@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { AUTH_COOKIE, verifySessionToken } from '@/lib/auth-session'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
-const PROTECTED_PAGE_PREFIXES = ['/articles/new', '/newrite']
+const PROTECTED_PAGE_PREFIXES = ['/articles/new', '/newrite', '/drafts']
 
 const PROTECTED_API_MUTATION_PREFIXES = [
   '/api/articles',
@@ -11,8 +11,31 @@ const PROTECTED_API_MUTATION_PREFIXES = [
   '/api/obsidian',
 ]
 
+function authoringOn(req: NextRequest) {
+  return isAuthoringEnabled(req.nextUrl.hostname)
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+  const enabled = authoringOn(req)
+
+  // Login is local-only — never serve on the public deploy.
+  if (pathname === '/login' || pathname.startsWith('/login/')) {
+    if (!enabled) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
+    return NextResponse.next()
+  }
+
+  if (
+    pathname === '/api/auth/login' ||
+    pathname.startsWith('/api/auth/login/')
+  ) {
+    if (!enabled) {
+      return NextResponse.json({ error: 'Login disabled' }, { status: 403 })
+    }
+    return NextResponse.next()
+  }
 
   const isProtectedPage = PROTECTED_PAGE_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
@@ -29,7 +52,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Production deploy: no create/edit surface at all (even with a session).
-  if (!isAuthoringEnabled()) {
+  if (!enabled) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ error: 'Authoring disabled' }, { status: 403 })
     }
@@ -50,10 +73,16 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/login',
+    '/login/:path*',
+    '/drafts',
+    '/drafts/:path*',
     '/articles/new',
     '/articles/new/:path*',
     '/newrite',
     '/newrite/:path*',
+    '/api/auth/login',
+    '/api/auth/login/:path*',
     '/api/articles',
     '/api/articles/:path*',
     '/api/upload-image',

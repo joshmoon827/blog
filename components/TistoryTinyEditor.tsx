@@ -581,7 +581,7 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
              */
             const MIN_EDITOR_H = 400
             const syncImageResizeHandles = () => {
-              const cs = editor.selection?.controlSelection as
+              const cs = editor.selection?.controlSelection as unknown as
                 | {
                     showResizeRect?: (el: Element) => void
                     hideResizeRect?: () => void
@@ -868,7 +868,7 @@ export const TistoryTinyEditor = forwardRef<TistoryTinyEditorHandle, Props>(
                * for CEF roots — re-show handles on the inner <img>.
                */
               const refreshImageResize = () => {
-                const cs = editor.selection?.controlSelection as
+                const cs = editor.selection?.controlSelection as unknown as
                   | {
                       showResizeRect?: (el: Element) => void
                     }

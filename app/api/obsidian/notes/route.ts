@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
   try {
     if (notePath) {
-      const note = readVaultNote(notePath)
+      const note = await readVaultNote(notePath)
       return NextResponse.json({ vault: getVaultRoot(), note })
     }
 

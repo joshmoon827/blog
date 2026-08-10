@@ -10,6 +10,7 @@ export type ImportedObsidianNote = {
   created: string
   tags: string[]
   body: string
+  imageUpload?: { uploaded: number; errors: string[] }
 }
 
 type NoteListItem = {
@@ -101,6 +102,10 @@ export default function ObsidianNotePicker({ open, onClose, onSelect }: Props) {
       }
       if (!res.ok || !data.note) {
         throw new Error(data.error || `Load failed (${res.status})`)
+      }
+      const upload = data.note.imageUpload
+      if (upload?.errors?.length) {
+        console.warn('[obsidian import] image issues:', upload.errors)
       }
       onSelect(data.note)
       onClose()

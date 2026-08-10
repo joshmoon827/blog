@@ -1,7 +1,11 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { markdownFileToArticle } from '@/lib/importObsidian'
+import {
+  markdownFileToArticle,
+  sanitizeObsidianBodyWithImages,
+} from '@/lib/importObsidian'
+import { parseMarkdownWithFrontmatter } from '@/lib/parseFrontmatter'
 
 const SKIP_DIR_NAMES = new Set([
   '.obsidian',
@@ -122,7 +126,9 @@ export function listVaultNotes(options?: { max?: number }): VaultNoteListItem[] 
   return notes
 }
 
-export function readVaultNote(relativePath: string): VaultNoteContent {
+export async function readVaultNote(
+  relativePath: string,
+): Promise<VaultNoteContent & { imageUpload?: { uploaded: number; errors: string[] } }> {
   const abs = resolveVaultPath(relativePath)
   if (!abs.endsWith('.md')) {
     throw Object.assign(new Error('Only .md files are supported'), { status: 400 })
@@ -133,13 +139,20 @@ export function readVaultNote(relativePath: string): VaultNoteContent {
 
   const source = fs.readFileSync(abs, 'utf-8')
   const article = markdownFileToArticle(abs, source)
+  const vault = getVaultRoot()
+  const { body: rawBody } = parseMarkdownWithFrontmatter(source)
+  const rewritten = await sanitizeObsidianBodyWithImages(rawBody, abs, vault)
 
   return {
-    path: toVaultRelative(abs, getVaultRoot()),
+    path: toVaultRelative(abs, vault),
     title: article.title,
     description: article.description || '',
     created: article.created || new Date().toISOString().slice(0, 10),
     tags: article.tags || [],
-    body: article.body,
+    body: rewritten.body,
+    imageUpload: {
+      uploaded: rewritten.uploaded,
+      errors: rewritten.errors,
+    },
   }
 }

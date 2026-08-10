@@ -25,7 +25,7 @@ function titleFromFilename(filePath: string): string {
   return path.basename(filePath, path.extname(filePath)).trim()
 }
 
-/** Strip Obsidian wiki-links / embeds lightly for web body. */
+/** Strip Obsidian wiki-links / embeds lightly for web body (no image upload). */
 export function sanitizeObsidianBody(body: string): string {
   return body
     .replace(/!\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g, (_m, file, alias) => {
@@ -36,6 +36,24 @@ export function sanitizeObsidianBody(body: string): string {
       return alias || String(target)
     })
     .replace(/^>\s*\[!(\w+)\][^\n]*\n?/gm, (_m, kind) => `> **${kind}**\n`)
+}
+
+/**
+ * Like sanitizeObsidianBody, but uploads image embeds to GitHub and rewrites
+ * them to `/api/images/...` markdown. Use for vault import (UI / CLI).
+ */
+export async function sanitizeObsidianBodyWithImages(
+  body: string,
+  noteAbsPath: string,
+  vaultRoot: string,
+): Promise<{ body: string; uploaded: number; errors: string[] }> {
+  const { rewriteObsidianImagesInBody } = await import('@/lib/obsidianImages')
+  const result = await rewriteObsidianImagesInBody(body, noteAbsPath, vaultRoot)
+  return {
+    body: result.body,
+    uploaded: result.uploaded,
+    errors: result.errors,
+  }
 }
 
 export function markdownFileToArticle(

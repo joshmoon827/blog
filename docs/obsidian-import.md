@@ -35,6 +35,24 @@ Skipped folders: `.obsidian`, `.git`, `99_Attachments`, `node_modules`, `_System
 
 Disabled in production unless `ALLOW_OBSIDIAN_IMPORT=1`.
 
+## Images
+
+`![[Pasted image ….png]]` embeds (and relative `![](…)` paths) are resolved from:
+
+- the note’s folder
+- vault root
+- `99_Attachments` / `Attachments` / `assets` / `images`
+
+Then uploaded with **GitHub Contents API** (`lib/githubImageUpload.ts` — same as paste → `POST /api/upload-image`) and rewritten to:
+
+```md
+![alt](/api/images/images/YYYY/MM/<id>.png)
+```
+
+Requires `.env.local` image hosting vars (`npm run setup:image-env`).
+
+Non-image embeds (PDF 등) stay as `*[embedded: …]*`.
+
 ## Phase 1 frontmatter → UI
 
 | Obsidian | Blog |

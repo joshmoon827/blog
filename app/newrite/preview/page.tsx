@@ -3,10 +3,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { categoryLabel } from '@/data/categories'
+import {
+  formatBodyClassName,
+  resolveArticleFormat,
+} from '@/data/articleFormats'
 import { parseTagsInput } from '@/lib/parseFrontmatter'
 import { readNewritePreview, type NewritePreviewPayload } from '@/lib/newritePreview'
 import { renderArticleBody } from '@/lib/renderArticleBody'
-import TistoryMoreLessHydrate from '@/components/TistoryMoreLessHydrate'
+import TistoryPreviewBody from '@/components/TistoryPreviewBody'
 import styles from '../newrite.module.css'
 
 export default function NewritePreviewPage() {
@@ -43,10 +47,11 @@ export default function NewritePreviewPage() {
   }
 
   const tags = parseTagsInput(payload.tagsText)
+  const format = resolveArticleFormat(payload.format)
+  const empty = <p className={styles.previewEmpty}>본문이 비어 있습니다.</p>
 
   return (
     <div className={styles.fullPreviewPage}>
-      <TistoryMoreLessHydrate />
       <header className={styles.fullPreviewChrome}>
         <h1 className={styles.fullPreviewChromeTitle}>미리보기</h1>
         <Link href="/newrite" className={styles.fullPreviewBack}>
@@ -67,16 +72,22 @@ export default function NewritePreviewPage() {
             ))}
           </p>
         ) : null}
-        <div
-          className={`article-body ${styles.previewContent} article-format-tistory`}
-          data-format="tistory"
-        >
-          {payload.body.trim()
-            ? renderArticleBody(payload.body, { format: 'tistory' })
-            : (
-                <p className={styles.previewEmpty}>본문이 비어 있습니다.</p>
-              )}
-        </div>
+        {format === 'tistory' ? (
+          <TistoryPreviewBody
+            html={payload.body}
+            className={styles.previewContent}
+            emptyFallback={empty}
+          />
+        ) : (
+          <div
+            className={`article-body ${styles.previewContent} ${formatBodyClassName(format)}`}
+            data-format={format}
+          >
+            {payload.body.trim()
+              ? renderArticleBody(payload.body, { format })
+              : empty}
+          </div>
+        )}
       </article>
     </div>
   )

@@ -5,6 +5,8 @@
  * Do not rewrite site crop/display aspect ratios here — blog CSS handles display.
  */
 
+import { SWISS_MODERNIST_ART_DIRECTION } from "./cover-swiss-modernist.mjs";
+
 function buildStyle(theme) {
   const light =
     "Style: flat minimalist geometry (rects, circles, triangles, lines, grids). " +
@@ -32,6 +34,7 @@ function buildStyle(theme) {
  *   authorReferenceCount?: number,
  *   paletteColors?: string[],
  *   backgroundColor?: string,
+ *   swissModernist?: boolean,
  * }} [opts]
  */
 export function buildCoverPrompt(keywords, opts = {}) {
@@ -41,6 +44,8 @@ export function buildCoverPrompt(keywords, opts = {}) {
   }
 
   const productRelated = opts.productRelated !== false;
+  // Default ON — UI checkbox can disable.
+  const swissModernist = opts.swissModernist !== false;
   const theme = opts.theme === "light" ? "light" : "dark";
   const titleLine = opts.title ? `Article title: ${opts.title}` : "";
   const logoBrief = String(opts.logo || "").trim();
@@ -115,6 +120,13 @@ export function buildCoverPrompt(keywords, opts = {}) {
   const requirementsLine =
     "Requirements: One cohesive flat illustration — not a collage; inspired by references but do not duplicate any reference exactly. No watermarks.";
 
+  const swissBlock = swissModernist
+    ? [
+        "SWISS MODERNIST ART DIRECTION (blend with the geometry brief below):",
+        SWISS_MODERNIST_ART_DIRECTION.trim(),
+      ].join("\n")
+    : "";
+
   return [
     additionalBlock,
     criticalLogoLine,
@@ -124,6 +136,7 @@ export function buildCoverPrompt(keywords, opts = {}) {
     paletteLine,
     backgroundLine,
     formatLine,
+    swissBlock,
     style,
     layoutLine,
     titleLine,

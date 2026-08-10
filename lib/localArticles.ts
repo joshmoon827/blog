@@ -24,6 +24,12 @@ export interface ArticleData {
   sourcePath?: string
   /** True when saved via newrite 임시저장 (not published). */
   draft?: boolean
+  /** 보관(북마크/고정) 상태. 독립적인 보관 글 목록을 위해 사용(v2 기능). */
+  archived?: boolean
+  /** Soft-deleted — hidden from listings; trash UI later. */
+  trashed?: boolean
+  /** ISO timestamp when moved to trash. */
+  trashedAt?: string
 }
 
 const DB_PATH = path.join(process.cwd(), 'data', 'articles.local.json')
@@ -58,6 +64,38 @@ export function createOne(article: ArticleData): ArticleData {
   all.unshift(article)
   writeAll(all)
   return article
+}
+
+/** Hard-delete (permanent). Prefer `trashOne` for admin UI. */
+export function deleteOne(slug: string): boolean {
+  const all = readAll()
+  const next = all.filter((a) => a.slug !== slug)
+  if (next.length === all.length) return false
+  writeAll(next)
+  return true
+}
+
+/** Soft-delete → trash. Idempotent if already trashed. */
+export function trashOne(slug: string): ArticleData | null {
+  const all = readAll()
+  const idx = all.findIndex((a) => a.slug === slug)
+  if (idx === -1) return null
+  const prev = all[idx]
+  if (prev.trashed) return prev
+  const next: ArticleData = {
+    ...prev,
+    trashed: true,
+    trashedAt: new Date().toISOString(),
+  }
+  all[idx] = next
+  writeAll(all)
+  return next
+}
+
+export function listTrashed(): ArticleData[] {
+  return readAll()
+    .filter((a) => a.trashed)
+    .sort((a, b) => (b.trashedAt || '').localeCompare(a.trashedAt || ''))
 }
 
 export function slugifyTitle(title: string): string {

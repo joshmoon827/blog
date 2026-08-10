@@ -3,6 +3,9 @@
  *  (sessionStorage is not shared across tabs).
  */
 
+import type { ArticleFormat } from '@/data/articleFormats'
+import { resolveArticleFormat } from '@/data/articleFormats'
+
 export const NEWRITE_PREVIEW_STORAGE_KEY = 'newrite-preview-v1'
 
 export type NewritePreviewPayload = {
@@ -10,6 +13,8 @@ export type NewritePreviewPayload = {
   body: string
   tagsText: string
   category: string
+  /** Authoring format — defaults to `tistory` for older payloads. */
+  format?: ArticleFormat
   savedAt: number
 }
 
@@ -18,6 +23,7 @@ export function writeNewritePreview(
 ): void {
   const data: NewritePreviewPayload = {
     ...payload,
+    format: resolveArticleFormat(payload.format ?? 'tistory'),
     savedAt: Date.now(),
   }
   localStorage.setItem(NEWRITE_PREVIEW_STORAGE_KEY, JSON.stringify(data))
@@ -34,6 +40,7 @@ export function readNewritePreview(): NewritePreviewPayload | null {
       body: parsed.body,
       tagsText: typeof parsed.tagsText === 'string' ? parsed.tagsText : '',
       category: typeof parsed.category === 'string' ? parsed.category : '',
+      format: resolveArticleFormat(parsed.format ?? 'tistory'),
       savedAt: typeof parsed.savedAt === 'number' ? parsed.savedAt : 0,
     }
   } catch {

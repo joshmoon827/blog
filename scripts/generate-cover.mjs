@@ -84,6 +84,8 @@ Options:
   --background-color <#hex> Forced solid background hex (omit = default prompt)
   --product-related   Emphasize product/software logos (default)
   --no-product-related  Skip product logo priority; abstract geometry only
+  --swiss-modernist   Blend Swiss modernist art-direction block (default)
+  --no-swiss-modernist  Omit Swiss modernist art-direction block
   --help              Show this help
 `);
 }
@@ -107,6 +109,7 @@ function parseArgs(argv) {
     /** @type {string | null} */
     backgroundColor: null,
     productRelated: true,
+    swissModernist: true,
     extraRefs: [],
     send: true,
     wait: true,
@@ -192,6 +195,12 @@ function parseArgs(argv) {
         break;
       case "--product-related":
         args.productRelated = true;
+        break;
+      case "--no-swiss-modernist":
+        args.swissModernist = false;
+        break;
+      case "--swiss-modernist":
+        args.swissModernist = true;
         break;
       case "--no-send":
         args.send = false;
@@ -581,6 +590,13 @@ async function main() {
         ? true
         : args.productRelated;
 
+  const swissModernist =
+    process.env.COVER_SWISS_MODERNIST === "0"
+      ? false
+      : process.env.COVER_SWISS_MODERNIST === "1"
+        ? true
+        : args.swissModernist !== false;
+
   let title = args.title || "";
   let description = args.description || "";
   let body = "";
@@ -638,6 +654,7 @@ async function main() {
     console.log("[generate-cover] background color:", backgroundColor);
   }
   console.log("[generate-cover] product-related:", productRelated);
+  console.log("[generate-cover] swiss-modernist:", swissModernist);
 
   const { keywords, logo, raw } = await extractKeywordsWithCursorAgent(sourceText, {
     title,
@@ -671,6 +688,7 @@ async function main() {
     referenceCount: exampleCovers.length,
     additionalPrompt: additionalPrompt || undefined,
     productRelated,
+    swissModernist,
     authorReferenceCount: authorRefCount,
     paletteColors,
     backgroundColor: backgroundColor || undefined,

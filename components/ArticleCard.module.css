@@ -1,11 +1,112 @@
 .card {
+  position: relative;
   background-color: var(--bg-card);
   border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .card:hover { background-color: var(--bg-card-hover); }
+
+.pressing {
+  cursor: progress;
+}
+
+.clicked .tapDim,
+.card.clicked {
+  /* flash handled by overlay */
+}
+
+.pressLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.tapDim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, #000 18%, transparent);
+  animation: tapFlash 0.14s ease-out;
+}
+
+.pressCircle {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: color-mix(in srgb, #000 22%, transparent);
+  will-change: width, height;
+}
+
+@keyframes tapFlash {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.deleteMode {
+  /* shake lives on inner wrapper so framer-motion transform doesn't fight it */
+}
+
+.shakeInner {
+  animation: cardJiggle 0.42s ease-in-out infinite;
+  animation-delay: var(--shake-delay, 0ms);
+  height: 100%;
+}
+
+@keyframes cardJiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(-1.15deg) translateY(0.5px);
+  }
+  75% {
+    transform: rotate(1.15deg) translateY(-0.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shakeInner {
+    animation: none;
+  }
+}
+
+.trashBtn {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 6;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  border: none;
+  appearance: none;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, #111 82%, transparent);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px color-mix(in srgb, #000 35%, transparent);
+}
+
+.trashBtn:hover {
+  background: #c0392b;
+}
+
+.trashBtn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
 
 .thumbLink { display: block; position: relative; }
 
@@ -43,6 +144,9 @@
 .card:hover .title a {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.card.deleteMode:hover .title a {
+  text-decoration: none;
 }
 
 .desc {

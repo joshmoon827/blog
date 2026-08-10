@@ -13,6 +13,7 @@ import { coverPickerImages, coverLabel, coverPalette } from '@/data/covers'
 import CoverPaletteThumb from '@/components/CoverPaletteThumb'
 import type { ArticleData } from '@/lib/localArticles'
 import { renderArticleBody } from '@/lib/renderArticleBody'
+import TistoryPreviewBody from '@/components/TistoryPreviewBody'
 import type { HybridMarkdownEditorHandle } from '@/components/HybridMarkdownEditor'
 import {
   CoverReferencePhotos,
@@ -67,6 +68,7 @@ type CoverJobMode = 'generate' | 'redownload'
 type CoverGenOptions = {
   additionalPrompt?: string
   productRelated?: boolean
+  swissModernist?: boolean
   paletteColors?: string[]
   backgroundColor?: string
   referenceImages?: Array<{
@@ -90,6 +92,7 @@ async function startCoverJob(
     cover?: string
     additionalPrompt?: string
     productRelated?: boolean
+    swissModernist?: boolean
     paletteColors?: string[]
     backgroundColor?: string
     referenceImages?: CoverGenOptions['referenceImages']
@@ -99,6 +102,7 @@ async function startCoverJob(
     background: true,
     mode,
     productRelated: opts.productRelated !== false,
+    swissModernist: opts.swissModernist !== false,
   }
   const extra = opts.additionalPrompt?.trim()
   if (extra) body.additionalPrompt = extra
@@ -136,6 +140,7 @@ async function fetchCoverStatus(slug: string) {
       mode?: CoverJobMode
       additionalPrompt?: string | null
       productRelated?: boolean | null
+      swissModernist?: boolean | null
       backgroundColor?: string | null
     } | null
   }
@@ -163,12 +168,102 @@ export default function ArticleView({ article: initial }: Props) {
   const [imageValue, setImageValue] = useState(initial.image)
   const [coverAdditionalPrompt, setCoverAdditionalPrompt] = useState('')
   const [coverProductRelated, setCoverProductRelated] = useState(true)
+  const [coverSwissModernist, setCoverSwissModernist] = useState(true)
   const [coverBackgroundColor, setCoverBackgroundColor] = useState('')
   const [coverReferencePhotos, setCoverReferencePhotos] = useState<
     CoverReferencePhoto[]
   >([])
   const draft = useRef({ ...initial })
   const bodyRef = useRef<HybridMarkdownEditorHandle>(null)
+  /** 보관(북마크/고정) 상태 — 임시저장 와 별개의 독립 플래그. */
+  const [archived, setArchived] = useState(!!initial.archived)
+  const [archiveToggling, setArchiveToggling] = useState(false)
+  /** 글 설정 popover (보관 토글 + 표지/메타데이터 편집) 열림 여부. */
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const popoverAnchor = useRef<{ x: number; y: number } | null>(null)
+  const settingsBtnRef = useRef<HTMLButtonElement | null>(null)
+  const popoverRef = useRef<HTMLDivElement | null>(null)
+
+  // gear 버튼이 직접 표지 편집으로 간 것을 popover 메뉴의 한 항목으로 분리.
+  const openCoverEditing = useCallback(() => {
+    setSettingsOpen(false)
+    draft.current = { ...article }
+    setCreatedValue(article.created || '')
+    setDescriptionValue(article.description || '')
+    setTagsValue(formatTagsInput(article.tags))
+    setImageValue(article.image)
+    setBodyEditing(false)
+    setCoverEditing(true)
+  }, [article])
+
+  // 보관 토글 — PATCH-like PUT 병합을 통해 articles API에 반영.
+  const toggleArchive = useCallback(async () => {
+    if (archiveToggling) return
+    const next = !archived
+    setArchiveToggling(true)
+    try {
+      const res = await fetch(`/api/articles/${article.slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived: next }),
+      })
+      if (!res.ok) throw new Error('보관 상태 저장 실패')
+      setArchived(next)
+    } catch (e) {
+      alert(e instanceof Error ? e.message : String(e))
+    } finally {
+      setArchiveToggling(false)
+    }
+  }, [article.slug, archived, archiveToggling])
+
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDeleteArticle = useCallback(async () => {
+    if (deleting) return
+    const ok = confirm(
+      `「${article.title || article.slug}」을(를) 휴지통으로 보낼까요?`,
+    )
+    if (!ok) return
+    setDeleting(true)
+    setSettingsOpen(false)
+    try {
+      const res = await fetch(`/api/articles/${article.slug}`, {
+        method: 'DELETE',
+      })
+      const data = (await res.json().catch(() => ({}))) as { error?: string }
+      if (!res.ok) {
+        throw new Error(data.error || `삭제 실패 (${res.status})`)
+      }
+      router.push('/')
+      router.refresh()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : String(e))
+      setDeleting(false)
+    }
+  }, [article.slug, article.title, deleting, router])
+
+  // 설정 popover 바깥 클릭 / Esc 시 닫기.
+  useEffect(() => {
+    if (!settingsOpen) return
+    const handleOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node
+      if (!popoverRef.current || !popoverRef.current.contains(target)) {
+        setSettingsOpen(false)
+      }
+    }
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSettingsOpen(false)
+    }
+    window.addEventListener('mousedown', handleOutside, true)
+    window.addEventListener('touchstart', handleOutside, true)
+    window.addEventListener('keydown', handleKey)
+    return () => {
+      window.removeEventListener('mousedown', handleOutside, true)
+      window.removeEventListener('touchstart', handleOutside, true)
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [settingsOpen])
+
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
@@ -208,6 +303,7 @@ export default function ArticleView({ article: initial }: Props) {
     (job?: {
       additionalPrompt?: string | null
       productRelated?: boolean | null
+      swissModernist?: boolean | null
       backgroundColor?: string | null
     } | null) => {
       if (!job) return
@@ -217,6 +313,9 @@ export default function ArticleView({ article: initial }: Props) {
       }
       if (typeof job.productRelated === 'boolean') {
         setCoverProductRelated(job.productRelated)
+      }
+      if (typeof job.swissModernist === 'boolean') {
+        setCoverSwissModernist(job.swissModernist)
       }
       if (typeof job.backgroundColor === 'string' && job.backgroundColor.trim()) {
         setCoverBackgroundColor((prev) => (prev.trim() ? prev : job.backgroundColor!.trim()))
@@ -320,6 +419,7 @@ export default function ArticleView({ article: initial }: Props) {
     return {
       additionalPrompt: coverAdditionalPrompt,
       productRelated: coverProductRelated,
+      swissModernist: coverSwissModernist,
       paletteColors: selectedCover ? coverPalette(selectedCover) : undefined,
       backgroundColor: coverBackgroundColor,
       referenceImages: coverReferencePhotos.length
@@ -561,15 +661,18 @@ export default function ArticleView({ article: initial }: Props) {
             ) : canEdit ? (
               <button
                 type="button"
+                ref={settingsBtnRef}
                 className={styles.btnSettings}
-                onClick={() => {
-                  draft.current = { ...article }
-                  setCreatedValue(article.created || '')
-                  setDescriptionValue(article.description || '')
-                  setTagsValue(formatTagsInput(article.tags))
-                  setImageValue(article.image)
-                  setBodyEditing(false)
-                  setCoverEditing(true)
+                aria-haspopup="true"
+                aria-expanded={settingsOpen}
+                onClick={(e) => {
+                  const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect()
+                  let x = rect.right - 240
+                  if (typeof window !== 'undefined') {
+                    x = Math.min(x, window.innerWidth - 16 - 240)
+                  }
+                  popoverAnchor.current = { x: Math.max(16, x), y: rect.bottom + 8 }
+                  setSettingsOpen(true)
                 }}
                 title="표지·메타데이터 편집"
                 aria-label="표지·메타데이터 편집"
@@ -582,6 +685,72 @@ export default function ArticleView({ article: initial }: Props) {
             ) : null}
           </div>
         </div>
+
+        {settingsOpen && popoverAnchor.current ? (
+          <div
+            className={styles.settingsPopover}
+            ref={popoverRef}
+            style={{ left: `${popoverAnchor.current?.x ?? 0}px`, top: `${popoverAnchor.current?.y ?? 0}px` }}
+            role="menu"
+            aria-orientation="vertical"
+            tabIndex={-1}
+          >
+            <ul className={styles.settingsMenu}>
+              <li>
+                <button
+                  type="button"
+                  role="menuitemcheckbox"
+                  aria-checked={archived}
+                  disabled={archiveToggling}
+                  className={`${styles.settingsRow} ${archived ? styles.settingsRowActive : ''}`}
+                  onClick={toggleArchive}
+                >
+                  <svg width="16" height="15" viewBox="0 0 24 24" fill={archived ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M19 21l-7-5-7 5V5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3z" />
+                  </svg>
+                  <span className={styles.settingsRowLabel}>보관</span>
+                  {archived ? (
+                    <span className={styles.settingsRowStatus}>보관됨</span>
+                  ) : null}
+                </button>
+              </li>
+              <li>
+                <hr className={styles.settingsDivider} aria-hidden="true" />
+              </li>
+              <li>
+                <button type="button" role="menuitem" className={styles.settingsRow} onClick={openCoverEditing}>
+                  <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M3 17.2V21h3.8l9.4-9.4-3.8-3.8L3 14.5v2.7z" />
+                    <path d="M20.7 6a2 2 0 0 0 .5-1V3.6c0-.7-.5-1.2-1.2-.9l-3 1.2" />
+                  </svg>
+                  <span className={styles.settingsRowLabel}>표지·메타데이터 편집</span>
+                </button>
+              </li>
+              <li>
+                <hr className={styles.settingsDivider} aria-hidden="true" />
+              </li>
+              <li>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`${styles.settingsRow} ${styles.settingsRowDanger}`}
+                  onClick={handleDeleteArticle}
+                  disabled={deleting}
+                >
+                  <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                  </svg>
+                  <span className={styles.settingsRowLabel}>
+                    {deleting ? '삭제 중…' : '휴지통으로'}
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        ) : null}
 
         {localTools &&
           (coverStatus === 'running' || coverStatus === 'error' || coverStatus === 'success') &&
@@ -699,6 +868,18 @@ export default function ArticleView({ article: initial }: Props) {
                       />
                       <span>제품/브랜드 관련 (공식 로고 포함)</span>
                     </label>
+                    <label
+                      className={styles.coverAutoCheck}
+                      title="스위스 모더니스트 추상 로고형 아트 디렉션을 표지 프롬프트에 포함 (기본 ON)"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={coverSwissModernist}
+                        onChange={(e) => setCoverSwissModernist(e.target.checked)}
+                        disabled={generatingCover || uploading || saving}
+                      />
+                      <span>스위스 모더니스트 아트 디렉션</span>
+                    </label>
                     <button
                       type="button"
                       className={styles.btnGenerateCover}
@@ -778,27 +959,41 @@ export default function ArticleView({ article: initial }: Props) {
 
         <hr className={styles.divider} />
 
-        <div
-          className={`article-body ${styles.body} ${formatBodyClassName(resolveArticleFormat(article.format))}`}
-          data-format={resolveArticleFormat(article.format)}
-        >
-          {canEdit && bodyEditing ? (
-            <HybridMarkdownEditor
-              ref={bodyRef}
-              variant="inline"
-              value={bodyValue}
-              onChange={syncBody}
-              uploadImage={uploadImageFile}
-              onUploadingChange={setUploading}
-              disabled={uploading}
-            />
-          ) : (
-            renderArticleBody(article.body, {
-              imageClassName: styles.bodyImage,
-              format: article.format,
-            })
-          )}
-        </div>
+        {(() => {
+          const format = resolveArticleFormat(article.format)
+          const isTistory = format === 'tistory'
+          if (isTistory && !(canEdit && bodyEditing)) {
+            return (
+              <TistoryPreviewBody
+                html={article.body}
+                hydrate={false}
+              />
+            )
+          }
+          return (
+            <div
+              className={`article-body ${styles.body} ${formatBodyClassName(format)}`}
+              data-format={format}
+            >
+              {canEdit && bodyEditing ? (
+                <HybridMarkdownEditor
+                  ref={bodyRef}
+                  variant="inline"
+                  value={bodyValue}
+                  onChange={syncBody}
+                  uploadImage={uploadImageFile}
+                  onUploadingChange={setUploading}
+                  disabled={uploading}
+                />
+              ) : (
+                renderArticleBody(article.body, {
+                  imageClassName: styles.bodyImage,
+                  format: article.format,
+                })
+              )}
+            </div>
+          )
+        })()}
 
         {!bodyEditing && !coverEditing && (
           <CommentsSection articleSlug={article.slug} />

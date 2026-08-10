@@ -1,4 +1,5 @@
 import ArticleCard from '@/components/ArticleCard'
+import ArticlesGrid from '@/components/ArticlesGrid'
 import TagFilterBar from '@/components/TagFilterBar'
 import { getListedArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
@@ -22,11 +23,11 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <section className={styles.hero}>
         <TagFilterBar articles={listed} selectedTag={selectedTag} />
       </section>
-      <section className={styles.grid} aria-label="Articles">
+      <ArticlesGrid className={styles.grid} aria-label="Articles">
         {filteredArticles.map((article, i) => (
           <ArticleCard key={article.slug} article={article} index={i} />
         ))}
-      </section>
+      </ArticlesGrid>
     </>
   )
 }

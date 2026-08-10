@@ -9,7 +9,6 @@ import {
   type KeyboardEvent,
 } from 'react'
 import {
-  formatSupabaseError,
   getSupabaseBrowser,
   isSupabaseConfigured,
   type DbComment,
@@ -17,6 +16,7 @@ import {
 import styles from './CommentsSection.module.css'
 
 type NestedComment = DbComment & { replies: DbComment[] }
+type CommentsBackend = 'supabase' | 'local'
 
 type Props = {
   articleSlug: string
@@ -47,10 +47,24 @@ function formatTime(iso: string) {
   }
 }
 
+async function apiJson<T>(
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<T> {
+  const res = await fetch(input, init)
+  const data = (await res.json()) as T & { error?: string }
+  if (!res.ok) {
+    throw new Error(data.error || `Request failed (${res.status})`)
+  }
+  return data
+}
+
 export default function CommentsSection({ articleSlug }: Props) {
-  const configured = isSupabaseConfigured()
+  const supabaseConfigured = isSupabaseConfigured()
   const [rows, setRows] = useState<DbComment[]>([])
-  const [loading, setLoading] = useState(configured)
+  const [backend, setBackend] = useState<CommentsBackend | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
   const [error, setError] = useState('')
   const [author, setAuthor] = useState('')
@@ -73,32 +87,33 @@ export default function CommentsSection({ articleSlug }: Props) {
   }, [])
 
   const refresh = useCallback(async (): Promise<boolean> => {
-    const sb = getSupabaseBrowser()
-    if (!sb) return false
     try {
-      const { data, error: qErr } = await sb
-        .from('comments')
-        .select('*')
-        .eq('article_slug', articleSlug)
-        .order('created_at', { ascending: true })
-      if (qErr) {
-        setLoadFailed(true)
-        setError(formatSupabaseError(qErr))
-        return false
-      }
-      setRows((data || []) as DbComment[])
+      const data = await apiJson<{
+        comments: DbComment[]
+        backend: CommentsBackend
+      }>(`/api/comments?slug=${encodeURIComponent(articleSlug)}`, {
+        cache: 'no-store',
+      })
+      setRows(data.comments || [])
+      setBackend(data.backend)
+      setUnavailable(false)
       setLoadFailed(false)
       setError('')
       return true
     } catch (err) {
-      setLoadFailed(true)
-      setError(formatSupabaseError(err))
+      const message = err instanceof Error ? err.message : String(err)
+      if (message.includes('백엔드가 없습니다') || message.includes('503')) {
+        setUnavailable(true)
+        setLoadFailed(false)
+      } else {
+        setLoadFailed(true)
+        setError(message)
+      }
       return false
     }
   }, [articleSlug])
 
   useEffect(() => {
-    if (!configured) return
     let cancelled = false
     ;(async () => {
       setLoading(true)
@@ -108,11 +123,13 @@ export default function CommentsSection({ articleSlug }: Props) {
     return () => {
       cancelled = true
     }
-  }, [configured, refresh])
+  }, [refresh])
 
-  // Realtime live updates — only after a successful load (dead host → no WS spam)
+  // Supabase realtime when that backend is active
   useEffect(() => {
-    if (loadFailed || loading) return
+    if (backend !== 'supabase' || loadFailed || loading || !supabaseConfigured) {
+      return
+    }
     const sb = getSupabaseBrowser()
     if (!sb) return
 
@@ -138,11 +155,22 @@ export default function CommentsSection({ articleSlug }: Props) {
       void sb.removeChannel(channel)
       setLive(false)
     }
-  }, [articleSlug, refresh, loadFailed, loading])
+  }, [articleSlug, refresh, loadFailed, loading, backend, supabaseConfigured])
+
+  // Local backend: light polling instead of realtime
+  useEffect(() => {
+    if (backend !== 'local' || loadFailed || loading) return
+    setLive(true)
+    const t = window.setInterval(() => {
+      void refresh()
+    }, 5000)
+    return () => {
+      window.clearInterval(t)
+      setLive(false)
+    }
+  }, [backend, loadFailed, loading, refresh])
 
   const submit = async (parentId: string | null, text: string) => {
-    const sb = getSupabaseBrowser()
-    if (!sb) return
     const name = author.trim()
     const content = text.trim()
     if (!name || !content) {
@@ -157,16 +185,16 @@ export default function CommentsSection({ articleSlug }: Props) {
       /* ignore */
     }
     try {
-      const { error: insErr } = await sb.from('comments').insert({
-        article_slug: articleSlug,
-        parent_id: parentId,
-        author: name.slice(0, 40),
-        body: content.slice(0, 4000),
+      await apiJson('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          articleSlug,
+          parentId,
+          author: name,
+          body: content,
+        }),
       })
-      if (insErr) {
-        setError(formatSupabaseError(insErr))
-        return
-      }
       if (parentId) {
         setReplyTo(null)
         setReplyBody('')
@@ -175,7 +203,7 @@ export default function CommentsSection({ articleSlug }: Props) {
       }
       await refresh()
     } catch (err) {
-      setError(formatSupabaseError(err))
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setSubmitting(false)
     }
@@ -197,8 +225,6 @@ export default function CommentsSection({ articleSlug }: Props) {
   const myName = author.trim()
 
   const vote = async (id: string, direction: 'up' | 'down') => {
-    const sb = getSupabaseBrowser()
-    if (!sb) return
     const target = rows.find((c) => c.id === id)
     if (!target) return
     const isAuthor = Boolean(myName && myName === target.author)
@@ -213,26 +239,15 @@ export default function CommentsSection({ articleSlug }: Props) {
       }
     }
     try {
-      const { error: vErr } = await sb.rpc('vote_comment', {
-        p_id: id,
-        p_direction: direction,
-        p_voter: myName,
+      await apiJson('/api/comments/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, direction, voter: myName }),
       })
-      if (vErr) {
-        const msg = formatSupabaseError(vErr)
-        setError(
-          msg.includes('only the author')
-            ? '본인 댓글만 추천을 내릴 수 있습니다.'
-            : msg.includes('cannot lower')
-              ? '남이 올려 둔 추천 수는 내릴 수 없습니다.'
-              : msg,
-        )
-        return
-      }
       setError('')
       await refresh()
     } catch (err) {
-      setError(formatSupabaseError(err))
+      setError(err instanceof Error ? err.message : String(err))
     }
   }
 
@@ -240,18 +255,18 @@ export default function CommentsSection({ articleSlug }: Props) {
   const canLower = (c: DbComment) =>
     Boolean(myName && myName === c.author && c.upvotes > (c.score_floor ?? 0))
 
-  if (!configured) {
+  if (unavailable && !loading) {
     return (
       <section className={styles.section} aria-label="댓글 설정 안내">
         <div className={styles.header}>
           <h2 className={styles.title}>댓글</h2>
         </div>
         <p className={styles.setup}>
-          Supabase 댓글: <code>.env.local</code>에{' '}
-          <code>NEXT_PUBLIC_SUPABASE_URL</code>,{' '}
-          <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>를 넣고{' '}
-          <code>supabase/schema.sql</code>을 SQL Editor에서 실행한 뒤{' '}
-          <code>next dev</code>를 재시작하세요.
+          배포 환경에서는 Supabase가 필요합니다. Dashboard에서 활성 프로젝트의{' '}
+          <code>NEXT_PUBLIC_SUPABASE_URL</code> /{' '}
+          <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>를 설정하고{' '}
+          <code>supabase/schema.sql</code>을 실행하세요. (
+          <code>docs/comments-supabase.md</code>)
         </p>
       </section>
     )
@@ -268,7 +283,7 @@ export default function CommentsSection({ articleSlug }: Props) {
               Live
             </span>
           )}
-          <span>Supabase</span>
+          <span>{backend === 'local' ? '로컬' : 'Supabase'}</span>
         </div>
       </div>
 
@@ -299,7 +314,10 @@ export default function CommentsSection({ articleSlug }: Props) {
           disabled={submitting}
         />
         <div className={styles.formActions}>
-          <span className={styles.hint}>⌘↵ 등록 · 실시간 반영</span>
+          <span className={styles.hint}>
+            ⌘↵ 등록
+            {backend === 'local' ? ' · 로컬 저장' : ' · 실시간 반영'}
+          </span>
           <button type="submit" className={styles.submit} disabled={submitting}>
             {submitting ? '등록 중…' : '댓글 등록'}
           </button>
@@ -315,10 +333,8 @@ export default function CommentsSection({ articleSlug }: Props) {
         <p className={styles.empty}>불러오는 중…</p>
       ) : loadFailed ? (
         <p className={styles.empty}>
-          댓글을 불러오지 못했습니다. URL 호스트 DNS가 죽으면 프로젝트가
-          삭제된 경우가 많습니다 — Dashboard에서 활성 프로젝트 URL·anon key로{' '}
-          <code>.env.local</code>을 고친 뒤 <code>npm run check:supabase</code>로
-          확인하고 <code>next dev</code>를 재시작하세요.
+          댓글을 불러오지 못했습니다.
+          {error ? ` ${error}` : ''}
         </p>
       ) : nested.length === 0 ? (
         <p className={styles.empty}>아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.</p>

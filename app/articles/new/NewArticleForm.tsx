@@ -54,6 +54,7 @@ type CoverJobMode = 'generate' | 'redownload'
 type CoverGenOptions = {
   additionalPrompt?: string
   productRelated?: boolean
+  swissModernist?: boolean
   paletteColors?: string[]
   /** Hex #rrggbb, or '' to clear / omit forced background. */
   backgroundColor?: string
@@ -77,6 +78,7 @@ async function startCoverGeneration(
     background: true,
     mode,
     productRelated: opts.productRelated !== false,
+    swissModernist: opts.swissModernist !== false,
   }
   const extra = opts.additionalPrompt?.trim()
   if (extra) body.additionalPrompt = extra
@@ -116,6 +118,7 @@ export default function NewArticleForm() {
   )
   const [coverAdditionalPrompt, setCoverAdditionalPrompt] = useState('')
   const [coverProductRelated, setCoverProductRelated] = useState(true)
+  const [coverSwissModernist, setCoverSwissModernist] = useState(true)
   const [coverBackgroundColor, setCoverBackgroundColor] = useState('')
   const [coverReferencePhotos, setCoverReferencePhotos] = useState<
     CoverReferencePhoto[]
@@ -144,6 +147,7 @@ export default function NewArticleForm() {
   const coverGenOptions = async (): Promise<CoverGenOptions> => ({
     additionalPrompt: coverAdditionalPrompt,
     productRelated: coverProductRelated,
+    swissModernist: coverSwissModernist,
     paletteColors: coverPalette(image),
     backgroundColor: coverBackgroundColor,
     referenceImages: coverReferencePhotos.length
@@ -375,6 +379,18 @@ export default function NewArticleForm() {
                       disabled={saving || uploading}
                     />
                     <span>제품/브랜드 관련 (공식 로고 포함)</span>
+                  </label>
+                  <label
+                    className={styles.coverAutoCheck}
+                    title="스위스 모더니스트 추상 로고형 아트 디렉션을 표지 프롬프트에 포함 (기본 ON)"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={coverSwissModernist}
+                      onChange={(e) => setCoverSwissModernist(e.target.checked)}
+                      disabled={saving || uploading}
+                    />
+                    <span>스위스 모더니스트 아트 디렉션</span>
                   </label>
                   <label
                     className={styles.coverAutoCheck}

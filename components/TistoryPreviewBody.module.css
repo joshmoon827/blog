@@ -1,0 +1,18 @@
+/* Light “paper” so Tistory tokens (#333) stay readable on dark site chrome.
+   Used by `/newrite/preview` and `/articles/[slug]` (format: tistory). */
+.paper {
+  background: #fff;
+  color: #333;
+  border-radius: 2px;
+  padding: 2rem 1.75rem 2.5rem;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow-x: auto;
+}
+
+.paper > *:first-child {
+  margin-top: 0;
+}
+
+.paper > *:last-child {
+  margin-bottom: 0;
+}

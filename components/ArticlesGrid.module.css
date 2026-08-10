@@ -1,0 +1,33 @@
+.wrap {
+  /* block wrapper so delete bar sits above the grid */
+}
+
+.deleteBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.doneBtn {
+  appearance: none;
+  border: none;
+  background: var(--text);
+  color: var(--bg, #fff);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.doneBtn:hover {
+  opacity: 0.88;
+}

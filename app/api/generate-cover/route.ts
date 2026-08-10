@@ -210,6 +210,7 @@ export async function GET(req: NextRequest) {
  *   mode?: 'generate' | 'redownload',
  *   additionalPrompt?: string,
  *   productRelated?: boolean,
+ *   swissModernist?: boolean,
  *   paletteColors?: string[],
  *   backgroundColor?: string,
  *   referenceImages?: Array<{ filename: string, contentType: string, contentBase64: string }>,
@@ -236,6 +237,7 @@ export async function POST(req: NextRequest) {
     mode?: 'generate' | 'redownload'
     additionalPrompt?: string
     productRelated?: boolean
+    swissModernist?: boolean
     paletteColors?: string[]
     backgroundColor?: string
     referenceImages?: Array<{
@@ -333,6 +335,7 @@ export async function POST(req: NextRequest) {
   if (paletteColors.length) args.push('--palette', paletteColors.join(','))
   if (backgroundColor) args.push('--background-color', backgroundColor)
   if (body.productRelated === false) args.push('--no-product-related')
+  if (body.swissModernist === false) args.push('--no-swiss-modernist')
 
   let savedExtraRefs: string[] = []
   try {
@@ -392,6 +395,7 @@ export async function POST(req: NextRequest) {
         ? backgroundColor || null
         : backgroundColor || prevBg,
       productRelated: body.productRelated !== false,
+      swissModernist: body.swissModernist !== false,
       extraRefs: savedExtraRefs.map((p) => path.basename(p)),
       imageAtStart: readArticleImage(slug),
       startedAt: new Date().toISOString(),

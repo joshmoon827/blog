@@ -168,12 +168,72 @@ export function parseCoverAgentOutput(output, title = "", opts = {}) {
 }
 
 /**
- * Run `cursor agent -p --mode ask` and return keywords + required logo brief.
+ * Fallback: Extract keywords + logo using Ollama (Gemma 2 27B / Gemma model) on aitopatom.
  * @param {string} sourceText
- * @param {{ cursorBin?: string, timeoutMs?: number, title?: string, additionalPrompt?: string, productRelated?: boolean }} [opts]
+ * @param {{ title?: string, additionalPrompt?: string, productRelated?: boolean, model?: string, host?: string }} [opts]
  * @returns {Promise<{ keywords: string[], logo: string, raw: string }>}
  */
-export function extractKeywordsWithCursorAgent(sourceText, opts = {}) {
+export function extractKeywordsWithOllama(sourceText, opts = {}) {
+  const model = opts.model || process.env.OLLAMA_MODEL || "hf.co/bartowski/gemma-2-27b-it-GGUF:Q4_K_M";
+  const sshHost = process.env.OLLAMA_SSH_HOST || "aitopatom";
+  const title = opts.title || "";
+  const productRelated = opts.productRelated !== false;
+  const prompt = buildKeywordAgentPrompt(sourceText, title, {
+    additionalPrompt: opts.additionalPrompt,
+    productRelated,
+  });
+
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      model,
+      prompt,
+      stream: false,
+    });
+
+    const sshCmd = `curl -s -X POST http://localhost:11434/api/generate -H "Content-Type: application/json" -d ${JSON.stringify(payload)}`;
+
+    const child = spawn("ssh", [sshHost, sshCmd], {
+      stdio: ["ignore", "pipe", "pipe"],
+      env: process.env,
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    const timer = setTimeout(() => {
+      child.kill("SIGTERM");
+      reject(new Error(`Ollama fallback timed out after 60s`));
+    }, 60000);
+
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (err) => {
+      clearTimeout(timer);
+      reject(new Error(`Failed to execute Ollama via SSH (${sshHost}): ${err.message}`));
+    });
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      if (code !== 0) {
+        reject(new Error(`Ollama fallback SSH exited with code ${code}\nstderr: ${stderr.slice(0, 400)}`));
+        return;
+      }
+      try {
+        const jsonRes = JSON.parse(stdout);
+        const rawResponse = jsonRes.response || "";
+        const { keywords, logo } = parseCoverAgentOutput(rawResponse, title, { productRelated });
+        resolve({ keywords, logo, raw: rawResponse });
+      } catch (e) {
+        reject(new Error(`Failed to parse Ollama output: ${e.message}\nraw output: ${stdout.slice(0, 500)}`));
+      }
+    });
+  });
+}
+
+function runCursorAgentInternal(sourceText, opts = {}) {
   const cursorBin = opts.cursorBin || process.env.CURSOR_BIN || "cursor";
   const timeoutMs = opts.timeoutMs ?? 120_000;
   const title = opts.title || "";
@@ -235,3 +295,22 @@ export function extractKeywordsWithCursorAgent(sourceText, opts = {}) {
     });
   });
 }
+
+/**
+ * Run `cursor agent -p --mode ask` and return keywords + required logo brief.
+ * Automatically falls back to Ollama Gemma 2 27B model on error/usage limit.
+ * @param {string} sourceText
+ * @param {{ cursorBin?: string, timeoutMs?: number, title?: string, additionalPrompt?: string, productRelated?: boolean }} [opts]
+ * @returns {Promise<{ keywords: string[], logo: string, raw: string }>}
+ */
+export async function extractKeywordsWithCursorAgent(sourceText, opts = {}) {
+  try {
+    return await runCursorAgentInternal(sourceText, opts);
+  } catch (err) {
+    const firstLine = String(err.message || "").split("\n")[0];
+    console.warn(`[generate-cover] Cursor CLI error: ${firstLine}`);
+    console.warn(`[generate-cover] 🔄 Falling back to Ollama (${process.env.OLLAMA_MODEL || "hf.co/bartowski/gemma-2-27b-it-GGUF:Q4_K_M"}) on aitopatom...`);
+    return await extractKeywordsWithOllama(sourceText, opts);
+  }
+}
+

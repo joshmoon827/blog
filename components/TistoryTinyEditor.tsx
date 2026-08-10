@@ -207,6 +207,24 @@ const CONTENT_STYLE = `
   .mce-content-body hr[data-mce-selected] {
     outline: 0 none;
   }
+  /*
+   * Oxide content.css normally ships with skin — we use skin:false, so CEF
+   * selection clones (.mce-offscreen-selection) must be parked off-screen or
+   * they render as a visible “ghost” duplicate under place/image figures.
+   */
+  .mce-content-body [data-mce-caret] {
+    left: -1000px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: auto;
+    top: 0;
+  }
+  .mce-content-body .mce-offscreen-selection {
+    left: -2000000px;
+    max-width: 1000000px;
+    position: absolute;
+  }
   .mce-content-body .mce-clonedresizable {
     position: absolute;
     outline: #000 dashed 1px;

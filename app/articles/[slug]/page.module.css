@@ -661,134 +661,6 @@
   color: var(--danger);
 }
 
-/* —— format: tistory (wins over .body defaults above) —— */
-/* Light “paper” surface so Tistory type tokens stay readable on dark site chrome */
-.body:global(.article-format-tistory) {
-  font-family: -apple-system, system-ui, 'Helvetica Neue', 'Apple SD Gothic Neo',
-    Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.7;
-  letter-spacing: normal;
-  color: #333;
-  background: #fff;
-  border-radius: 2px;
-  padding: 2rem 1.75rem 2.5rem;
-  margin: 0 -0.25rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
-}
-.body:global(.article-format-tistory) p {
-  margin-bottom: 0;
-  line-height: 1.75;
-  color: #333;
-}
-.body:global(.article-format-tistory) p + p {
-  margin-top: 1px;
-}
-.body:global(.article-format-tistory) h1,
-.body:global(.article-format-tistory) h2,
-.body:global(.article-format-tistory) h3,
-.body:global(.article-format-tistory) h4 {
-  color: #000;
-  font-weight: 400;
-  letter-spacing: normal;
-}
-.body:global(.article-format-tistory) h1 {
-  font-size: 32px;
-  line-height: 1.35;
-  margin: 32px 0 20px;
-}
-.body:global(.article-format-tistory) h2 {
-  font-size: 1.62em;
-  line-height: 1.46;
-  margin: 1.62em 0 20px;
-}
-.body:global(.article-format-tistory) h3 {
-  font-size: 1.44em;
-  line-height: 1.48;
-  margin: 10px 0 20px;
-}
-.body:global(.article-format-tistory) h4 {
-  font-size: 1.25em;
-  line-height: 1.55;
-  margin: 10px 0 20px;
-}
-.body:global(.article-format-tistory) a {
-  color: #0070d1;
-  text-decoration: none;
-}
-.body:global(.article-format-tistory) a:hover {
-  text-decoration: underline;
-  opacity: 1;
-}
-.body:global(.article-format-tistory) strong,
-.body:global(.article-format-tistory) b {
-  color: inherit;
-  font-weight: 700;
-}
-.body:global(.article-format-tistory) ul,
-.body:global(.article-format-tistory) ol {
-  margin: 14px 0 24px;
-  padding-left: 10px;
-  color: #333;
-}
-.body:global(.article-format-tistory) li {
-  margin: 0 0 3px 22px;
-  line-height: 1.7;
-  color: #333;
-}
-.body:global(.article-format-tistory) blockquote {
-  margin: 20px 0 0;
-  padding: 3px 20px 6px 14px;
-  border-left: 8px solid #eee;
-  color: #666;
-  background: transparent;
-}
-.body:global(.article-format-tistory) blockquote p {
-  margin-bottom: 0;
-  color: #666;
-  line-height: 1.6;
-}
-.body:global(.article-format-tistory) :global(blockquote[data-ke-style='style2']) {
-  border-left: 4px solid #d0d0d0;
-  padding: 1px 0 0 12px;
-}
-.body:global(.article-format-tistory) :global(blockquote[data-ke-style='style3']) {
-  border: 1px solid #ddd;
-  background: #fcfcfc;
-  padding: 21px 25px 20px;
-  border-left-width: 1px;
-}
-.body:global(.article-format-tistory) hr {
-  margin: 32px 80px;
-  border-top: 1px solid #ddd;
-}
-.body:global(.article-format-tistory) code {
-  background: #f5f5f5;
-  border: 1px solid #e8e8e8;
-  border-radius: 3px;
-  color: #333;
-}
-.body:global(.article-format-tistory) pre {
-  border-radius: 4px;
-  background: #f7f7f7;
-  border: 1px solid #eaeaea;
-}
-.body:global(.article-format-tistory) th,
-.body:global(.article-format-tistory) td {
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  color: #333;
-  background: transparent;
-}
-.body:global(.article-format-tistory) th {
-  background: #fafafa;
-  font-weight: 600;
-}
-.body:global(.article-format-tistory) img,
-.body:global(.article-format-tistory) .bodyImage {
-  border-radius: 0;
-}
-
 /* —— format: obsidian —— */
 .body:global(.article-format-obsidian) h1 {
   font-size: 1.85rem;
@@ -1206,4 +1078,108 @@
 @media (max-width: 640px) {
   .article { padding: 1.5rem 1.25rem 4rem; }
   .banner { aspect-ratio: 4 / 3; }
+}
+
+/* ===== article settings popover / archive menu */
+.settingsPopover {
+  position: fixed;
+  z-index: 100;
+  min-width: 224px;
+  max-width: calc(100vw - 32px);
+  padding: 6px 8px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.settingsMenu {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font);
+  font-size: 0.82rem;
+}
+
+.settingsRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.52rem 0.7rem;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary, var(--text-muted));
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+}
+
+.settingsRow:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+}
+
+.settingsRow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.settingsRowActive {
+  color: var(--accent);
+}
+
+.settingsRowActive svg {
+  stroke: var(--accent);
+}
+
+.settingsRowDanger {
+  color: var(--danger);
+}
+
+.settingsRowDanger:hover {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}
+
+.settingsRowDanger svg {
+  stroke: currentColor;
+}
+
+.settingsRow svg {
+  width: 1rem;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+.settingsRowLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settingsRowStatus {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+.settingsDivider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+.settingsRow:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }

@@ -71,10 +71,8 @@ export function formatSupabaseError(err: unknown): string {
     lower.includes('network request failed')
   ) {
     return (
-      'Supabase에 연결할 수 없습니다. NEXT_PUBLIC_SUPABASE_URL 프로젝트가 ' +
-      '삭제·일시정지되었거나 URL이 잘못된 경우 DNS/네트워크에서 실패합니다. ' +
-      'Dashboard에서 활성 프로젝트의 URL·anon key를 .env.local에 넣고 ' +
-      'supabase/schema.sql 실행 후 next dev를 재시작하세요. (docs/comments-supabase.md)'
+      'Supabase에 연결할 수 없습니다. 활성 프로젝트 URL·anon key를 확인하거나, ' +
+      '로컬 개발에서는 env를 비운 뒤 next dev를 재시작하면 로컬 댓글로 동작합니다.'
     )
   }
   return raw

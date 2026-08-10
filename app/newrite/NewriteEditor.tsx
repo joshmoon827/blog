@@ -27,7 +27,9 @@ import { formatTagsInput, parseTagsInput } from '@/lib/parseFrontmatter'
 import { isLocalToolsEnabled } from '@/lib/isLocalTools'
 import { openNewritePreviewTab } from '@/lib/newritePreview'
 import { renderArticleBody } from '@/lib/renderArticleBody'
+import TistoryPreviewBody from '@/components/TistoryPreviewBody'
 import TistoryMoreLessHydrate from '@/components/TistoryMoreLessHydrate'
+import type { HybridMarkdownEditorHandle } from '@/components/HybridMarkdownEditor'
 import NewriteToolbar, {
   type EditorViewMode,
   NEWRITE_SIDE_MARGIN_DEFAULT,
@@ -40,6 +42,14 @@ const TistoryTinyEditor = dynamic(
   () =>
     import('@/components/TistoryTinyEditor').then((mod) => ({
       default: mod.TistoryTinyEditor,
+    })),
+  { ssr: false },
+)
+
+const HybridMarkdownEditor = dynamic(
+  () =>
+    import('@/components/HybridMarkdownEditor').then((mod) => ({
+      default: mod.HybridMarkdownEditor,
     })),
   { ssr: false },
 )
@@ -72,7 +82,11 @@ type StoredDraft = {
   tagsText: string
   category: string
   image: string
+  /** Tistory / HTML body buffer */
   body: string
+  /** Markdown (기본 모드) buffer — kept separate; switching is not lossy conversion */
+  mdBody?: string
+  editorMode?: EditorViewMode
   savedAt: number
 }
 
@@ -171,6 +185,7 @@ type CoverJobMode = 'generate' | 'redownload'
 type CoverGenOptions = {
   additionalPrompt?: string
   productRelated?: boolean
+  swissModernist?: boolean
   paletteColors?: string[]
   backgroundColor?: string
   referenceImages?: Array<{
@@ -193,6 +208,7 @@ async function startCoverGeneration(
     background: true,
     mode,
     productRelated: opts.productRelated !== false,
+    swissModernist: opts.swissModernist !== false,
   }
   const extra = opts.additionalPrompt?.trim()
   if (extra) body.additionalPrompt = extra
@@ -255,6 +271,7 @@ export default function NewriteEditor() {
   )
   const [coverAdditionalPrompt, setCoverAdditionalPrompt] = useState('')
   const [coverProductRelated, setCoverProductRelated] = useState(true)
+  const [coverSwissModernist, setCoverSwissModernist] = useState(true)
   const [coverBackgroundColor, setCoverBackgroundColor] = useState('')
   const [coverReferencePhotos, setCoverReferencePhotos] = useState<
     CoverReferencePhoto[]
@@ -275,10 +292,14 @@ export default function NewriteEditor() {
   const [hydrated, setHydrated] = useState(false)
   const [editorMode, setEditorMode] = useState<EditorViewMode>('wysiwyg')
   const [htmlSource, setHtmlSource] = useState('')
+  const [mdBody, setMdBody] = useState('')
   const [sideMarginPct, setSideMarginPct] = useState(NEWRITE_SIDE_MARGIN_DEFAULT)
   const bodyRef = useRef<TistoryTinyEditorHandle>(null)
+  const mdRef = useRef<HybridMarkdownEditorHandle>(null)
   const categoryRef = useRef<HTMLDivElement>(null)
   const localTools = isLocalToolsEnabled()
+  const isMarkdownMode = editorMode === 'markdown'
+  const articleFormat = isMarkdownMode ? 'default' : 'tistory'
 
   const handleSideMarginChange = (pct: number) => {
     const next = clampSideMargin(pct)
@@ -290,24 +311,46 @@ export default function NewriteEditor() {
     }
   }
 
+  const flushHtmlFromEditor = () => {
+    const ed = bodyRef.current?.getEditor()
+    if (editorMode === 'html') return htmlSource
+    if (editorMode === 'wysiwyg') {
+      return ed?.getContent({ format: 'html' }) ?? body
+    }
+    return body
+  }
+
   const handleEditorModeChange = (mode: EditorViewMode) => {
     if (mode === editorMode) return
-    if (mode === 'html') {
+
+    // Flush buffers for the mode we are leaving (no auto-convert — lossy).
+    if (editorMode === 'wysiwyg' || editorMode === 'html') {
+      const html = flushHtmlFromEditor()
+      setBody(html)
+      if (mode === 'html') setHtmlSource(html)
+    }
+
+    if (mode === 'wysiwyg') {
+      const html = editorMode === 'html' ? htmlSource : body
       const ed = bodyRef.current?.getEditor()
-      const html = ed?.getContent({ format: 'html' }) ?? body
-      setHtmlSource(html)
+      if (ed) {
+        ed.setContent(html)
+        setBody(ed.getContent({ format: 'html' }))
+      } else {
+        setBody(html)
+      }
+      setEditorMode('wysiwyg')
+      return
+    }
+
+    if (mode === 'html') {
+      setHtmlSource(editorMode === 'wysiwyg' ? flushHtmlFromEditor() : body)
       setEditorMode('html')
       return
     }
-    // Restore WYSIWYG with synced HTML source
-    const ed = bodyRef.current?.getEditor()
-    if (ed) {
-      ed.setContent(htmlSource)
-      setBody(ed.getContent({ format: 'html' }))
-    } else {
-      setBody(htmlSource)
-    }
-    setEditorMode('wysiwyg')
+
+    // markdown (기본 모드) — restore md buffer as-is
+    setEditorMode('markdown')
   }
 
   useEffect(() => {
@@ -332,6 +375,17 @@ export default function NewriteEditor() {
       setCategory(stored.category || '')
       if (stored.image) setImage(stored.image)
       setBody(stored.body || '')
+      setMdBody(stored.mdBody || '')
+      if (
+        stored.editorMode === 'wysiwyg' ||
+        stored.editorMode === 'html' ||
+        stored.editorMode === 'markdown'
+      ) {
+        setEditorMode(stored.editorMode)
+        if (stored.editorMode === 'html') {
+          setHtmlSource(stored.body || '')
+        }
+      }
       if (stored.savedAt) setAutoSavedAt(stored.savedAt)
     }
     setSideMarginPct(readStoredSideMargin())
@@ -361,13 +415,15 @@ export default function NewriteEditor() {
   useEffect(() => {
     if (!hydrated) return
     bodyRef.current?.setSpellcheck(spellcheckOn)
-  }, [hydrated, spellcheckOn, body])
+    mdRef.current?.setSpellcheck?.(spellcheckOn)
+  }, [hydrated, spellcheckOn, body, mdBody, editorMode])
 
   useEffect(() => {
     if (!hydrated || createdSlug) return
     const hasContent =
       title.trim() ||
       body.trim() ||
+      mdBody.trim() ||
       tagsText.trim() ||
       description.trim() ||
       category
@@ -383,6 +439,8 @@ export default function NewriteEditor() {
         category,
         image,
         body,
+        mdBody,
+        editorMode,
         savedAt,
       }
       try {
@@ -404,6 +462,8 @@ export default function NewriteEditor() {
     category,
     image,
     body,
+    mdBody,
+    editorMode,
   ])
 
   useEffect(() => {
@@ -438,13 +498,15 @@ export default function NewriteEditor() {
     setDescription(note.description)
     setCreated(note.created || new Date().toISOString().slice(0, 10))
     setTagsText(formatTagsInput(note.tags))
-    setBody(note.body)
+    setMdBody(note.body)
+    setEditorMode('markdown')
     setSettingsOpen(false)
   }
 
   const coverGenOptions = async (): Promise<CoverGenOptions> => ({
     additionalPrompt: coverAdditionalPrompt,
     productRelated: coverProductRelated,
+    swissModernist: coverSwissModernist,
     paletteColors: coverPalette(image),
     backgroundColor: coverBackgroundColor,
     referenceImages: coverReferencePhotos.length
@@ -487,6 +549,8 @@ export default function NewriteEditor() {
       category,
       image,
       body,
+      mdBody,
+      editorMode,
       savedAt,
     }
     try {
@@ -498,8 +562,11 @@ export default function NewriteEditor() {
   }
 
   const liveEditorBody = () => {
-    const ed = bodyRef.current?.getEditor()
+    if (editorMode === 'markdown') {
+      return mdRef.current?.getMarkdown?.() ?? mdBody
+    }
     if (editorMode === 'html') return htmlSource
+    const ed = bodyRef.current?.getEditor()
     return ed?.getContent({ format: 'html' }) ?? body
   }
 
@@ -518,7 +585,7 @@ export default function NewriteEditor() {
           created,
           tags: parseTagsInput(tagsText),
           category: category || undefined,
-          format: 'tistory',
+          format: articleFormat,
           body: liveBody,
           draft: true,
         }),
@@ -556,16 +623,12 @@ export default function NewriteEditor() {
   const openPreview = () => setPreviewOpen(true)
 
   const openFullPreview = () => {
-    const ed = bodyRef.current?.getEditor()
-    const liveBody =
-      editorMode === 'html'
-        ? htmlSource
-        : (ed?.getContent({ format: 'html' }) ?? body)
     openNewritePreviewTab({
       title,
-      body: liveBody,
+      body: liveEditorBody(),
       tagsText,
       category,
+      format: articleFormat,
     })
   }
 
@@ -590,9 +653,20 @@ export default function NewriteEditor() {
 
   const openSpellcheck = () => {
     setSpellcheckOn(true)
-    bodyRef.current?.setSpellcheck(true)
-    bodyRef.current?.focus()
-    setSpellIssues(runDraftChecks({ title, body, tagsText }))
+    if (isMarkdownMode) {
+      mdRef.current?.setSpellcheck?.(true)
+      mdRef.current?.focus()
+    } else {
+      bodyRef.current?.setSpellcheck(true)
+      bodyRef.current?.focus()
+    }
+    setSpellIssues(
+      runDraftChecks({
+        title,
+        body: liveEditorBody(),
+        tagsText,
+      }),
+    )
     setSpellOpen(true)
   }
 
@@ -606,6 +680,7 @@ export default function NewriteEditor() {
     setCoverGenStatus('idle')
     setCoverGenMessage('')
     try {
+      const liveBody = liveEditorBody()
       const res = await fetch('/api/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -615,9 +690,9 @@ export default function NewriteEditor() {
           created,
           tags: parseTagsInput(tagsText),
           category: category || undefined,
-          format: 'tistory',
+          format: articleFormat,
           image,
-          body,
+          body: liveBody,
         }),
       })
       const data = (await res.json()) as { slug?: string; error?: string }
@@ -841,11 +916,25 @@ export default function NewriteEditor() {
                 />
               </div>
             ) : null}
+            {editorMode === 'markdown' ? (
+              <HybridMarkdownEditor
+                ref={mdRef}
+                variant="inline"
+                value={mdBody}
+                onChange={setMdBody}
+                uploadImage={uploadImageFile}
+                onUploadingChange={setUploading}
+                disabled={uploading || busy}
+                placeholder="마크다운으로 본문을 입력하세요"
+              />
+            ) : null}
             <div
               className={`${styles.tinyHost} ${
-                editorMode === 'html' ? styles.tinyHostHidden : ''
+                editorMode === 'html' || editorMode === 'markdown'
+                  ? styles.tinyHostHidden
+                  : ''
               }`}
-              aria-hidden={editorMode === 'html'}
+              aria-hidden={editorMode === 'html' || editorMode === 'markdown'}
             >
               <TistoryTinyEditor
                 ref={bodyRef}
@@ -853,7 +942,12 @@ export default function NewriteEditor() {
                 onChange={setBody}
                 uploadImage={uploadImageFile}
                 onUploadingChange={setUploading}
-                disabled={uploading || busy || editorMode === 'html'}
+                disabled={
+                  uploading ||
+                  busy ||
+                  editorMode === 'html' ||
+                  editorMode === 'markdown'
+                }
                 placeholder="본문을 입력하세요"
               />
             </div>
@@ -1060,16 +1154,30 @@ export default function NewriteEditor() {
                   ))}
                 </p>
               ) : null}
-              <div
-                className={`article-body ${styles.previewContent} article-format-tistory`}
-                data-format="tistory"
-              >
-                {body.trim()
-                  ? renderArticleBody(body, { format: 'tistory' })
-                  : (
-                      <p className={styles.previewEmpty}>본문이 비어 있습니다.</p>
-                    )}
-              </div>
+              {articleFormat === 'tistory' ? (
+                <TistoryPreviewBody
+                  html={liveEditorBody()}
+                  hydrate={false}
+                  paper={false}
+                  className={styles.previewContent}
+                  emptyFallback={
+                    <p className={styles.previewEmpty}>본문이 비어 있습니다.</p>
+                  }
+                />
+              ) : (
+                <div
+                  className={`article-body ${styles.previewContent} article-format-default`}
+                  data-format="default"
+                >
+                  {liveEditorBody().trim()
+                    ? renderArticleBody(liveEditorBody(), {
+                        format: 'default',
+                      })
+                    : (
+                        <p className={styles.previewEmpty}>본문이 비어 있습니다.</p>
+                      )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1227,6 +1335,20 @@ export default function NewriteEditor() {
                         disabled={saving || uploading}
                       />
                       제품/브랜드 관련
+                    </label>
+                    <label
+                      className={styles.check}
+                      title="스위스 모더니스트 추상 로고형 아트 디렉션을 표지 프롬프트에 포함 (기본 ON)"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={coverSwissModernist}
+                        onChange={(e) =>
+                          setCoverSwissModernist(e.target.checked)
+                        }
+                        disabled={saving || uploading}
+                      />
+                      스위스 모더니스트
                     </label>
                     <label className={styles.check}>
                       <input

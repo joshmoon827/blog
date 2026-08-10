@@ -47,7 +47,7 @@ import {
 import { SPECIAL_CHARS } from '@/data/specialChars'
 import styles from './newrite.module.css'
 
-export type EditorViewMode = 'wysiwyg' | 'html'
+export type EditorViewMode = 'wysiwyg' | 'html' | 'markdown'
 
 export const NEWRITE_SIDE_MARGIN_MIN = 0
 export const NEWRITE_SIDE_MARGIN_MAX = 40
@@ -641,8 +641,13 @@ export default function NewriteToolbar({
   const [imageAltDraft, setImageAltDraft] = useState('')
   const uid = useId()
   const htmlMode = editorMode === 'html'
-  const modeLabel = htmlMode ? 'HTML' : 'tistory 모드'
-  const fmtDisabled = Boolean(disabled || htmlMode)
+  const markdownMode = editorMode === 'markdown'
+  const modeLabel = markdownMode
+    ? '기본 모드'
+    : htmlMode
+      ? 'HTML'
+      : 'tistory 모드'
+  const fmtDisabled = Boolean(disabled || htmlMode || markdownMode)
 
   const ed = () => editorRef.current?.getEditor() ?? null
 
@@ -1154,7 +1159,7 @@ export default function NewriteToolbar({
         <ToolBtn
           title="첨부"
           className={styles.toolDrop}
-          disabled={disabled || htmlMode}
+          disabled={disabled || htmlMode || markdownMode}
           active={menu === 'image'}
           onClick={() => toggle('image')}
         >
@@ -2067,7 +2072,7 @@ export default function NewriteToolbar({
       <div className={styles.toolGroup}>
         <ToolBtn
           title="장소"
-          disabled={disabled || htmlMode}
+          disabled={disabled || htmlMode || markdownMode}
           active={menu === 'place'}
           onClick={() => toggle('place')}
         >
@@ -2135,17 +2140,18 @@ export default function NewriteToolbar({
         >
           {(
             [
-              ['tistory 모드', 'TinyMCE WYSIWYG (HTML)'],
-              ['HTML', '소스 보기 (코드 편집)'],
+              ['tistory 모드', 'wysiwyg', 'TinyMCE WYSIWYG (HTML)'],
+              ['기본 모드', 'markdown', '마크다운 편집 (Hybrid / Muya)'],
+              ['HTML', 'html', '소스 보기 (코드 편집)'],
             ] as const
-          ).map(([label, hint]) => (
+          ).map(([label, mode, hint]) => (
             <button
               key={label}
               type="button"
               role="menuitem"
               className={styles.toolMenuItem}
               onClick={() => {
-                onEditorModeChange?.(label === 'HTML' ? 'html' : 'wysiwyg')
+                onEditorModeChange?.(mode)
                 setMenu(null)
               }}
             >

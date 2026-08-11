@@ -88,19 +88,12 @@
 }
 
 .brandMark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  color: inherit;
-  line-height: 0;
-}
-.brandMark svg {
   display: block;
-  width: 32px;
+  width: 39px;
   height: 32px;
+  background: url('/blog-logo.svg') center / contain no-repeat;
 }
+/* newrite chrome is light; keep black mark as-is */
 
 .topSpacer {
   flex: 1;

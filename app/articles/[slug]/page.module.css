@@ -1,7 +1,8 @@
 .article {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 5rem;
+  /* No top padding — cover banner sits flush under the header. */
+  padding: 0 1.5rem 5rem;
 }
 
 .banner {
@@ -525,6 +526,10 @@
 .body > *:first-child {
   margin-top: 0;
 }
+.body > :is(h1, h2, h3, h4):first-child {
+  /* Keep section heading air even as first body child (~3× prior 2rem). */
+  margin-top: 6rem;
+}
 .body > *:last-child {
   margin-bottom: 0;
 }
@@ -538,7 +543,7 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.25;
-  margin: 2rem 0 0.85rem;
+  margin: 6rem 0 0.85rem;
 }
 .body h1 { font-size: 1.75rem; }
 .body h2 { font-size: 1.45rem; }
@@ -664,21 +669,21 @@
 /* —— format: obsidian —— */
 .body:global(.article-format-obsidian) h1 {
   font-size: 1.85rem;
-  margin: 1.75rem 0 0.75rem;
+  margin: 6rem 0 0.75rem;
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--border);
   font-weight: 650;
 }
 .body:global(.article-format-obsidian) h2 {
   font-size: 1.45rem;
-  margin: 1.5rem 0 0.65rem;
+  margin: 6rem 0 0.65rem;
   padding-bottom: 0.25rem;
   border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   font-weight: 650;
 }
 .body:global(.article-format-obsidian) h3 {
   font-size: 1.2rem;
-  margin: 1.25rem 0 0.5rem;
+  margin: 6rem 0 0.5rem;
   font-weight: 650;
 }
 .body:global(.article-format-obsidian) blockquote {
@@ -728,7 +733,7 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.25;
-  margin: 2rem 0 0.85rem;
+  margin: 6rem 0 0.85rem;
 }
 
 .body :global(h1.mu-atx-heading),

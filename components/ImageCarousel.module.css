@@ -6,6 +6,10 @@
   background: var(--bg-elevated);
 }
 
+.wrapPadded {
+  /* matte color set inline from border-ring sample */
+}
+
 .slide {
   position: absolute;
   inset: 0;
@@ -13,5 +17,10 @@
 
 .img {
   object-fit: cover;
+  object-position: center;
+}
+
+.imgContain {
+  object-fit: contain;
   object-position: center;
 }

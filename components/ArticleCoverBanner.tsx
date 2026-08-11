@@ -127,14 +127,16 @@ export default function ArticleCoverBanner({ src, alt, priority }: Props) {
       className={`${styles.banner} ${padded ? styles.bannerPadded : ''}`}
       style={padColor ? { backgroundColor: padColor } : undefined}
     >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="100vw"
-        className={padded ? styles.imgPadded : styles.imgCover}
-        priority={priority}
-      />
+      <div className={padded ? styles.frame : styles.frameBleed}>
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="100vw"
+          className={padded ? styles.imgPadded : styles.imgCover}
+          priority={priority}
+        />
+      </div>
     </div>
   )
 }

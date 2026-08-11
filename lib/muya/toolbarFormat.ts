@@ -2,10 +2,11 @@ import type { Muya } from '@muyajs/core'
 
 import { applyQuickInsert } from '@/lib/muya/applyQuickInsert'
 import { insertTextAtMuyaCursor } from '@/lib/muya/insertText'
-import { coerceMuyaText } from '@/lib/muya/muyaPatches'
+import { coerceMuyaText, setMuyaBlockText } from '@/lib/muya/muyaPatches'
 
 type ContentBlock = {
   text: string
+  parent?: unknown | null
   getCursor: () => { start: { offset: number }; end: { offset: number } } | null
   setCursor: (start: number, end: number, update?: boolean) => void
   update: () => void
@@ -54,23 +55,29 @@ export function wrapSelection(
   placeholder = '텍스트',
 ): string {
   const block = muya.editor.activeContentBlock as ContentBlock | null
-  if (!block) {
+  if (!block?.parent) {
     return insertTextAtMuyaCursor(muya, `${before}${placeholder}${after}`)
   }
 
   const current = coerceMuyaText(block.text)
-  if (block.text !== current) block.text = current
+  setMuyaBlockText(block, current)
 
   const { start, end } = resolveOffsets(block)
   const selected = current.slice(start, end)
   const inner = selected || placeholder
   const wrapped = `${before}${inner}${after}`
-  block.text = current.slice(0, start) + wrapped + current.slice(end)
+  if (!setMuyaBlockText(block, current.slice(0, start) + wrapped + current.slice(end))) {
+    return insertTextAtMuyaCursor(muya, `${before}${placeholder}${after}`)
+  }
 
   const nextStart = start + before.length
   const nextEnd = nextStart + inner.length
-  block.setCursor(nextStart, nextEnd, true)
-  block.update()
+  try {
+    block.setCursor(nextStart, nextEnd, true)
+    block.update()
+  } catch {
+    /* detached */
+  }
   return muya.getMarkdown()
 }
 

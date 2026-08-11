@@ -322,6 +322,15 @@ export async function POST(req: NextRequest) {
     if (typeof prev === 'string') backgroundColor = normalizeHex(prev)
   }
 
+  // Background locks paint: stock cover swatches must not fight the field hue.
+  if (backgroundColor) {
+    const { deriveToneOnTonePalette } = await import(
+      '../../../scripts/lib/cover-tone-palette.mjs'
+    )
+    const derived = deriveToneOnTonePalette(backgroundColor, 5)
+    if (derived.length) paletteColors = derived
+  }
+
   const script = path.join(process.cwd(), 'scripts', 'generate-cover.mjs')
   const args = [script, '--slug', slug]
   if (body.cover) args.push('--cover', body.cover)

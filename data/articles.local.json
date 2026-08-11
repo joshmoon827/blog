@@ -1,5 +1,30 @@
 [
   {
+    "slug": "resizing",
+    "title": "표지 썸네일 resizing 하기",
+    "description": "",
+    "created": "2026-08-11",
+    "tags": [],
+    "format": "default",
+    "image": "/images/generated/resizing-2026-08-11T01-51-21-090Z.png",
+    "body": "# 문제점\n\n![Pasted image 20260811100532](/api/images/images/2026/08/9222ebca0a1343d6.png)\n\n표지에 오브젝트가 잴 위부터 아래까지 꽉차서 보기가 불편하고 어딘가 짤린 느낌이 든다.\n\n# 해결방법\n\n![Pasted image 20260811101403](/api/images/images/2026/08/a57f67fd0f524ab7.png)\n\n- 기존 표지 이미지를 픽셀별로 쪼개서 색깔을 탐지한다\n- 25퍼센트 이상 다른 색이 있을때 오른쪽 아래 제일 구석 색깔을 링으로 패딩을 줘 여백을 유지하게 한다\n  - 오른쪽 구석색을 주는 이유\n- 정확힌 가장자리에서 안쪽으로 기본 5%센트 안으로 들어왔을때 의 rgb 값을 평균적으로 대조하여 감지함\n\n### “리사이징”은 이미지 재인코딩이 아님\n\n`ImageCarousel`이 배경을 그 색으로 칠하고, \n안쪽 `slide`에 `top/bottom/left/right` % inset을 준 뒤 \n`object-fit: contain`으로 보이게 합니다. \n\n즉, Sharp/OpenCV 같은 건 안 씁니다.\n\n# 트러블 슈팅\n\n![Pasted image 20260811102424](/api/images/images/2026/08/53bfe9d84bde425d.png)\n\n원본 기준으로 리사이징을 진행해 리사이징이 안되어\b패딩이 제대로 적용이 되지 않는 이슈가 발생.\n\n### 해결 방법\n\n![Pasted image 20260811103433](/api/images/images/2026/08/558fdea2cd314b94.png)\n\n이를 해결하기 위해 크롭된 css 기준으로 다시 픽셀을 쪼개고 링을 만들어 리사이징 감지를 진행 후 해결.\n\n- 해결하기 위해 짰던 코드는 아래 함수 참고\n\n **cover crop 함수**\n\n```css\nexport function coverCropRect(\nimgW: number,\nimgH: number,\ndisplayAspect: number,\n): { sx: number; sy: number; sw: number; sh: number } {\n\nconst imgAspect = imgW / imgH\n\nif (imgAspect > displayAspect) {\n// Image wider than box → crop left/right\nconst sw = imgH * displayAspect\nconst sx = (imgW - sw) / 2\nreturn { sx, sy: 0, sw, sh: imgH }\n}\n\n// Image taller (or equal) → crop top/bottom\nconst sh = imgW / displayAspect\nconst sy = (imgH - sh) / 2\nreturn { sx: 0, sy, sw: imgW, sh }\n}\n```\n"
+  },
+  {
+    "slug": "article-msn24oaz",
+    "title": "김수현 (에너지경제)",
+    "description": "서울대 에너지신산업 혁신융합대학사업단 객원조교수. 에너지 정책·산업 분석, 유가·생산·소비·재고 분석 전문.",
+    "created": "2026-06-30",
+    "tags": [
+      "people",
+      "professor",
+      "energy",
+      "CO-Week"
+    ],
+    "format": "default",
+    "image": "/images/generated/article-msn24oaz-2026-08-10T10-08-09-864Z.png",
+    "body": "# 김수현 (Soohyeon Kim, Ph.D.)\n\n에너지 경제학자. **서울대학교 에너지신산업 혁신융합대학사업단** 객원조교수 (2024.09~). 생산량·소비량·유가·재고 등 에너지 시장 지표를 정량적으로 분석한다.\n\n> **info**\n> UNIST 반도체·UNIST AI 등 다른 분야의 김수현 교수와 혼동하지 않도록 한다.\n\n## 소속·역할\n\n| 항목     | 내용                                                                                                              |\n| ------ | --------------------------------------------------------------------------------------------------------------- |\n| 현재     | 서울대 에너지신산업 혁신융합대학사업단 **객원조교수** (2024.09~)                                                                       |\n| 소속 연구실 | [서울대 지구환경경제연구실](https://enecon.snu.ac.kr/) (Enecon Center)                                                      |\n| 강의     | (공유) 에너지신산업 캡스톤디자인 2 등 ([LikeSNU](https://likesnu.snu.ac.kr/usr/course/courseDetail.do?course_cd=M3500.010700)) |\n\n## 연구 분야\n\n- **에너지 정책·산업 분석** (Energy Policy, Energy Industry)\n- **에너지 시장·유가** — 원유 재고, 수요·공급 충격, 투기(speculation) 역할\n- **기후·에너지 정책**, 청정에너지 투자\n\nCO-Week 강의 맥락에서는 **생산량·소비량·유가** 등 해외 에너지 정보를 분석하는 **해외정보 분석팀** 업무와 연결된다.\n\n## 학력\n\n| 기간                | 학위  | 전공·기관                       |\n| ----------------- | --- | --------------------------- |\n| 2007.03 ~ 2012.02 | 학사  | 고려대학교 물리학                   |\n| 2012.03 ~ 2014.02 | 석사  | 서울대 에너지시스템공학부 (환경·에너지·공학경제) |\n| 2015.09 ~ 2019.08 | 박사  | 서울대 에너지시스템공학부 (환경·에너지·공학경제) |\n\n**박사 논문:** *Three Essays on the Role of Inventory in Market Speculation* — 에너지·원자재 시장에서 재고(inventory)가 시장 완충(buffer)과 투기(speculation)에 각각 어떤 역할을 하는지 분석.\n\n## 경력\n\n| 기간                | 기관·직위                             |\n| ----------------- | --------------------------------- |\n| 2019.11 ~ 2021.08 | 에너지경제연구원 (KEEI) 선임연구원 — 국제에너지협력센터 |\n| 2021.09 ~ 2022.09 | 두산경영연구원 매니저                       |\n| 2024.02 ~ 2024.08 | 서울대 차세대 에너지 통합형 인력양성 사업단 박사후연구원   |\n| 2024.09 ~         | 서울대 에너지신산업 혁신융합대학사업단 객원조교수        |\n\n## 주요 연구·논문\n\n- **Kim, S., Baek, J., & Heo, E.** (2020). *Crude oil inventories: The two faces of Janus?* **Empirical Economics**, 59(2). — 원유 재고가 수요·공급 충격에 대해 **완충(buffer)** 역할과 **투기(speculative)** 역할을 동시에 수행하는지 SVAR로 검증. [DOI](https://doi.org/10.1007/s00181-019-01660-1)\n\n## 관련 강의·노트\n\n- 에너지 안보, 한 시간에 보는 세계의 지금\n\n## 출처\n\n- [서울대 지구환경경제연구실 — 참여교수 (에너지신산업 혁신융합대학)](https://enecon.snu.ac.kr/staticdata/static/people/convergence/)\n- [에너지신산업 혁신융합대학 사업단 (유니허브)](https://unihub.kr/?page_id=1331)\n"
+  },
+  {
     "slug": "draft-mscxk8x8",
     "title": "임시저장 1",
     "description": "",
@@ -85,7 +110,7 @@
       "project",
       "아이디어"
     ],
-    "image": "/images/generated/obsidian-base-or-dataview-gui-2026-08-10T09-03-49-807Z.png",
+    "image": "/images/generated/obsidian-base-or-dataview-gui-2026-08-10T09-07-36-645Z.png",
     "body": "Like notion\n\n*[embedded: Pasted image 20260430161654]*"
   },
   {
@@ -98,7 +123,7 @@
       "RL",
       "CO-Week"
     ],
-    "image": "/images/generated/dreamer-2026-07-20T06-44-32-129Z.png",
+    "image": "/images/generated/dreamer-2026-08-11T03-23-50-518Z.png",
     "body": "관련: 월드모델과 AGI · Judea Pear , three layer causal hierarchy \n\n> **abstract**\n> 관측을 잠복 상태로 압축하고, 그 상태에서 미래를 **상상(imagination)** 하며 시뮬레이션한 뒤, 그 상상 데이터로 정책을 학습하는 모델. 실제 환경 상호작용을 줄이면서 model-free RL보다 효율적으로 학습한다.\n\n---\n\n## 배경 — Ha & Schmidhuber → Dreamer\n\n| | Ha & Schmidhuber (2018) | Dreamer (2020~) |\n|---|---|---|\n| 잠복 상태 | RNN hidden state | **RSSM** (deterministic + stochastic) |\n| 불확실성 | MDN (가우시안 혼합) | stochastic state $z$에서 샘플링 |\n| 학습 | 실제 rollout 위주 | **잠복 공간 imagination rollout** |\n| 정책 | Controller (C) | Actor-Critic (DreamerV2~) |\n\n---\n\n## RSSM (Recurrent State Space Model)\n\n세계 상태를 **두 종류**로 분리한다.\n\n```\n관측 o_t\n   ↓ 인코더\n잠복 상태: h_t (deterministic, GRU) + z_t (stochastic, 샘플링)\n   ↓ 전이 모델 (dynamics)\n예측: o_{t+1}, r_t, done_t\n   ↓\n정책 π(a_t | h_t, z_t) → 행동\n```\n\n| 구성요소 | 역할 |\n|---|---|\n| **$h_t$** (deterministic) | GRU가 이전 정보 누적 — **belief 유지** |\n| **$z_t$** (stochastic) | 확률 분포에서 샘플링 — **스토캐스틱 시뮬** |\n| **인코더** | 이미지/관측 → $(h_t, z_t)$ |\n| **전이 모델** | $(h_t, z_t, a_t)$ → $(h_{t+1}, z_{t+1})$ |\n| **디코더** | $(h_t, z_t)$ → 관측 $\\hat{o}_t$ 재구성 |\n| **Reward/Done 예측기** | $(h_t, z_t)$ → 보상, 종료 여부 |\n\n> **note**\n> - **잠복표현** → 인코더가 $z_t$로 압축\n> - **belief 유지** → GRU의 $h_t$가 시간에 따라 상태 추적\n> - **스토캐스틱 샘플링** → $z_t$를 분포에서 샘플링해 다양한 미래 생성\n\n---\n\n## 3가지 손실 함수 (DreamerV1)\n\n### 1. 예측 손실 (Reconstruction / Observation Loss)\n\n$$\\mathcal{L}_o = -\\log p(o_t \\mid h_t, z_t)$$\n\n- 디코더가 **실제 관측(픽셀)을 복원**하도록 학습\n- 월드모델이 \"세상이 어떻게 보이는지\" 맞추는 손실\n\n### 2. 동역학 손실 (Dynamics KL Loss)\n\n$$\\mathcal{L}_{\\text{dyn}} = \\text{KL}\\big[q(z_t \\mid h_t, o_t) \\,\\|\\, p(z_t \\mid h_t)\\big]$$\n\n- **사후(posterior)** vs **사전(prior)** 분포를 맞춤\n- 행동 없이 예측한 상태와, 관측을 본 뒤 추정한 상태가 일치해야 함\n- → 전이 모델이 **시간에 따른 세계 변화**를 학습\n\n### 3. 표현 손실 (Representation KL Loss)\n\n$$\\mathcal{L}_{\\text{rep}} = \\text{KL}\\big[q(z_t \\mid h_t, o_t) \\,\\|\\, p(z_t \\mid h_t)\\big]$$\n\n- 인코더가 뽑은 $z_t$가 dynamics prior와 정렬되도록 유도\n- 잠복 표현이 **예측 가능하고 유용한 정보**만 담도록 제약\n\n> DreamerV2 이후 KL balancing, symlog 등으로 손실 설계가 개선됨.\n\n---\n\n## 학습 흐름 (Dreaming)\n\n```\n[1] 실제 환경에서 경험 수집 → replay buffer 저장\n\n[2] 월드모델 학습\n    실제 (o, a, r) 시퀀스로 RSSM 학습\n    → 3가지 손실로 인코더·전이·디코더 업데이트\n\n[3] Imagination (Dreaming) ← 핵심\n    잠복 상태 (h, z)에서 시작\n    → 전이 모델로 미래 rollout (실제 환경 불필요)\n    → 상상 속 보상·가치로 Actor-Critic 학습\n\n[4] 실제 환경에 정책 적용 → [1]로 반복\n```\n\n**Dreaming** = 실제 픽셀을 생성하지 않고, **잠복 공간에서만 rollout** → 계산 효율적.\n\n---\n\n## 버전별 변화\n\n| 버전 | 핵심 개선 |\n|---|---|\n| **DreamerV1** (2020) | RSSM + imagination으로 Atari 등 벤치마크 입증 |\n| **DreamerV2** (2021) | Actor-Critic, KL balancing, discrete/continuous action 통합 |\n| **DreamerV3** (2023) | 하이퍼파라미터 거의 고정, 150+ 태스크 SOTA, **범용 RL** 지향 |\n\n---\n\n## Judea Pearl 3단계와의 연결\n\n| Pearl 단계 | Dreamer에서                                  |\n| -------- | ------------------------------------------ |\n| 1단계 (보기) | 관측 $o_t$로 상태 추정                            |\n| 2단계 (행동) | $a_t$ 개입 시 전이 모델로 $o_{t+1}$ 예측             |\n| 3단계 (상상) | 실제 행동 없이 imagination rollout → **반사실적 시뮬** |\n\n강화학습만으로는 3단계가 어렵지만, 월드모델을 에이전트 내부에 넣으면 imagination으로 접근 가능.\n\n---\n\n## 요약\n\n```\nDreamer = RSSM 월드모델 + 잠복 공간 Imagination + Actor-Critic\n\n학습:  실제 경험 → 월드모델(3손실) → 상상 rollout → 정책\n핵심:  픽셀 단위가 아닌 잠복 상태에서 \"꿈꾸며\" 학습\n목표:  적은 환경 상호작용으로 효율적 RL → AGI 방향의 world model\n```\n"
   },
   {

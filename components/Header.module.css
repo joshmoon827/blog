@@ -28,6 +28,17 @@
 }
 .logo:hover { opacity: 1; }
 
+.logoImg {
+  display: block;
+  width: 46px;
+  height: 38px;
+  object-fit: contain;
+}
+/* SVG is black; invert on dark theme so it tracks --text */
+:global([data-theme='dark']) .logoImg {
+  filter: invert(1);
+}
+
 .mobileLogo {
   position: relative;
   display: none;

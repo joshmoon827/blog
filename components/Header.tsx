@@ -20,22 +20,15 @@ const languageItems = [
 
 function LogoMark() {
   return (
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* O — outer ring */}
-      <circle cx="19" cy="19" r="17.5" stroke="currentColor" strokeWidth="1.3"/>
-      {/* H — left vertical */}
-      <line x1="12" y1="9" x2="12" y2="29" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      {/* H — right vertical */}
-      <line x1="26" y1="9" x2="26" y2="29" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      {/* S — starts/ends at center-x, arcs right then left symmetrically */}
-      <path
-        d="M19 10 C26 10 26 19 19 19 C12 19 12 28 19 28"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-      />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element -- theme via CSS filter; avoid next/image SVG quirks
+    <img
+      src="/blog-logo.svg"
+      alt=""
+      width={46}
+      height={38}
+      className={styles.logoImg}
+      draggable={false}
+    />
   )
 }
 
@@ -165,6 +158,27 @@ export default function Header() {
           {canWrite ? (
             <>
               <Link
+                href="/settings"
+                className={styles.writeLink}
+                aria-label="설정"
+                title="설정"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                  />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852 1.01 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+              <Link
                 href="/articles/new"
                 className={styles.writeLink}
                 aria-label="새 글 작성"
@@ -204,6 +218,25 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
+              {canWrite ? (
+                <>
+                  <li>
+                    <Link href="/settings" onClick={() => setMenuOpen(false)}>
+                      설정
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/articles/new" onClick={() => setMenuOpen(false)}>
+                      새 글
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/newrite" onClick={() => setMenuOpen(false)}>
+                      newrite
+                    </Link>
+                  </li>
+                </>
+              ) : null}
             </ul>
           </nav>
         </div>

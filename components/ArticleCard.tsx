@@ -178,7 +178,18 @@ export default function ArticleCard({ article, index, variant = 'default' }: Pro
     if (!ok) setTrashing(false)
   }
 
-  if (hidden) return null
+  if (hidden) {
+    // Keep the motion node mounted but inert — unmounting framer-motion
+    // articles mid-layout can throw removeChild on a null parent.
+    return (
+      <motion.article
+        className={styles.card}
+        style={{ display: 'none' }}
+        aria-hidden
+        initial={false}
+      />
+    )
+  }
 
   const showCircle = pressed && progress > 0.02
   const circleSize = circle.max * Math.max(progress, 0.04)
@@ -260,12 +271,13 @@ export default function ArticleCard({ article, index, variant = 'default' }: Pro
           aria-hidden
           draggable={false}
         >
-          <ImageCarousel
-            src={article.image}
-            alt={article.title}
-            aspectRatio={variant === 'wide' ? '3 / 1' : undefined}
-            priority={index < 3}
-          />
+        <ImageCarousel
+          src={article.image}
+          alt={article.title}
+          aspectRatio={variant === 'wide' ? '3 / 1' : undefined}
+          priority={index < 3}
+          edgeMatte
+        />
           {article.draft ? (
             <span className={styles.draftBadge}>임시저장</span>
           ) : null}

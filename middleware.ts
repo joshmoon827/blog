@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { AUTH_COOKIE, verifySessionToken } from '@/lib/auth-session'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
-const PROTECTED_PAGE_PREFIXES = ['/articles/new', '/newrite', '/drafts']
+const PROTECTED_PAGE_PREFIXES = ['/articles/new', '/newrite', '/drafts', '/settings']
 
 const PROTECTED_API_MUTATION_PREFIXES = [
   '/api/articles',
@@ -77,6 +77,8 @@ export const config = {
     '/login/:path*',
     '/drafts',
     '/drafts/:path*',
+    '/settings',
+    '/settings/:path*',
     '/articles/new',
     '/articles/new/:path*',
     '/newrite',

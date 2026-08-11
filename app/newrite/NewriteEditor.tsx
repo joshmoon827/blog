@@ -730,48 +730,7 @@ export default function NewriteEditor() {
       <TistoryMoreLessHydrate />
       <header className={styles.topBar}>
         <Link href="/" className={styles.brand} aria-label="Laws of UX 홈">
-          <span className={styles.brandMark} aria-hidden="true">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 38 38"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="19"
-                cy="19"
-                r="17.5"
-                stroke="currentColor"
-                strokeWidth="1.3"
-              />
-              <line
-                x1="12"
-                y1="9"
-                x2="12"
-                y2="29"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <line
-                x1="26"
-                y1="9"
-                x2="26"
-                y2="29"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <path
-                d="M19 10 C26 10 26 19 19 19 C12 19 12 28 19 28"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                fill="none"
-              />
-            </svg>
-          </span>
+          <span className={styles.brandMark} aria-hidden="true" />
         </Link>
         <NewriteToolbar
           editorRef={bodyRef}

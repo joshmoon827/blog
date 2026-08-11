@@ -1,6 +1,8 @@
 import type { Muya } from '@muyajs/core'
 
-import { coerceMuyaText } from '@/lib/muya/muyaPatches'
+import { coerceMuyaText, setMuyaBlockText } from '@/lib/muya/muyaPatches'
+
+export { setMuyaBlockText }
 
 /** Slash + optional filter (no spaces), same as Muya's quick-insert trigger. */
 export const QUICK_INSERT_TEXT_RE = /^[/、]\S*$/
@@ -16,7 +18,7 @@ export type ParagraphContentBlock = {
     replaceWith: (block: unknown) => unknown
     firstContentInDescendant: () => ParagraphContentBlock | null
     getState: () => { text?: string; meta?: { level?: number } }
-  }
+  } | null
   setCursor: (start: number, end: number, focus?: boolean) => void
   update: () => void
 }
@@ -37,12 +39,20 @@ function isFormFieldFocused(): boolean {
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
 }
 
+function asAttachedParagraph(
+  block: ParagraphContentBlock | null | undefined,
+): ParagraphContentBlock | null {
+  if (!block || block.blockName !== 'paragraph.content') return null
+  // Mid-deletion: activeContentBlock can linger after parent is cleared.
+  if (!block.parent) return null
+  return block
+}
+
 export function getParagraphContentBlock(muya: Muya): ParagraphContentBlock | null {
-  const active = muya.editor.activeContentBlock as ParagraphContentBlock | null
-  if (active?.blockName === 'paragraph.content') {
-    active.text = coerceMuyaText(active.text)
-    return active
-  }
+  const active = asAttachedParagraph(
+    muya.editor.activeContentBlock as ParagraphContentBlock | null,
+  )
+  if (active) return active
 
   const selection = muya.editor.selection.getSelection() as
     | {
@@ -51,13 +61,8 @@ export function getParagraphContentBlock(muya: Muya): ParagraphContentBlock | nu
       }
     | undefined
 
-  if (
-    selection?.isSelectionInSameBlock &&
-    selection.anchorBlock?.blockName === 'paragraph.content'
-  ) {
-    const block = selection.anchorBlock
-    block.text = coerceMuyaText(block.text)
-    return block
+  if (selection?.isSelectionInSameBlock) {
+    return asAttachedParagraph(selection.anchorBlock)
   }
 
   return null
@@ -119,7 +124,11 @@ export function clearSlashTrigger(muya: Muya): void {
   if (!block) return
   const text = coerceMuyaText(block.text)
   if (!QUICK_INSERT_TEXT_RE.test(text)) return
-  block.text = ''
-  block.setCursor(0, 0, true)
-  block.update()
+  if (!setMuyaBlockText(block, '')) return
+  try {
+    block.setCursor(0, 0, true)
+    block.update()
+  } catch {
+    /* block may be mid-teardown */
+  }
 }

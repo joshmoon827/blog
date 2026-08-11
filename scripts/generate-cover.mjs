@@ -33,6 +33,7 @@ import {
 } from "./lib/keywords.mjs";
 import { buildCoverPrompt } from "./lib/cover-prompt.mjs";
 import { patchCoverRightCorners } from "./lib/cover-postprocess.mjs";
+import { deriveToneOnTonePalette } from "./lib/cover-tone-palette.mjs";
 import {
   generateCoverViaGeminiCdp,
   redownloadCoverViaGeminiCdp,
@@ -583,6 +584,12 @@ async function main() {
   }
 
   const backgroundColor = resolveBackgroundColor();
+
+  // Author background locks the paint system: replace stock cover palette with
+  // tone-on-tone steps of that hue (prompt also enforces this).
+  const effectivePalette = backgroundColor
+    ? deriveToneOnTonePalette(backgroundColor, 5)
+    : paletteColors;
   const productRelated =
     process.env.COVER_PRODUCT_RELATED === "0"
       ? false
@@ -647,11 +654,17 @@ async function main() {
   if (additionalPrompt) {
     console.log("[generate-cover] additional prompt:", additionalPrompt.slice(0, 120));
   }
-  if (paletteColors.length) {
-    console.log("[generate-cover] palette:", paletteColors.join(", "));
+  if (effectivePalette.length) {
+    console.log("[generate-cover] palette:", effectivePalette.join(", "));
   }
   if (backgroundColor) {
     console.log("[generate-cover] background color:", backgroundColor);
+    if (paletteColors.length) {
+      console.log(
+        "[generate-cover] stock cover palette overridden by background tone-on-tone:",
+        paletteColors.join(", "),
+      );
+    }
   }
   console.log("[generate-cover] product-related:", productRelated);
   console.log("[generate-cover] swiss-modernist:", swissModernist);
@@ -690,7 +703,7 @@ async function main() {
     productRelated,
     swissModernist,
     authorReferenceCount: authorRefCount,
-    paletteColors,
+    paletteColors: effectivePalette,
     backgroundColor: backgroundColor || undefined,
   });
   console.log("[generate-cover] Step 2 prompt:\n---\n" + prompt + "\n---");

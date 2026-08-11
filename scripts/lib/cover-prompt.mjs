@@ -1,11 +1,16 @@
 /**
  * Build the Gemini cover-generation prompt from keywords + style instruction.
  *
- * Attached reference covers (random stock picks) define format + palette.
- * Do not rewrite site crop/display aspect ratios here — blog CSS handles display.
+ * Attached reference covers (random stock picks) define format + shape language.
+ * When the author picks a background hex, the WHOLE palette is rebuilt as
+ * tone-on-tone around that hex (stock cover colors are ignored for paint).
  */
 
 import { SWISS_MODERNIST_ART_DIRECTION } from "./cover-swiss-modernist.mjs";
+import {
+  deriveToneOnTonePalette,
+  normalizeCoverHex,
+} from "./cover-tone-palette.mjs";
 
 function buildStyle(theme) {
   const light =
@@ -58,28 +63,37 @@ export function buildCoverPrompt(keywords, opts = {}) {
 
   const authorRefCount = Number(opts.authorReferenceCount) || 0;
   const refCount = opts.referenceCount ?? 5;
+  const backgroundColor = normalizeCoverHex(opts.backgroundColor || "");
+
   const refLine =
     authorRefCount > 0
-      ? `The first ${authorRefCount} attached image(s) are AUTHOR references — prioritize their mood, composition cues, and color feeling. Remaining attached images are format/style refs only (not backgrounds).`
-      : refCount > 1
-        ? `Study all ${refCount} attached reference covers for shape style only — not their backgrounds.`
-        : "Study the attached reference cover(s) for shape style only — not their backgrounds.";
+      ? `The first ${authorRefCount} attached image(s) are AUTHOR references — prioritize their mood and composition cues` +
+        (backgroundColor
+          ? ", but NOT their colors (colors are locked to the author background tone-on-tone system)."
+          : ", and color feeling. Remaining attached images are format/style refs only (not backgrounds).")
+      : backgroundColor
+        ? `Study attached reference covers for shape language and layout only — IGNORE their colors and backgrounds. Paint only with the author tone-on-tone system below.`
+        : refCount > 1
+          ? `Study all ${refCount} attached reference covers for shape style only — not their backgrounds.`
+          : "Study the attached reference cover(s) for shape style only — not their backgrounds.";
 
-  const paletteColors = (Array.isArray(opts.paletteColors) ? opts.paletteColors : [])
-    .map((c) => String(c || "").trim())
-    .filter((c) => /^#?[0-9a-fA-F]{6}$/.test(c))
-    .map((c) => (c.startsWith("#") ? c.toLowerCase() : `#${c.toLowerCase()}`));
+  const stockPalette = (Array.isArray(opts.paletteColors) ? opts.paletteColors : [])
+    .map((c) => normalizeCoverHex(c))
+    .filter(Boolean);
 
-  const rawBg = String(opts.backgroundColor || "").trim();
-  const backgroundColor =
-    /^#?[0-9a-fA-F]{6}$/.test(rawBg)
-      ? rawBg.startsWith("#")
-        ? rawBg.toLowerCase()
-        : `#${rawBg.toLowerCase()}`
-      : "";
+  // Author background wins: rebuild the full paint set around that hue.
+  // Stock reference palettes must not fight the field color.
+  const paletteColors = backgroundColor
+    ? deriveToneOnTonePalette(backgroundColor, 5)
+    : stockPalette;
 
-  const paletteLine =
-    paletteColors.length > 0
+  const paletteLine = backgroundColor
+    ? `Colors: AUTHOR chose field color ${backgroundColor}. ` +
+      `The ENTIRE cover (background + every foreground shape) MUST be one tone-on-tone (톤 온 톤) system built only from: [${paletteColors.join(", ")}]. ` +
+      "Conceive the geometry for this hue from the start — lighter/darker/softer variants of the SAME color family only. " +
+      "FORBIDDEN: designing the motif in an unrelated palette (e.g. blue-gray shapes) and then swapping only the backdrop to the author color. " +
+      "No loud contrast hues; no colors outside this list."
+    : paletteColors.length > 0
       ? `Colors: MUST use ONLY this selected palette array (in order): [${paletteColors.join(", ")}]. ` +
         "Build a tone-on-tone (톤 온 톤) composition from these hex colors — same family, subtle value shifts only; " +
         "do not invent unrelated hues outside this list."
@@ -102,12 +116,10 @@ export function buildCoverPrompt(keywords, opts = {}) {
   const criticalNoTextLine =
     "**CRITICAL: Do NOT add any text, lettering, words, labels, captions, numbers, or typography to the image — absolutely no readable characters.**";
 
-  // Explicit author background hex wins over palette-derived background rules
-  // (additionalPrompt above still outranks everything on conflict).
   const backgroundLine = backgroundColor
-    ? `**BACKGROUND COLOR (AUTHOR SELECTED): The entire cover background MUST be one flat solid fill of exactly ${backgroundColor}. ` +
-      "No gradients, textures, patterns, photo backgrounds, or other hex values for the field. " +
-      "Foreground geometry may use the palette / tone-on-tone rules, but the backdrop itself is locked to this hex.**"
+    ? `**BACKGROUND + MOTIF UNITY: Field fill MUST be exactly ${backgroundColor} (flat solid — no gradients/textures/photos). ` +
+      "All motif fills/strokes MUST come from the tone-on-tone list above (same hue family). " +
+      "The picture must look like one designed color story, not a motif pasted onto a recolored backdrop.**"
     : paletteColors.length > 0
       ? `Background: MUST be one flat solid color chosen from the palette array [${paletteColors.join(", ")}] ` +
         "(no gradients, textures, patterns, or photo backgrounds)."

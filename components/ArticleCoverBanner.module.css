@@ -1,15 +1,33 @@
+/* Full-bleed matte strip — color reaches both viewport edges. */
 .banner {
   position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 7;
-  border-radius: 12px;
-  overflow: hidden;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: center;
   background: var(--surface-muted, #f0f0f0);
 }
 
 .bannerPadded {
-  /* side gutters use sampled corner color via inline backgroundColor */
+  /* side gutters beyond .frame use sampled color via inline backgroundColor */
+}
+
+/* Content column — matches article max-width minus horizontal padding. */
+.frame {
+  position: relative;
+  width: min(calc(1200px - 3rem), calc(100vw - 3rem));
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+}
+
+/* Landscape covers: image itself goes edge to edge. */
+.frameBleed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
 }
 
 .imgCover {
@@ -18,7 +36,7 @@
 }
 
 .imgPadded {
-  /* 10% left + 10% right gutters; contain so 1:1 is not cropped. */
+  /* 10% left + 10% right gutters inside the content frame; contain so 1:1 is not cropped. */
   object-fit: contain;
   object-position: center;
   left: 10% !important;
@@ -27,7 +45,8 @@
 }
 
 @media (max-width: 640px) {
-  .banner {
+  .frame,
+  .frameBleed {
     aspect-ratio: 4 / 3;
   }
 }

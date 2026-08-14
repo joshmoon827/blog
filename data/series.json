@@ -1,0 +1,65 @@
+{
+  "layout": {
+    "columns": 2,
+    "featuredFirst": false
+  },
+  "series": [
+    {
+      "slug": "cloud",
+      "title": "클라우드",
+      "description": "인프라, 컨테이너, 클라우드 운영과 보안.",
+      "coverImage": "/images/choice-overload.jpg",
+      "matchTags": [
+        "cloud",
+        "docker",
+        "openstack",
+        "k8s",
+        "kubernetes",
+        "devops",
+        "security",
+        "supply-chain",
+        "infrastructure",
+        "네트워크",
+        "클라우드"
+      ]
+    },
+    {
+      "slug": "opensource",
+      "title": "오픈소스",
+      "description": "오픈소스 도구, 런타임, 개발 환경.",
+      "coverImage": "/images/law-of-proximity.jpg",
+      "matchTags": [
+        "oss",
+        "open-source",
+        "opensource",
+        "javascript",
+        "v8",
+        "obsidian",
+        "tools",
+        "cli",
+        "cursor",
+        "acp",
+        "ide",
+        "오픈소스"
+      ]
+    },
+    {
+      "slug": "ai",
+      "title": "AI",
+      "description": "LLM, 에이전트, 학습과 프롬프트.",
+      "coverImage": "/images/millers-law.jpg",
+      "matchTags": [
+        "ai",
+        "llm",
+        "rag",
+        "prompt",
+        "agent",
+        "agi",
+        "world-model",
+        "rl",
+        "아이디어",
+        "ai-separation"
+      ]
+    }
+  ]
+}

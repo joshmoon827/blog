@@ -1,0 +1,52 @@
+.stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #0b0b10;
+}
+
+.stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer;
+}
+
+.fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #1a1a22 0%, #0b0b10 45%, #161820 100%);
+}
+
+.caption {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.1rem;
+  z-index: 2;
+  pointer-events: none;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.captionKicker {
+  margin: 0 0 0.2rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.captionTitle {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+@media (max-width: 640px) {
+  .caption {
+    left: 0.9rem;
+    bottom: 0.8rem;
+  }
+}

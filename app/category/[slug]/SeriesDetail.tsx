@@ -1,10 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Article } from '@/data/articles'
+import ArticleCoverBanner from '@/components/ArticleCoverBanner'
 import { imageFilesFromDataTransfer } from '@/components/CoverReferencePhotos'
 import { LocalizedArticleCount } from '@/components/LocalizedText'
 import SeriesArticleList from '@/components/SeriesArticleList'
@@ -54,6 +54,12 @@ export default function SeriesDetail({
   const [addSlug, setAddSlug] = useState('')
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [coverPrompt, setCoverPrompt] = useState('')
+  const [coverStatus, setCoverStatus] = useState<
+    'idle' | 'running' | 'success' | 'error' | 'cancelled'
+  >('idle')
+  const [coverMessage, setCoverMessage] = useState('')
+  const pollRef = useRef<number | null>(null)
 
   useEffect(() => {
     setSeries(initial)
@@ -143,6 +149,108 @@ export default function SeriesDetail({
     [router, series.slug],
   )
 
+  const stopCoverPoll = useCallback(() => {
+    if (pollRef.current != null) {
+      window.clearInterval(pollRef.current)
+      pollRef.current = null
+    }
+  }, [])
+
+  const applyCoverFromJob = useCallback(
+    (image: string | null | undefined) => {
+      if (!image) return
+      setCoverImage(image)
+      setSeries((cur) => ({ ...cur, coverImage: image }))
+    },
+    [],
+  )
+
+  const pollCoverJob = useCallback(async () => {
+    const res = await fetch(
+      `/api/generate-cover?slug=${encodeURIComponent(series.slug)}&target=category`,
+      { cache: 'no-store' },
+    )
+    const data = (await res.json()) as {
+      status?: string
+      image?: string | null
+      publicUrl?: string | null
+      error?: string | null
+    }
+    const status = data.status || 'idle'
+    if (status === 'success') {
+      stopCoverPoll()
+      setCoverStatus('success')
+      setCoverMessage('표지 생성 완료')
+      applyCoverFromJob(data.publicUrl || data.image)
+      router.refresh()
+    } else if (status === 'error' || status === 'cancelled') {
+      stopCoverPoll()
+      setCoverStatus(status)
+      setCoverMessage(data.error || (status === 'cancelled' ? '취소됨' : '표지 생성 실패'))
+    } else if (status === 'running') {
+      setCoverStatus('running')
+    }
+  }, [applyCoverFromJob, router, series.slug, stopCoverPoll])
+
+  const startCoverPoll = useCallback(() => {
+    stopCoverPoll()
+    void pollCoverJob()
+    pollRef.current = window.setInterval(() => {
+      void pollCoverJob()
+    }, 2500)
+  }, [pollCoverJob, stopCoverPoll])
+
+  useEffect(() => {
+    return () => stopCoverPoll()
+  }, [stopCoverPoll])
+
+  const generatingCover = coverStatus === 'running'
+
+  const startCategoryCover = async () => {
+    setCoverStatus('running')
+    setCoverMessage('표지 생성을 백그라운드에서 시작합니다…')
+    try {
+      const res = await fetch('/api/generate-cover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: series.slug,
+          target: 'category',
+          force: true,
+          background: true,
+          additionalPrompt: coverPrompt.trim() || undefined,
+          cover:
+            coverImage &&
+            !coverImage.includes('/images/generated/') &&
+            !coverImage.includes('/images/category/')
+              ? coverImage
+              : undefined,
+        }),
+      })
+      const data = (await res.json()) as { error?: string }
+      if (!res.ok) throw new Error(data.error || `시작 실패 (${res.status})`)
+      setCoverMessage('표지 생성 중… (Cursor CLI + CDP Chrome)')
+      startCoverPoll()
+    } catch (e) {
+      setCoverStatus('error')
+      setCoverMessage(e instanceof Error ? e.message : '표지 생성 시작 실패')
+    }
+  }
+
+  const cancelCategoryCover = async () => {
+    try {
+      await fetch(
+        `/api/generate-cover?slug=${encodeURIComponent(series.slug)}&target=category`,
+        { method: 'DELETE' },
+      )
+    } catch {
+      /* ignore */
+    }
+    setCoverStatus('cancelled')
+    setCoverMessage('표지 생성을 취소했습니다.')
+    stopCoverPoll()
+  }
+
   const saveMeta = async () => {
     const ok = await persist({
       title,
@@ -214,13 +322,11 @@ export default function SeriesDetail({
     <>
       <section className={styles.hero}>
         <div className={styles.cover}>
-          <Image
+          <ArticleCoverBanner
             src={editing ? coverImage : series.coverImage}
             alt=""
-            fill
-            sizes="100vw"
-            className={styles.coverImg}
             priority
+            fillParent
           />
           <div className={styles.coverScrim} />
           <div className={styles.coverMeta}>
@@ -341,6 +447,41 @@ export default function SeriesDetail({
                   URL 적용
                 </button>
               </div>
+              <label className={styles.field}>
+                <span>표지 생성 추가 프롬프트 (선택)</span>
+                <textarea
+                  value={coverPrompt}
+                  onChange={(e) => setCoverPrompt(e.target.value)}
+                  rows={2}
+                  placeholder="카테고리 분위기·키워드를 표지 생성에 반영"
+                  disabled={saving || generatingCover}
+                />
+              </label>
+              <div className={styles.coverGenRow}>
+                <button
+                  type="button"
+                  className={styles.btnPrimary}
+                  disabled={saving || generatingCover}
+                  onClick={() => void startCategoryCover()}
+                >
+                  {generatingCover ? '표지 생성 중…' : '표지 생성'}
+                </button>
+                {generatingCover ? (
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    disabled={saving}
+                    onClick={() => void cancelCategoryCover()}
+                  >
+                    생성 취소
+                  </button>
+                ) : null}
+              </div>
+              {coverMessage ? (
+                <p className={styles.coverGenStatus} role="status">
+                  {coverMessage}
+                </p>
+              ) : null}
             </div>
             <p className={styles.stockLabel}>테스트용 기본 표지</p>
             <div className={styles.stockGrid}>

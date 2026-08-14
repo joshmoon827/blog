@@ -115,6 +115,14 @@ function writeJob(slug: string, data: Record<string, unknown>) {
   return next
 }
 
+function jobKey(slug: string, target: 'article' | 'category') {
+  return target === 'category' ? `category__${slug}` : slug
+}
+
+function parseTarget(raw: string | null | undefined): 'article' | 'category' {
+  return raw === 'category' ? 'category' : 'article'
+}
+
 function readArticleImage(slug: string): string | null {
   const db = path.join(process.cwd(), 'data', 'articles.local.json')
   if (!existsSync(db)) return null
@@ -129,6 +137,23 @@ function readArticleImage(slug: string): string | null {
   }
 }
 
+function readCategoryCover(slug: string): string | null {
+  const db = path.join(process.cwd(), 'data', 'category.json')
+  if (!existsSync(db)) return null
+  try {
+    const file = JSON.parse(readFileSync(db, 'utf8')) as {
+      series?: Array<{ slug: string; coverImage?: string }>
+    }
+    return file.series?.find((s) => s.slug === slug)?.coverImage ?? null
+  } catch {
+    return null
+  }
+}
+
+function readCoverImage(slug: string, target: 'article' | 'category') {
+  return target === 'category' ? readCategoryCover(slug) : readArticleImage(slug)
+}
+
 /**
  * GET /api/generate-cover?slug=…
  * Poll background job status (and current article.image).
@@ -139,14 +164,19 @@ export async function GET(req: NextRequest) {
   if (!slug) {
     return NextResponse.json({ error: 'slug is required' }, { status: 400 })
   }
+  const target = parseTarget(req.nextUrl.searchParams.get('target'))
+  const key = jobKey(slug, target)
 
-  let job = readJob(slug)
+  let job = readJob(key)
   if (job?.status === 'running') {
-    job = healStaleRunningCoverJob(slug, job) as Record<string, unknown> | null
+    job = healStaleRunningCoverJob(key, job) as Record<string, unknown> | null
   }
-  const image = readArticleImage(slug)
+  const image = readCoverImage(slug, target)
   const generated =
-    typeof image === 'string' && image.includes('/images/generated/')
+    typeof image === 'string' &&
+    (target === 'category'
+      ? image.includes('/images/category/')
+      : image.includes('/images/generated/'))
 
   if (!job) {
     return NextResponse.json({
@@ -218,8 +248,10 @@ export async function DELETE(req: NextRequest) {
   if (!slug) {
     return NextResponse.json({ error: 'slug is required' }, { status: 400 })
   }
+  const target = parseTarget(req.nextUrl.searchParams.get('target'))
+  const key = jobKey(slug, target)
 
-  const result = cancelCoverJob(slug) as {
+  const result = cancelCoverJob(key) as {
     ok: boolean
     slug: string
     status: string
@@ -271,6 +303,7 @@ export async function POST(req: NextRequest) {
 
   let body: {
     slug?: string
+    target?: 'article' | 'category'
     cover?: string
     theme?: 'dark' | 'light'
     force?: boolean
@@ -298,10 +331,12 @@ export async function POST(req: NextRequest) {
   if (!slug) {
     return NextResponse.json({ error: 'slug is required' }, { status: 400 })
   }
+  const target = parseTarget(body.target)
+  const key = jobKey(slug, target)
 
   const background = body.background !== false && body.keywordsOnly !== true
   const mode = body.mode === 'redownload' ? 'redownload' : 'generate'
-  const prevJob = readJob(slug)
+  const prevJob = readJob(key)
   // Reuse last saved additional prompt on regenerate when the client omits/empties it.
   let additionalPrompt = body.additionalPrompt?.trim() || ''
   if (!additionalPrompt && mode === 'generate') {
@@ -375,6 +410,7 @@ export async function POST(req: NextRequest) {
 
   const script = path.join(process.cwd(), 'scripts', 'generate-cover.mjs')
   const args = [script, '--slug', slug]
+  if (target === 'category') args.push('--target', 'category')
   if (body.cover) args.push('--cover', body.cover)
   if (body.theme === 'dark' || body.theme === 'light') {
     args.push('--theme', body.theme)
@@ -390,7 +426,7 @@ export async function POST(req: NextRequest) {
 
   let savedExtraRefs: string[] = []
   try {
-    savedExtraRefs = saveAuthorReferenceImages(slug, body.referenceImages)
+    savedExtraRefs = saveAuthorReferenceImages(key, body.referenceImages)
     for (const abs of savedExtraRefs) {
       args.push('--extra-ref', abs)
     }
@@ -403,7 +439,7 @@ export async function POST(req: NextRequest) {
     // Heal zombies before the already-running gate (dead PID must not block).
     let existing = prevJob
     if (existing?.status === 'running') {
-      existing = healStaleRunningCoverJob(slug, existing) as Record<
+      existing = healStaleRunningCoverJob(key, existing) as Record<
         string,
         unknown
       > | null
@@ -424,7 +460,7 @@ export async function POST(req: NextRequest) {
     }
 
     mkdirSync(LOGS_DIR, { recursive: true })
-    const safe = slug.replace(/[^a-z0-9가-힣_-]+/gi, '-')
+    const safe = key.replace(/[^a-z0-9가-힣_-]+/gi, '-')
     const logFile = path.join(LOGS_DIR, `${safe}.log`)
     const outFd = openSync(logFile, 'a')
     const errFd = openSync(logFile, 'a')
@@ -440,7 +476,7 @@ export async function POST(req: NextRequest) {
       typeof prevJob?.backgroundColor === 'string'
         ? prevJob.backgroundColor
         : null
-    writeJob(slug, {
+    writeJob(key, {
       status: 'running',
       mode,
       cover: body.cover || null,
@@ -455,7 +491,7 @@ export async function POST(req: NextRequest) {
       productRelated: body.productRelated !== false,
       swissModernist: body.swissModernist !== false,
       extraRefs: savedExtraRefs.map((p) => path.basename(p)),
-      imageAtStart: readArticleImage(slug),
+      imageAtStart: readCoverImage(slug, target),
       startedAt: new Date().toISOString(),
       finishedAt: null,
       error: null,
@@ -468,14 +504,14 @@ export async function POST(req: NextRequest) {
       cwd: process.cwd(),
       env: {
         ...process.env,
-        COVER_JOB_SLUG: slug,
-        COVER_JOB_FILE: jobPath(slug),
+        COVER_JOB_SLUG: key,
+        COVER_JOB_FILE: jobPath(key),
       },
       detached: true,
       stdio: ['ignore', outFd, errFd],
     })
 
-    writeJob(slug, { pid: child.pid ?? null })
+    writeJob(key, { pid: child.pid ?? null })
     child.unref()
 
     return NextResponse.json({

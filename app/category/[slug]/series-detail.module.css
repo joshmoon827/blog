@@ -216,6 +216,18 @@
   gap: 0.55rem;
 }
 
+.coverGenRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.coverGenStatus {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
 .urlRow {
   display: flex;
   flex-wrap: wrap;

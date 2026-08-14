@@ -44,6 +44,21 @@
   width: 80% !important;
 }
 
+.bannerFlush {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.bannerFlush .frame,
+.bannerFlush .frameBleed {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
 @media (max-width: 640px) {
   .frame,
   .frameBleed {

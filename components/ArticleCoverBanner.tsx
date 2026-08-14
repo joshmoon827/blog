@@ -8,6 +8,8 @@ type Props = {
   src: string
   alt: string
   priority?: boolean
+  /** Fill a parent frame (category hero) instead of the article 16/7 strip. */
+  fillParent?: boolean
 }
 
 /** Treat as square-ish when width/height is below this (banner is ~2.29). */
@@ -100,7 +102,12 @@ function probeCoverImage(src: string): Promise<ImageProbe | null> {
   })
 }
 
-export default function ArticleCoverBanner({ src, alt, priority }: Props) {
+export default function ArticleCoverBanner({
+  src,
+  alt,
+  priority,
+  fillParent = false,
+}: Props) {
   const [padColor, setPadColor] = useState<string | null>(null)
   const [padded, setPadded] = useState(false)
 
@@ -124,7 +131,7 @@ export default function ArticleCoverBanner({ src, alt, priority }: Props) {
 
   return (
     <div
-      className={`${styles.banner} ${padded ? styles.bannerPadded : ''}`}
+      className={`${styles.banner} ${padded ? styles.bannerPadded : ''} ${fillParent ? styles.bannerFlush : ''}`}
       style={padColor ? { backgroundColor: padColor } : undefined}
     >
       <div className={padded ? styles.frame : styles.frameBleed}>

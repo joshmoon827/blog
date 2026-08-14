@@ -73,8 +73,10 @@ function installCancelSignalHandlers() {
 installCancelSignalHandlers();
 
 const DB_PATH = join(BLOG_ROOT, "data", "articles.local.json");
+const CATEGORY_PATH = join(BLOG_ROOT, "data", "category.json");
 const PUBLIC_IMAGES = join(BLOG_ROOT, "public", "images");
 const GENERATED_DIR = join(PUBLIC_IMAGES, "generated");
+const CATEGORY_COVER_DIR = join(PUBLIC_IMAGES, "category");
 
 function printHelp() {
   console.log(`Usage:
@@ -88,6 +90,7 @@ function printHelp() {
 
 Options:
   --slug <slug>       Load article from data/articles.local.json
+  --target <article|category>  What --slug refers to (default: article)
   --file <path>       Read markdown file (optional YAML frontmatter)
   --stdin             Read body from stdin
   --title <text>      Override title (with --file / --stdin)
@@ -115,6 +118,7 @@ Options:
 function parseArgs(argv) {
   const args = {
     slug: null,
+    target: "article",
     file: null,
     stdin: false,
     title: null,
@@ -150,6 +154,14 @@ function parseArgs(argv) {
       case "--slug":
         args.slug = next();
         break;
+      case "--target": {
+        const t = next().toLowerCase();
+        if (t !== "article" && t !== "category") {
+          throw new Error(`--target must be article|category, got: ${t}`);
+        }
+        args.target = t;
+        break;
+      }
       case "--file":
         args.file = next();
         break;
@@ -288,6 +300,37 @@ function loadArticleBySlug(slug) {
   return { article, all };
 }
 
+function loadCategoryBySlug(slug) {
+  if (!existsSync(CATEGORY_PATH)) {
+    throw new Error(`Missing ${CATEGORY_PATH}`);
+  }
+  const file = JSON.parse(readFileSync(CATEGORY_PATH, "utf8"));
+  const list = Array.isArray(file?.series) ? file.series : [];
+  const series = list.find((s) => s.slug === slug);
+  if (!series) throw new Error(`Category not found: ${slug}`);
+  return { series, file };
+}
+
+function categorySourceBody(series) {
+  const parts = [series.description || ""];
+  const slugs = Array.isArray(series.articleSlugs) ? series.articleSlugs : [];
+  if (slugs.length && existsSync(DB_PATH)) {
+    try {
+      const articles = JSON.parse(readFileSync(DB_PATH, "utf8"));
+      const bySlug = new Map(articles.map((a) => [a.slug, a]));
+      for (const slug of slugs) {
+        const article = bySlug.get(slug);
+        if (!article) continue;
+        parts.push(article.title || "");
+        parts.push(article.description || "");
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return parts.filter(Boolean).join("\n\n");
+}
+
 function isGeneratedCoverPath(p) {
   const n = String(p || "").replace(/\\/g, "/");
   return n.includes("/images/generated/") || n.includes("/generated/");
@@ -418,9 +461,12 @@ function resolveCoverPath(coverArg, articleImage) {
   return resolved;
 }
 
-function defaultOutPath(slug) {
+function defaultOutPath(slug, target = "article") {
   const safe = (slug || "cover").replace(/[^a-z0-9가-힣_-]+/gi, "-");
   const ts = new Date().toISOString().replace(/[:.]/g, "-");
+  if (target === "category") {
+    return join(CATEGORY_COVER_DIR, `${safe}-${ts}.png`);
+  }
   return join(GENERATED_DIR, `${safe}-${ts}.png`);
 }
 
@@ -440,19 +486,32 @@ function updateArticleImage(slug, imageUrl) {
   writeFileSync(DB_PATH, JSON.stringify(all, null, 2) + "\n", "utf8");
 }
 
+function updateCategoryCover(slug, imageUrl) {
+  const { file } = loadCategoryBySlug(slug);
+  const list = Array.isArray(file.series) ? file.series : [];
+  const idx = list.findIndex((s) => s.slug === slug);
+  if (idx < 0) throw new Error(`Category not found: ${slug}`);
+  list[idx] = { ...list[idx], coverImage: imageUrl };
+  writeFileSync(
+    CATEGORY_PATH,
+    JSON.stringify({ ...file, series: list }, null, 2) + "\n",
+    "utf8",
+  );
+}
+
 function resolveRedownloadOutPath(slug, args) {
   if (args.out) return resolve(args.out);
-  const prevJob = slug ? readCoverJob(slug) : null;
+  const prevJob = slug ? readCoverJob(process.env.COVER_JOB_SLUG || slug) : null;
   if (
     typeof prevJob?.savedPath === "string" &&
     existsSync(prevJob.savedPath)
   ) {
     return resolve(prevJob.savedPath);
   }
-  return defaultOutPath(slug || "cover");
+  return defaultOutPath(slug || "cover", args.target);
 }
 
-async function finalizeSavedCover({ slug, result, patchJob = {} }) {
+async function finalizeSavedCover({ slug, result, patchJob = {}, target = "article" }) {
   if (result.savedPath && existsSync(result.savedPath)) {
     try {
       const patch = await patchCoverRightCorners(result.savedPath);
@@ -481,8 +540,13 @@ async function finalizeSavedCover({ slug, result, patchJob = {} }) {
         `표지 파일이 디스크에 없습니다: ${result.savedPath || "(empty)"}`
       );
     }
-    updateArticleImage(slug, publicUrl);
-    console.log("[generate-cover] updated article.image →", publicUrl);
+    if (target === "category") {
+      updateCategoryCover(slug, publicUrl);
+      console.log("[generate-cover] updated category.coverImage →", publicUrl);
+    } else {
+      updateArticleImage(slug, publicUrl);
+      console.log("[generate-cover] updated article.image →", publicUrl);
+    }
   }
 
   updateJob({
@@ -517,6 +581,7 @@ async function runRedownloadFlow({ args, slug }) {
     slug,
     result,
     patchJob: { mode: "redownload" },
+    target: args.target,
   });
 
   if (!publicUrl) {
@@ -553,13 +618,19 @@ async function main() {
     return;
   }
 
-  const additionalPrompt =
+  const additionalPrompt = [
+    args.target === "category"
+      ? "This cover is for a blog category folder, not a single article. Emphasize the series theme."
+      : "",
     (
       args.additionalPrompt ||
       process.env.COVER_ADDITIONAL_PROMPT ||
       process.env.COVER_EXTRA_PROMPT ||
       ""
-    ).trim() || null;
+    ).trim(),
+  ]
+    .filter(Boolean)
+    .join("\n") || null;
 
   /** Resolve selected cover palette: CLI --palette > env > cover-palettes.json by cover path. */
   function resolvePaletteColors() {
@@ -631,7 +702,14 @@ async function main() {
   let slug = args.slug || null;
   let articleImage = null;
 
-  if (args.slug) {
+  if (args.slug && args.target === "category") {
+    const { series } = loadCategoryBySlug(args.slug);
+    title = args.title ?? series.title ?? "";
+    description = args.description ?? series.description ?? "";
+    body = categorySourceBody(series);
+    articleImage = series.coverImage || null;
+    slug = series.slug;
+  } else if (args.slug) {
     const { article } = loadArticleBySlug(args.slug);
     title = args.title ?? article.title ?? "";
     description = args.description ?? article.description ?? "";
@@ -755,7 +833,8 @@ async function main() {
     return;
   }
 
-  const outPath = resolve(args.out || defaultOutPath(slug || "cover"));
+  const outPath = resolve(args.out || defaultOutPath(slug || "cover", args.target));
+  mkdirSync(dirname(outPath), { recursive: true });
 
   if (existsSync(outPath) && !args.force) {
     throw new Error(`Output exists (use --force): ${outPath}`);
@@ -780,6 +859,7 @@ async function main() {
     ({ publicUrl } = await finalizeSavedCover({
       slug: args.slug,
       result,
+      target: args.target,
       patchJob: {
         mode: "generate",
         attach: result.attach || null,

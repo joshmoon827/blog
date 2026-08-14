@@ -8,7 +8,7 @@
       "slug": "cloud",
       "title": "클라우드",
       "description": "인프라, 컨테이너, 클라우드 운영과 보안.",
-      "coverImage": "/images/choice-overload.jpg",
+      "coverImage": "/images/category/cloud-2026-08-14T10-33-51-070Z.png",
       "matchTags": [
         "cloud",
         "docker",
@@ -23,8 +23,7 @@
       ],
       "articleSlugs": [
         "v8",
-        "supply-chain-attack",
-        "docker-openstack"
+        "supply-chain-attack"
       ]
     },
     {

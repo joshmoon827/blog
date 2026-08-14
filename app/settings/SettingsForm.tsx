@@ -94,6 +94,61 @@ export default function SettingsForm({
   const [randomEnabled, setRandomEnabled] = useState(initialRandomEnabled)
   const [seriesModeError, setSeriesModeError] = useState<string | null>(null)
   const [savingMode, startSaveMode] = useTransition()
+  const [settingsDirty, setSettingsDirty] = useState(false)
+  const [pushingSettings, setPushingSettings] = useState(false)
+  const [settingsGitError, setSettingsGitError] = useState<string | null>(null)
+  const [settingsGitOk, setSettingsGitOk] = useState(false)
+
+  async function refreshSettingsDirty() {
+    try {
+      const res = await fetch('/api/settings-git', { credentials: 'same-origin' })
+      const data = (await res.json().catch(() => null)) as {
+        dirty?: boolean
+        error?: string
+      } | null
+      if (!res.ok) {
+        setSettingsDirty(false)
+        return
+      }
+      setSettingsDirty(Boolean(data?.dirty))
+    } catch {
+      setSettingsDirty(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!canWrite) return
+    void refreshSettingsDirty()
+    const timer = window.setInterval(() => {
+      void refreshSettingsDirty()
+    }, 4000)
+    return () => window.clearInterval(timer)
+  }, [canWrite, savingMode])
+
+  async function pushSettings() {
+    if (!settingsDirty || pushingSettings) return
+    setPushingSettings(true)
+    setSettingsGitError(null)
+    setSettingsGitOk(false)
+    try {
+      const res = await fetch('/api/settings-git', {
+        method: 'POST',
+        credentials: 'same-origin',
+      })
+      const data = (await res.json().catch(() => null)) as { error?: string } | null
+      if (!res.ok) {
+        setSettingsGitError(data?.error || '설정을 올리지 못했습니다.')
+        return
+      }
+      setSettingsDirty(false)
+      setSettingsGitOk(true)
+    } catch {
+      setSettingsGitError('설정을 올리지 못했습니다.')
+    } finally {
+      setPushingSettings(false)
+      void refreshSettingsDirty()
+    }
+  }
 
   useEffect(() => {
     if (loading) return
@@ -403,6 +458,25 @@ export default function SettingsForm({
         {seriesModeError ? (
           <p className={styles.modeError} role="alert">
             {seriesModeError}
+          </p>
+        ) : null}
+
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.gitPushBtn}
+            disabled={!settingsDirty || pushingSettings}
+            onClick={() => void pushSettings()}
+          >
+            {pushingSettings ? '올리는 중…' : '설정 커밋·푸시'}
+          </button>
+          {settingsGitOk && !settingsDirty ? (
+            <span className={styles.gitPushOk}>올렸습니다</span>
+          ) : null}
+        </div>
+        {settingsGitError ? (
+          <p className={styles.modeError} role="alert">
+            {settingsGitError}
           </p>
         ) : null}
 

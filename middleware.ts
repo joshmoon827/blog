@@ -13,6 +13,7 @@ const PROTECTED_API_MUTATION_PREFIXES = [
   '/api/mosaic-presets',
   '/api/home-series-mode',
   '/api/category',
+  '/api/settings-git',
 ]
 
 function authoringOn(req: NextRequest) {
@@ -105,5 +106,7 @@ export const config = {
     '/api/home-series-mode/:path*',
     '/api/category',
     '/api/category/:path*',
+    '/api/settings-git',
+    '/api/settings-git/:path*',
   ],
 }

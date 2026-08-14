@@ -295,6 +295,31 @@
   background: color-mix(in srgb, var(--text) 7%, transparent);
 }
 
+.gitPushBtn {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--text);
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--bg, #fff);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gitPushBtn:disabled {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.gitPushOk {
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--success, #26cf88);
+}
+
 @media (min-width: 720px) {
   .experimentBlock .modeSwitch {
     grid-template-columns: repeat(3, 1fr);

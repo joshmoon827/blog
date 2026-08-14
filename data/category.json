@@ -30,7 +30,7 @@
       "slug": "opensource",
       "title": "오픈소스",
       "description": "오픈소스 도구, 런타임, 개발 환경.",
-      "coverImage": "/images/law-of-proximity.jpg",
+      "coverImage": "/images/category/opensource-2026-08-14T11-29-48-774Z.png",
       "matchTags": [
         "oss",
         "open-source",
@@ -44,13 +44,21 @@
         "acp",
         "ide",
         "오픈소스"
+      ],
+      "articleSlugs": [
+        "블로그-탐방",
+        "obsidian-base-or-dataview-gui",
+        "obsidian",
+        "amaze-x3",
+        "22cursor-cli",
+        "agent-client-protocol-acp"
       ]
     },
     {
       "slug": "ai",
       "title": "AI",
       "description": "LLM, 에이전트, 학습과 프롬프트.",
-      "coverImage": "/images/millers-law.jpg",
+      "coverImage": "/images/category/ai-2026-08-14T11-32-23-570Z.png",
       "matchTags": [
         "ai",
         "llm",
@@ -62,6 +70,12 @@
         "rl",
         "아이디어",
         "ai-separation"
+      ],
+      "articleSlugs": [
+        "article-mrei1cde",
+        "dreamer",
+        "agi",
+        "22cursor-cli"
       ]
     },
     {

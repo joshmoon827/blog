@@ -3,12 +3,10 @@
   "randomEnabled": true,
   "randomPool": [
     "gsap-scatter",
-    "warp",
     "pretext",
     "gsap-columns",
     "gsap-wave",
     "gsap-slices",
-    "gsap-flip",
-    "liquid"
+    "gsap-flip"
   ]
 }

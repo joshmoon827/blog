@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
 import { siteConfig } from '@/lib/siteConfig'
+import { JsonLd } from '@/lib/jsonLd'
 import ArticleView from './ArticleView'
 
 /** Local JSON changes at runtime; Unicode slugs break static param matching. */
@@ -105,10 +106,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
-      />
+      <JsonLd data={blogPostingJsonLd} />
       <Suspense fallback={null}>
         <ArticleView article={article} />
       </Suspense>

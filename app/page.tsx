@@ -34,11 +34,18 @@ export const metadata: Metadata = {
     siteName: siteConfig.siteName,
     locale: 'ko_KR',
     type: 'website',
+    images: [
+      {
+        url: `${siteConfig.siteUrl}/blog-logo.svg`,
+        alt: siteConfig.siteName,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: `Articles | ${siteConfig.siteName}`,
     description: getDefaultDescription('ko'),
+    images: [`${siteConfig.siteUrl}/blog-logo.svg`],
   },
 }
 

@@ -6,6 +6,7 @@ import PageTransition from '@/components/PageTransition'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import { AuthProvider } from '@/components/AuthProvider'
 import { siteConfig, getDefaultDescription } from '@/lib/siteConfig'
+import { JsonLd } from '@/lib/jsonLd'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -39,13 +40,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="ko" data-theme="dark">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-      </head>
       <body>
+        <JsonLd data={websiteJsonLd} />
         <AuthProvider>
           <ServiceWorkerRegistrar />
           <a className="skip-link" href="#main">Skip to main content</a>

@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary',
       title: `${detail.title} | ${siteConfig.siteName}`,
       description: detail.description,
+      images: [imageUrl],
     },
   }
 }

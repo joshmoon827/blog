@@ -11,7 +11,6 @@ import {
 import { unauthorizedIfGuest } from '@/lib/requireAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
-export const runtime = 'nodejs'
 
 /** GET /api/home-series-mode */
 export async function GET() {

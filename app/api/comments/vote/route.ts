@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { voteComment } from '@/lib/commentsStore'
 
-export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest) {
   let body: {

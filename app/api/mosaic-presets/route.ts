@@ -8,7 +8,6 @@ import {
 import { unauthorizedIfGuest } from '@/lib/requireAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
-export const runtime = 'nodejs'
 
 /** GET /api/mosaic-presets — list reusable mosaic layouts. */
 export async function GET() {

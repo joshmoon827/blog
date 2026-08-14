@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { getDraftArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const metadata = {
   title: '임시저장 | josh log',
 }

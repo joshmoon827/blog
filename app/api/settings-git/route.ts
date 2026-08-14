@@ -3,7 +3,6 @@ import { unauthorizedIfGuest } from '@/lib/requireAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import { settingsGitStatus } from '@/lib/settingsGit.server'
 
-export const runtime = 'nodejs'
 
 async function deny(req: NextRequest) {
   if (!isAuthoringEnabled(req.nextUrl.hostname)) {

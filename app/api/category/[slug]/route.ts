@@ -10,7 +10,6 @@ import {
   validateImageFile,
 } from '@/lib/githubImageUpload'
 
-export const runtime = 'nodejs'
 
 type Ctx = { params: Promise<{ slug: string }> }
 

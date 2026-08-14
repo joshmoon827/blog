@@ -11,7 +11,6 @@ import {
 import { unauthorizedIfGuest } from '@/lib/requireAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 
-export const runtime = 'nodejs'
 
 /** GET /api/mosaic-pattern — public read of the home mosaic layout. */
 export async function GET() {

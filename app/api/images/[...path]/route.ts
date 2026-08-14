@@ -5,7 +5,6 @@ import {
   sanitizeImageObjectPath,
 } from '@/lib/githubImageUpload'
 
-export const runtime = 'nodejs'
 
 /**
  * GET /api/images/{path}

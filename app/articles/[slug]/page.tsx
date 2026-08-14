@@ -3,6 +3,10 @@ import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
 import ArticleView from './ArticleView'
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 function resolveSlug(raw: string): string {
   let slug = raw
   try {

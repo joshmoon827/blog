@@ -6,7 +6,6 @@ import {
   MAX_IMAGE_BYTES,
 } from '@/lib/githubImageUpload'
 
-export const runtime = 'nodejs'
 
 /**
  * POST /api/upload-image

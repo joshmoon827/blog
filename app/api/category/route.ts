@@ -18,7 +18,6 @@ import {
   validateImageFile,
 } from '@/lib/githubImageUpload'
 
-export const runtime = 'nodejs'
 
 async function coverFromFormFile(file: File, slugHint: string) {
   if (file.size > MAX_IMAGE_BYTES) {

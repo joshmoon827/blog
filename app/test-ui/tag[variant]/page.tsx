@@ -7,6 +7,10 @@ import { getTagGlassHref, getTagGlassVariant, TAG_GLASS_VARIANTS } from '@/data/
 import { getListedArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 interface TagGlassExamplePageProps {
   params: Promise<{ variant: string }>
   searchParams?: Promise<{

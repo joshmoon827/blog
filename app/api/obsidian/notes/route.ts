@@ -5,7 +5,6 @@ import {
   readVaultNote,
 } from '@/lib/obsidianVault'
 
-export const runtime = 'nodejs'
 
 /**
  * GET /api/obsidian/notes

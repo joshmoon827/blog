@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createComment, listComments, resolveCommentsBackend } from '@/lib/commentsStore'
 
-export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get('slug')?.trim() || ''

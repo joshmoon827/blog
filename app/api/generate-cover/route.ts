@@ -14,7 +14,6 @@ import {
   healStaleRunningCoverJob,
 } from '../../../scripts/lib/cover-job.mjs'
 
-export const runtime = 'nodejs'
 export const maxDuration = 300
 
 const JOBS_DIR = path.join(process.cwd(), 'data', 'cover-jobs')

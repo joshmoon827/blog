@@ -5,6 +5,10 @@ import { collectTagsFromArticles, countArticlesByTag } from '@/data/metadata'
 import { getListedArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 interface TagDesignExamplePageProps {
   params: Promise<{ exampleSlug: string }>
   searchParams?: Promise<{

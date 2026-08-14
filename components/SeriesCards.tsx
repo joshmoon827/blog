@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
+import ArticleCoverBanner from '@/components/ArticleCoverBanner'
 import MosaicBitmapImage from '@/components/MosaicBitmapImage'
 import { LocalizedArticleCount } from '@/components/LocalizedText'
 import type { SeriesCardItem } from '@/lib/seriesItems'
@@ -37,13 +37,7 @@ function SeriesCard({ item }: { item: SeriesCardItem }) {
   return (
     <Link href={item.href} className={styles.card}>
       <div className={styles.imageWrap}>
-        <Image
-          src={item.image}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 100vw, 1200px"
-          className={styles.image}
-        />
+        <ArticleCoverBanner src={item.image} alt="" fillParent />
       </div>
       <div className={styles.scrim} />
       <div className={styles.content}>

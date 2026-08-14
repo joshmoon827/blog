@@ -87,7 +87,13 @@
   transition: transform 0.45s var(--ease);
 }
 
-.card:hover .image {
+.imageWrap :global(img) {
+  transform: scale(1.01);
+  transition: transform 0.45s var(--ease);
+}
+
+.card:hover .image,
+.card:hover .imageWrap :global(img) {
   transform: scale(1.05);
 }
 

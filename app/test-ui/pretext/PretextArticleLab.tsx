@@ -21,6 +21,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { probeCoverBorder } from '@/lib/coverBorderColor'
+import { LabNav } from '../LabChrome'
 import styles from './page.module.css'
 
 const BODY_FONT = '18px Georgia'

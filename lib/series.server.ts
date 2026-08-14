@@ -138,7 +138,9 @@ export function readSeriesBySlug(slug: string): SeriesRecord | null {
 
 export function updateSeries(
   slug: string,
-  patch: Partial<SeriesRecord> & { articleSlugs?: string[] | null },
+  patch: Omit<Partial<SeriesRecord>, 'articleSlugs'> & {
+    articleSlugs?: string[] | null
+  },
 ): SeriesRecord | null {
   const file = readSeriesFile()
   const idx = file.series.findIndex((s) => s.slug === slug.trim().toLowerCase())

@@ -140,7 +140,12 @@ function clampStr(raw: unknown, max: number, fallback = ''): string {
 }
 
 export function sanitizeSeriesRecord(
-  raw: Partial<SeriesRecord> | null | undefined,
+  raw:
+    | (Omit<Partial<SeriesRecord>, 'articleSlugs'> & {
+        articleSlugs?: string[] | null
+      })
+    | null
+    | undefined,
   fallback?: SeriesRecord,
 ): SeriesRecord | null {
   const base = fallback

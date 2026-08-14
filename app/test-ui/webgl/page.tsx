@@ -4,8 +4,6 @@ import { readMosaicPattern } from '@/lib/mosaicPattern.server'
 import { getSeriesPreviewItems } from '@/lib/seriesItems'
 import WebglMosaicLab from './WebglMosaicLab'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: 'Interactive Mosaic | test-ui',
   description: 'WebGL mosaic banner lab — same footprint as the home series mosaic.',

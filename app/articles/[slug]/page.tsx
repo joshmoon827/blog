@@ -3,9 +3,6 @@ import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
 import ArticleView from './ArticleView'
 
-/** Local JSON changes at runtime; Unicode slugs break static param matching. */
-export const dynamic = 'force-dynamic'
-
 function resolveSlug(raw: string): string {
   let slug = raw
   try {

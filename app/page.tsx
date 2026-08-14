@@ -17,8 +17,6 @@ import { getPretextFeatureArticle } from '@/lib/pretextArticle.server'
 import { getSeriesPreviewItems } from '@/lib/seriesItems'
 import styles from './page.module.css'
 
-export const dynamic = 'force-dynamic'
-
 interface ArticlesPageProps {
   searchParams?: Promise<{
     tag?: string | string[]

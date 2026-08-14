@@ -4,8 +4,6 @@ import { readMosaicPattern } from '@/lib/mosaicPattern.server'
 import { getSeriesPreviewItems } from '@/lib/seriesItems'
 import PhysicsMosaicLab from './PhysicsMosaicLab'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: 'Matter.js Throw Covers | test-ui',
   description: 'Matter.js 2D physics — grab and throw series covers.',

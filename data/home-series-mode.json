@@ -1,0 +1,13 @@
+{
+  "mode": "pretext",
+  "randomEnabled": false,
+  "randomPool": [
+    "gsap-scatter",
+    "warp",
+    "pretext",
+    "gsap-columns",
+    "gsap-wave",
+    "gsap-slices",
+    "gsap-flip"
+  ]
+}

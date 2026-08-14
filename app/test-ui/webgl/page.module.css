@@ -1,0 +1,170 @@
+.page {
+  padding: 3.5rem 0 6rem;
+}
+
+.header {
+  max-width: 1180px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1.5rem;
+}
+
+.kicker {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pageTitle {
+  margin: 0 0 0.85rem;
+  color: var(--text);
+  font-size: clamp(2.1rem, 4.5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.lede {
+  max-width: 40rem;
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.lede strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.meta a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.meta a:hover {
+  color: var(--text);
+}
+
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-width: 1180px;
+  margin: 0 auto 1.25rem;
+  padding: 0.85rem 1.5rem 1.1rem;
+}
+
+.tocLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+
+.tocLink:hover,
+.tocActive {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.tocIndex {
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+
+.tocActive .tocIndex {
+  opacity: 0.7;
+}
+
+.stageBlock {
+  width: 100%;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #0b0b10;
+}
+
+.stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer;
+}
+
+.stageFallback {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(120deg, #1a1a22 0%, #0b0b10 45%, #161820 100%);
+}
+
+.caption {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.1rem;
+  z-index: 2;
+  pointer-events: none;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.captionKicker {
+  margin: 0 0 0.2rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.captionTitle {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.stageNote {
+  max-width: 1180px;
+  margin: 0.9rem auto 0;
+  padding: 0 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 2.25rem 0 4rem;
+  }
+
+  .caption {
+    left: 0.9rem;
+    bottom: 0.8rem;
+  }
+}

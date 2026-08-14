@@ -14,11 +14,26 @@
   padding: 0 1.5rem 5rem;
 }
 
+.listMobile {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
+  .gridDesktop {
+    display: none;
+  }
+
+  .listMobile {
+    display: block;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+  }
+
   .grid {
     grid-template-columns: 1fr;
     gap: 1rem;

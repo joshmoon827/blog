@@ -343,8 +343,16 @@ export default function TagFilterBar({ articles, selectedTag, basePath = '/', va
     setTagMotion('show')
   }
 
+  const wrapperClassName = [
+    styles.wrapper,
+    variant ? styles[variant] : '',
+    !expanded && !needsExpand ? styles.wrapperCentered : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <nav className={`${styles.wrapper} ${variant ? styles[variant] : ''}`} aria-label="Article tags">
+    <nav className={wrapperClassName} aria-label="Article tags">
       <div className={styles.measureShell} aria-hidden="true">
         <ul ref={measureRef} className={styles.collapsedList}>
           {items.map((item) => (

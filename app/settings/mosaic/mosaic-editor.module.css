@@ -1,0 +1,853 @@
+.loading {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  color: var(--text-secondary);
+}
+
+.layoutPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.layoutOptions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+@media (min-width: 720px) {
+  .layoutOptions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.layoutCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.layoutCard strong {
+  font-size: 0.95rem;
+}
+
+.layoutCard span {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.layoutCardActive {
+  border-color: var(--accent);
+  background: var(--accent-soft, rgba(100, 168, 255, 0.12));
+}
+
+.layoutBadge {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.addPieceBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn,
+.btnPrimary {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.btnPrimary {
+  background: var(--text);
+  color: var(--bg);
+  border-color: transparent;
+}
+
+.btnRecycle {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.btnRecycle:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btnRecycle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnPrimary:disabled,
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.message {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.dirty {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.previewFrame {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f3f3f3;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  container-type: inline-size;
+}
+
+/* Figma crop: let the image spill outside the frame while editing. */
+.previewFrameCrop {
+  overflow: visible;
+}
+
+.previewToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card, #fff);
+}
+
+.heightControl {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: min(100%, 280px);
+  flex: 1 1 220px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.heightControl span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 3.5rem;
+  line-height: 1.2;
+}
+
+.heightControl strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.heightControl input[type='range'] {
+  flex: 1 1 auto;
+  min-width: 80px;
+}
+
+.heightInput {
+  width: 4.25rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.previewHint {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.btnToggleOn {
+  border-color: var(--accent);
+  background: var(--accent-soft, rgba(100, 168, 255, 0.16));
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.preview {
+  position: relative;
+  display: grid;
+  background: #fff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.previewCropMode {
+  overflow: visible;
+  z-index: 2;
+}
+
+.previewPanMode .shard {
+  cursor: move;
+}
+
+.shardDimmed {
+  opacity: 0.28;
+  filter: grayscale(0.15);
+  pointer-events: none;
+}
+
+/* Figma-style crop stage: original rect + 4-edge border + corner handles */
+.cropStageWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  overflow: visible;
+}
+
+.cropStage {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  overflow: visible;
+  cursor: move;
+  touch-action: none;
+  outline: none;
+  border: none;
+  padding: 0;
+  background: transparent;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cropFrameSvg {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.cropStage:active {
+  cursor: grabbing;
+}
+
+/* Natural-aspect original photo box (moves / scales / rotates as one unit) */
+.cropImageRig {
+  position: absolute;
+  z-index: 1;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+  will-change: transform, left, top, width, height;
+}
+
+/* Same geometry as .cropImageRig — border + handles above veil/result */
+.cropImageControls {
+  position: absolute;
+  z-index: 6;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+  will-change: transform, left, top, width, height;
+}
+
+.cropGhost {
+  /* positioned inline — fills natural-aspect box only, no pad inset */
+  z-index: 1;
+}
+
+/* 4-edge vector border on the original image rectangle */
+.cropImageBorder {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+/* Soft veil outside the mosaic polygon (crop hole stays clear) */
+.cropVeil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+/* Bright polygon result — same CSS as published shard */
+.cropResult {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cropImgHost {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.cropImg {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(var(--mosaic-img-scale, 1))
+    rotate(var(--mosaic-img-rotate, 0deg));
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.cropFrameRing {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.cropFrameOutline {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: transparent;
+  outline: 2px solid #0ea5e9;
+  outline-offset: -1px;
+}
+
+/* Handles sit on the original-image rectangle corners */
+.cropRotateHandle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid #0ea5e9;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(40%, -40%);
+  cursor: grab;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.cropRotateHandle:active {
+  cursor: grabbing;
+}
+
+.cropScaleHandle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid #0ea5e9;
+  border-radius: 2px;
+  background: #fff;
+  transform: translate(40%, 40%);
+  cursor: nwse-resize;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.cropScaleHandle:active {
+  background: #0ea5e9;
+}
+
+.cropPadBar {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  z-index: 56;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cropPadLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.cropPadSwatchWrap {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.cropPadSwatch {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transform: scale(1.4);
+}
+
+.cropPadBtn {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 4px;
+  background: #f5f5f5;
+  color: #222;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cropPadBtn:hover:not(:disabled) {
+  background: #ebebeb;
+}
+
+.cropPadBtn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.cropBadge {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.45rem;
+  z-index: 56;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(14, 165, 233, 0.92);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.cropBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated, rgba(255, 255, 255, 0.03));
+}
+
+.cropHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.cropCode {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.padColorRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.padColorRow input[type='text'] {
+  flex: 1 1 auto;
+}
+
+.padColorSwatch {
+  width: 2.25rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.column {
+  position: relative;
+  min-height: 0;
+  background: #ececec;
+  overflow: hidden;
+}
+
+.previewCropMode .column {
+  overflow: visible;
+}
+
+.shard {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  background: #d8d8d8;
+  cursor: grab;
+}
+
+.shard:active {
+  cursor: grabbing;
+}
+
+.shardOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.shardActive {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.shardImage {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(var(--mosaic-img-scale, 1))
+    rotate(var(--mosaic-img-rotate, 0deg));
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.shardEmpty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid #111;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handleActive {
+  background: var(--accent, #6af);
+  border-color: #fff;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .panels {
+    grid-template-columns: 0.9fr 1.3fr 1fr;
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.pieceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pieceBtn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.pieceBtnActive {
+  border-color: var(--accent);
+  background: var(--accent-soft, rgba(100, 168, 255, 0.12));
+}
+
+.meta {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.pointActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pointTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pointRow {
+  display: grid;
+  grid-template-columns: 2rem 1fr 1fr;
+  gap: 0.45rem;
+  align-items: end;
+  padding: 0.35rem;
+  border-radius: 8px;
+}
+
+.pointRowActive {
+  background: var(--accent-soft, rgba(100, 168, 255, 0.1));
+}
+
+.pointIndex {
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pointRow label,
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.pointRow input,
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, transparent);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.columnRow {
+  display: grid;
+  grid-template-columns: 1fr 4.5rem auto;
+  gap: 0.5rem;
+  align-items: end;
+}
+
+.ratioSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.ratioSummary strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  opacity: 0.7;
+}
+
+.warn {
+  width: 100%;
+  color: var(--danger, #f87171);
+  font-weight: 600;
+}
+
+.widthInput {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.widthInput input {
+  width: 100%;
+  padding: 0.4rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, transparent);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.btnDanger {
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--danger, #f87171);
+  white-space: nowrap;
+}
+
+.btnDanger:hover:not(:disabled) {
+  border-color: var(--danger, #f87171);
+}
+
+.btnDanger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.sliderRow span {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sliderRow strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.sliderRow input[type='range'] {
+  width: 100%;
+}

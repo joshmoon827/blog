@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "layout": "columns",
+  "aspectRatio": "506 / 184",
+  "columns": [
+    27.2,
+    27.2,
+    27.2
+  ],
+  "columnGap": 0,
+  "pieces": [
+    {
+      "id": "left",
+      "label": "왼쪽",
+      "slot": 0,
+      "column": 0,
+      "overlay": false,
+      "objectFit": "cover",
+      "points": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 100,
+          "y": 0
+        },
+        {
+          "x": 78,
+          "y": 100
+        },
+        {
+          "x": 0,
+          "y": 100
+        }
+      ]
+    },
+    {
+      "id": "center",
+      "label": "가운데",
+      "slot": 1,
+      "column": 1,
+      "overlay": false,
+      "objectFit": "cover",
+      "padColor": "rgb(234, 125, 56)",
+      "points": [
+        {
+          "x": 21.85,
+          "y": 0
+        },
+        {
+          "x": 99.85,
+          "y": 0
+        },
+        {
+          "x": 77.85,
+          "y": 99.83
+        },
+        {
+          "x": 0,
+          "y": 99.83
+        }
+      ]
+    },
+    {
+      "id": "right",
+      "label": "오른쪽",
+      "slot": 2,
+      "column": 2,
+      "overlay": false,
+      "objectFit": "cover",
+      "points": [
+        {
+          "x": 22,
+          "y": 0
+        },
+        {
+          "x": 100,
+          "y": 0
+        },
+        {
+          "x": 100,
+          "y": 99.88
+        },
+        {
+          "x": 0,
+          "y": 99.88
+        }
+      ]
+    }
+  ]
+}

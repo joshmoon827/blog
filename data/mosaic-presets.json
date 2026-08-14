@@ -1,0 +1,354 @@
+[
+  {
+    "id": "preset-mssiks6m",
+    "name": "열분할 8. 14. 오후 02:36",
+    "createdAt": "2026-08-14T05:36:11.182Z",
+    "updatedAt": "2026-08-14T05:36:11.182Z",
+    "pattern": {
+      "version": 1,
+      "layout": "columns",
+      "aspectRatio": "506 / 184",
+      "columns": [
+        27.2,
+        27.2,
+        27.2
+      ],
+      "columnGap": 0,
+      "pieces": [
+        {
+          "id": "left",
+          "label": "왼쪽",
+          "slot": 0,
+          "column": 0,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 78,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        },
+        {
+          "id": "center",
+          "label": "가운데",
+          "slot": 1,
+          "column": 1,
+          "overlay": false,
+          "objectFit": "cover",
+          "padColor": "rgb(234, 125, 56)",
+          "points": [
+            {
+              "x": 21.85,
+              "y": 0
+            },
+            {
+              "x": 99.85,
+              "y": 0
+            },
+            {
+              "x": 77.85,
+              "y": 99.83
+            },
+            {
+              "x": 0,
+              "y": 99.83
+            }
+          ]
+        },
+        {
+          "id": "right",
+          "label": "오른쪽",
+          "slot": 2,
+          "column": 2,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 22,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 99.88
+            },
+            {
+              "x": 0,
+              "y": 99.88
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "builtin-triptych-slash",
+    "name": "3연 대각",
+    "createdAt": "2026-08-14T00:00:00.000Z",
+    "updatedAt": "2026-08-14T00:00:00.000Z",
+    "pattern": {
+      "version": 1,
+      "layout": "columns",
+      "aspectRatio": "506 / 184",
+      "columns": [
+        32,
+        32,
+        32
+      ],
+      "columnGap": 1.5,
+      "pieces": [
+        {
+          "id": "left",
+          "label": "왼쪽",
+          "slot": 0,
+          "column": 0,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 78,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        },
+        {
+          "id": "center",
+          "label": "가운데",
+          "slot": 1,
+          "column": 1,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 22,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 78,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        },
+        {
+          "id": "right",
+          "label": "오른쪽",
+          "slot": 2,
+          "column": 2,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 22,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "preset-msqv7idn",
+    "name": "열분할 8. 13. 오전 10:54",
+    "createdAt": "2026-08-13T01:54:14.603Z",
+    "updatedAt": "2026-08-13T01:54:14.603Z",
+    "pattern": {
+      "version": 1,
+      "layout": "columns",
+      "aspectRatio": "506 / 215.89",
+      "columns": [
+        19,
+        19,
+        19,
+        19
+      ],
+      "columnGap": 1.2,
+      "pieces": [
+        {
+          "id": "left",
+          "label": "왼쪽 (지붕)",
+          "slot": 0,
+          "column": 0,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 99.88,
+              "y": 0
+            },
+            {
+              "x": 99.88,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 44
+            }
+          ]
+        },
+        {
+          "id": "center",
+          "label": "가운데",
+          "slot": 1,
+          "column": 1,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        },
+        {
+          "id": "triangle",
+          "label": "3열 작은 삼각형",
+          "slot": 2,
+          "column": 2,
+          "overlay": true,
+          "zIndex": 2,
+          "objectFit": "cover",
+          "objectPosition": "99% 10%",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 89.49,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 41.7
+            }
+          ]
+        },
+        {
+          "id": "house",
+          "label": "3열 아래 (지붕)",
+          "slot": 3,
+          "column": 2,
+          "overlay": true,
+          "zIndex": 1,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 99.78,
+              "y": 0.29
+            },
+            {
+              "x": 99.78,
+              "y": 33.63
+            },
+            {
+              "x": 99.78,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 100
+            },
+            {
+              "x": 0,
+              "y": 49.01
+            }
+          ]
+        },
+        {
+          "id": "right",
+          "label": "오른쪽",
+          "slot": 4,
+          "column": 3,
+          "overlay": false,
+          "objectFit": "cover",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 80
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -186,7 +186,7 @@
   cursor: crosshair;
 }
 
-:global([data-theme='dark']) .heroScene {
+:global([data-theme='light']) .heroScene {
   background: #f6f3e3;
   color: #0d100e;
 }

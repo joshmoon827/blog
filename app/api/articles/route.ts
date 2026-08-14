@@ -4,6 +4,7 @@ import {
   type ArticleFormat,
 } from '@/data/articleFormats'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { createOne, readAll, slugifyTitle, type ArticleData } from '@/lib/localArticles'
 
 const DEFAULT_COVER = coverImages[0]
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     const created = createOne(article)
+    revalidateTag('articles', 'max')
     return NextResponse.json(created, { status: 201 })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Create failed'

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { isArticleFormat } from '@/data/articleFormats'
 import {
   deleteOne,
@@ -47,6 +48,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
   const updated = updateOne(slug, body)
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  revalidateTag('articles', 'max')
   return NextResponse.json(updated)
 }
 
@@ -56,9 +58,11 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   if (hard) {
     const removed = deleteOne(slug)
     if (!removed) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    revalidateTag('articles', 'max')
     return NextResponse.json({ ok: true, slug, hard: true })
   }
   const trashed = trashOne(slug)
   if (!trashed) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  revalidateTag('articles', 'max')
   return NextResponse.json({ ok: true, slug, trashed: true })
 }

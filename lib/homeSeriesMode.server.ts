@@ -2,6 +2,7 @@
  * Server-only home series mode persistence.
  */
 
+import { cacheTag } from 'next/cache'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import {
@@ -58,6 +59,7 @@ export function readHomeSeriesMode(): HomeSeriesMode {
 /** Home banner: random from pool when set, otherwise the stored mode. */
 export async function resolveHomeBannerMode(): Promise<HomeSeriesMode> {
   'use cache'
+  cacheTag('articles', 'home-banner')
   return pickHomeSeriesMode(readHomeSeriesSettings())
 }
 

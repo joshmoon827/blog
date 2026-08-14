@@ -20,6 +20,12 @@ export interface ArticleData {
   format?: ArticleFormat
   image: string
   body: string
+  /** English translation of title */
+  title_en?: string
+  /** English translation of description */
+  description_en?: string
+  /** English translation of body */
+  body_en?: string
   /** Absolute or vault-relative source path when imported from Obsidian */
   sourcePath?: string
   /** True when saved via newrite 임시저장 (not published). */

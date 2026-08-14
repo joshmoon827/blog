@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { coverPickerImages, coverLabel, coverPalette } from '@/data/covers'
 import CoverPaletteThumb from '@/components/CoverPaletteThumb'
 import type { ArticleData } from '@/lib/localArticles'
+import { useLanguage } from '@/components/LocalizedText'
 import { renderArticleBody } from '@/lib/renderArticleBody'
 import {
   applyAlignToNthImage,
@@ -170,9 +171,14 @@ async function fetchCoverStatus(slug: string) {
 export default function ArticleView({ article: initial }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const language = useLanguage()
   const { authenticated } = useAuth()
   const canEdit = authenticated && isAuthoringEnabled()
   const [article, setArticle] = useState(initial)
+  
+  const title = language === 'en' && article.title_en ? article.title_en : article.title
+  const description = language === 'en' && article.description_en ? article.description_en : article.description
+  const body = language === 'en' && article.body_en ? article.body_en : article.body
   const [coverEditing, setCoverEditing] = useState(false)
   const [bodyEditing, setBodyEditing] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -900,7 +906,7 @@ export default function ArticleView({ article: initial }: Props) {
       <TistoryMoreLessHydrate />
       <ArticleCoverBanner
         src={coverEditing ? imageValue : article.image}
-        alt={article.title}
+        alt={title}
         priority
       />
 
@@ -1127,7 +1133,7 @@ export default function ArticleView({ article: initial }: Props) {
             onChange={(e) => (draft.current.title = e.target.value)}
           />
         ) : (
-          <h1 className={styles.title}>{article.title}</h1>
+          <h1 className={styles.title}>{title}</h1>
         )}
 
         {canEdit && coverEditing ? (
@@ -1298,8 +1304,8 @@ export default function ArticleView({ article: initial }: Props) {
                 {article.created}
               </time>
             )}
-            {article.description ? (
-              <p className={styles.description}>{article.description}</p>
+            {description ? (
+              <p className={styles.description}>{description}</p>
             ) : null}
           </div>
         )}
@@ -1322,7 +1328,7 @@ export default function ArticleView({ article: initial }: Props) {
                 }
               >
                 <TistoryPreviewBody
-                  html={article.body}
+                  html={body}
                   hydrate={false}
                 />
               </div>
@@ -1344,7 +1350,7 @@ export default function ArticleView({ article: initial }: Props) {
                   disabled={uploading}
                 />
               ) : (
-                renderArticleBody(article.body, {
+                renderArticleBody(body, {
                   imageClassName: styles.bodyImage,
                   format: article.format,
                   editableImages: imageEditable,

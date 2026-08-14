@@ -13,6 +13,7 @@ import {
   isSupabaseConfigured,
   type DbComment,
 } from '@/lib/supabase/client'
+import { useLanguage } from '@/components/LocalizedText'
 import styles from './CommentsSection.module.css'
 
 type NestedComment = DbComment & { replies: DbComment[] }
@@ -61,6 +62,7 @@ async function apiJson<T>(
 
 export default function CommentsSection({ articleSlug }: Props) {
   const supabaseConfigured = isSupabaseConfigured()
+  const language = useLanguage()
   const [rows, setRows] = useState<DbComment[]>([])
   const [backend, setBackend] = useState<CommentsBackend | null>(null)
   const [unavailable, setUnavailable] = useState(false)
@@ -73,6 +75,28 @@ export default function CommentsSection({ articleSlug }: Props) {
   const [replyTo, setReplyTo] = useState<string | null>(null)
   const [replyBody, setReplyBody] = useState('')
   const [live, setLive] = useState(false)
+  
+  const t = {
+    title: language === 'en' ? 'Comments' : '댓글',
+    namePlaceholder: language === 'en' ? 'Name' : '이름',
+    commentPlaceholder: language === 'en' ? 'Leave a comment' : '댓글을 남겨 주세요',
+    submitButton: language === 'en' ? 'Post Comment' : '댓글 등록',
+    submittingButton: language === 'en' ? 'Posting...' : '등록 중…',
+    replyButton: language === 'en' ? 'Reply' : '답글',
+    replySubmitButton: language === 'en' ? 'Post Reply' : '답글 등록',
+    cancelButton: language === 'en' ? 'Cancel' : '취소',
+    loading: language === 'en' ? 'Loading...' : '불러오는 중…',
+    loadFailed: language === 'en' ? 'Failed to load comments.' : '댓글을 불러오지 못했습니다.',
+    noComments: language === 'en' ? 'No comments yet. Be the first to comment.' : '아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.',
+    upvote: language === 'en' ? 'Upvote' : '추천',
+    downvote: language === 'en' ? 'Downvote' : '추천 내리기',
+    hint: language === 'en' ? '⌘↵ Submit' : '⌘↵ 등록',
+    local: language === 'en' ? 'Local' : '로컬',
+    realtimeHint: language === 'en' ? 'Live updates' : '실시간 반영',
+    localStorageHint: language === 'en' ? 'Local storage' : '로컬 저장',
+    errorOwnCommentsOnly: language === 'en' ? 'You can only downvote your own comments.' : '본인 댓글만 추천을 내릴 수 있습니다.',
+    errorCannotLowerOthersUpvotes: language === 'en' ? 'You cannot lower upvotes given by others.' : '남이 올려 둔 추천 수는 내릴 수 없습니다.',
+  }
 
   const nested = useMemo(() => nestComments(rows), [rows])
   const total = rows.length
@@ -230,11 +254,11 @@ export default function CommentsSection({ articleSlug }: Props) {
     const isAuthor = Boolean(myName && myName === target.author)
     if (direction === 'down') {
       if (!isAuthor) {
-        setError('본인 댓글만 추천을 내릴 수 있습니다.')
+        setError(t.errorOwnCommentsOnly)
         return
       }
       if (target.upvotes <= (target.score_floor ?? 0)) {
-        setError('남이 올려 둔 추천 수는 내릴 수 없습니다.')
+        setError(t.errorCannotLowerOthersUpvotes)
         return
       }
     }
@@ -273,9 +297,9 @@ export default function CommentsSection({ articleSlug }: Props) {
   }
 
   return (
-    <section className={styles.section} aria-label="댓글">
+    <section className={styles.section} aria-label={t.title}>
       <div className={styles.header}>
-        <h2 className={styles.title}>댓글 {total > 0 ? total : ''}</h2>
+        <h2 className={styles.title}>{t.title} {total > 0 ? total : ''}</h2>
         <div className={styles.meta}>
           {live && (
             <span className={styles.live}>
@@ -283,7 +307,7 @@ export default function CommentsSection({ articleSlug }: Props) {
               Live
             </span>
           )}
-          <span>{backend === 'local' ? '로컬' : 'Supabase'}</span>
+          <span>{backend === 'local' ? t.local : 'Supabase'}</span>
         </div>
       </div>
 
@@ -293,7 +317,7 @@ export default function CommentsSection({ articleSlug }: Props) {
             className={styles.input}
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            placeholder="이름"
+            placeholder={t.namePlaceholder}
             maxLength={40}
             required
             disabled={submitting}
@@ -308,18 +332,18 @@ export default function CommentsSection({ articleSlug }: Props) {
           onKeyDown={onCmdEnter(() => {
             void submit(null, body)
           })}
-          placeholder="댓글을 남겨 주세요"
+          placeholder={t.commentPlaceholder}
           maxLength={4000}
           required
           disabled={submitting}
         />
         <div className={styles.formActions}>
           <span className={styles.hint}>
-            ⌘↵ 등록
-            {backend === 'local' ? ' · 로컬 저장' : ' · 실시간 반영'}
+            {t.hint}
+            {backend === 'local' ? ` · ${t.localStorageHint}` : ` · ${t.realtimeHint}`}
           </span>
           <button type="submit" className={styles.submit} disabled={submitting}>
-            {submitting ? '등록 중…' : '댓글 등록'}
+            {submitting ? t.submittingButton : t.submitButton}
           </button>
         </div>
         {error && (
@@ -330,14 +354,14 @@ export default function CommentsSection({ articleSlug }: Props) {
       </form>
 
       {loading ? (
-        <p className={styles.empty}>불러오는 중…</p>
+        <p className={styles.empty}>{t.loading}</p>
       ) : loadFailed ? (
         <p className={styles.empty}>
-          댓글을 불러오지 못했습니다.
+          {t.loadFailed}
           {error ? ` ${error}` : ''}
         </p>
       ) : nested.length === 0 ? (
-        <p className={styles.empty}>아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.</p>
+        <p className={styles.empty}>{t.noComments}</p>
       ) : (
         <div className={styles.list}>
           {nested.map((c) => (
@@ -354,7 +378,7 @@ export default function CommentsSection({ articleSlug }: Props) {
                   type="button"
                   className={styles.voteBtn}
                   onClick={() => vote(c.id, 'up')}
-                  aria-label="추천"
+                  aria-label={t.upvote}
                 >
                   ▲
                 </button>
@@ -363,14 +387,14 @@ export default function CommentsSection({ articleSlug }: Props) {
                   type="button"
                   className={styles.voteBtn}
                   onClick={() => vote(c.id, 'down')}
-                  aria-label="추천 내리기"
+                  aria-label={t.downvote}
                   disabled={!canLower(c)}
                   title={
                     myName && myName === c.author
                       ? canLower(c)
-                        ? '추천 내리기'
-                        : '남이 올려 둔 추천 수는 내릴 수 없습니다'
-                      : '본인 댓글만 내릴 수 있습니다'
+                        ? t.downvote
+                        : t.errorCannotLowerOthersUpvotes
+                      : t.errorOwnCommentsOnly
                   }
                 >
                   ▼
@@ -383,7 +407,7 @@ export default function CommentsSection({ articleSlug }: Props) {
                     setReplyBody('')
                   }}
                 >
-                  답글
+                  {t.replyButton}
                 </button>
               </div>
 
@@ -406,7 +430,7 @@ export default function CommentsSection({ articleSlug }: Props) {
                       className={styles.cancel}
                       onClick={() => setReplyTo(null)}
                     >
-                      취소
+                      {t.cancelButton}
                     </button>
                     <button
                       type="button"
@@ -414,7 +438,7 @@ export default function CommentsSection({ articleSlug }: Props) {
                       disabled={submitting}
                       onClick={() => submit(c.id, replyBody)}
                     >
-                      답글 등록
+                      {t.replySubmitButton}
                     </button>
                   </div>
                 </div>
@@ -436,7 +460,7 @@ export default function CommentsSection({ articleSlug }: Props) {
                           type="button"
                           className={styles.voteBtn}
                           onClick={() => vote(r.id, 'up')}
-                          aria-label="추천"
+                          aria-label={t.upvote}
                         >
                           ▲
                         </button>
@@ -445,14 +469,14 @@ export default function CommentsSection({ articleSlug }: Props) {
                           type="button"
                           className={styles.voteBtn}
                           onClick={() => vote(r.id, 'down')}
-                          aria-label="추천 내리기"
+                          aria-label={t.downvote}
                           disabled={!canLower(r)}
                           title={
                             myName && myName === r.author
                               ? canLower(r)
-                                ? '추천 내리기'
-                                : '남이 올려 둔 추천 수는 내릴 수 없습니다'
-                              : '본인 댓글만 내릴 수 있습니다'
+                                ? t.downvote
+                                : t.errorCannotLowerOthersUpvotes
+                              : t.errorOwnCommentsOnly
                           }
                         >
                           ▼

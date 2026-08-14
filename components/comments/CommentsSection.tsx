@@ -94,6 +94,8 @@ export default function CommentsSection({ articleSlug }: Props) {
     local: language === 'en' ? 'Local' : '로컬',
     realtimeHint: language === 'en' ? 'Live updates' : '실시간 반영',
     localStorageHint: language === 'en' ? 'Local storage' : '로컬 저장',
+    errorOwnCommentsOnly: language === 'en' ? 'You can only downvote your own comments.' : '본인 댓글만 추천을 내릴 수 있습니다.',
+    errorCannotLowerOthersUpvotes: language === 'en' ? 'You cannot lower upvotes given by others.' : '남이 올려 둔 추천 수는 내릴 수 없습니다.',
   }
 
   const nested = useMemo(() => nestComments(rows), [rows])
@@ -252,11 +254,11 @@ export default function CommentsSection({ articleSlug }: Props) {
     const isAuthor = Boolean(myName && myName === target.author)
     if (direction === 'down') {
       if (!isAuthor) {
-        setError('본인 댓글만 추천을 내릴 수 있습니다.')
+        setError(t.errorOwnCommentsOnly)
         return
       }
       if (target.upvotes <= (target.score_floor ?? 0)) {
-        setError('남이 올려 둔 추천 수는 내릴 수 없습니다.')
+        setError(t.errorCannotLowerOthersUpvotes)
         return
       }
     }
@@ -391,8 +393,8 @@ export default function CommentsSection({ articleSlug }: Props) {
                     myName && myName === c.author
                       ? canLower(c)
                         ? t.downvote
-                        : '남이 올려 둔 추천 수는 내릴 수 없습니다'
-                      : '본인 댓글만 내릴 수 있습니다'
+                        : t.errorCannotLowerOthersUpvotes
+                      : t.errorOwnCommentsOnly
                   }
                 >
                   ▼
@@ -473,8 +475,8 @@ export default function CommentsSection({ articleSlug }: Props) {
                             myName && myName === r.author
                               ? canLower(r)
                                 ? t.downvote
-                                : '남이 올려 둔 추천 수는 내릴 수 없습니다'
-                              : '본인 댓글만 내릴 수 있습니다'
+                                : t.errorCannotLowerOthersUpvotes
+                              : t.errorOwnCommentsOnly
                           }
                         >
                           ▼

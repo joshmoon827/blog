@@ -631,6 +631,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleBodySave = async () => {
     setSaving(true)
     try {
+      // IMPORTANT: bodyValue always contains the Korean body being edited
       const payload = { ...article, body: bodyValue }
       const res = await fetch(`/api/articles/${article.slug}`, {
         method: 'PUT',
@@ -653,6 +654,7 @@ export default function ArticleView({ article: initial }: Props) {
   }
 
   const handleBodyCancel = () => {
+    // Always reset to the Korean body
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(false)
@@ -695,6 +697,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleApplyBodyImageCrop = useCallback(
     async (crop: BodyImageCrop) => {
       if (!imageCropEdit) return
+      // IMPORTANT: Always apply crop to the Korean body, never the displayed English
       const nextBody = applyCropToNthImage(
         article.body,
         imageCropEdit.index,
@@ -713,6 +716,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleAlignBodyImage = useCallback(
     async (req: BodyImageAlignRequest) => {
       if (!canEdit || bodyEditing) return
+      // IMPORTANT: Always apply alignment to the Korean body, never the displayed English
       const nextBody = applyAlignToNthImage(
         article.body,
         req.index,
@@ -851,6 +855,7 @@ export default function ArticleView({ article: initial }: Props) {
 
   const enterBodyEditing = useCallback(() => {
     setCoverEditing(false)
+    // Always edit the Korean body, never the displayed English translation
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(true)
@@ -858,6 +863,7 @@ export default function ArticleView({ article: initial }: Props) {
   }, [article.body])
 
   const exitBodyEditing = useCallback(() => {
+    // Always reset to the Korean body
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(false)

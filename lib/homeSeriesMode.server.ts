@@ -56,11 +56,16 @@ export function readHomeSeriesMode(): HomeSeriesMode {
   return readHomeSeriesSettings().mode
 }
 
-/** Home banner: random from pool when set, otherwise the stored mode. */
-export async function resolveHomeBannerMode(): Promise<HomeSeriesMode> {
+/** Cached settings JSON only — random pick stays outside this cache. */
+async function getCachedHomeSeriesSettings(): Promise<HomeSeriesSettings> {
   'use cache'
-  cacheTag('articles', 'home-banner')
-  return pickHomeSeriesMode(readHomeSeriesSettings())
+  cacheTag('home-banner')
+  return readHomeSeriesSettings()
+}
+
+/** Home banner: random from pool on each request when set. */
+export async function resolveHomeBannerMode(): Promise<HomeSeriesMode> {
+  return pickHomeSeriesMode(await getCachedHomeSeriesSettings())
 }
 
 export function writeHomeSeriesSettings(

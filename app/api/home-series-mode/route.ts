@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import {
   sanitizeHomeSeriesMode,
   sanitizeHomeSeriesRandomPool,
@@ -52,6 +53,7 @@ export async function PUT(req: NextRequest) {
         ? { randomEnabled: Boolean(body.randomEnabled) }
         : {}),
     })
+    revalidateTag('home-banner', 'max')
     return NextResponse.json(next)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)

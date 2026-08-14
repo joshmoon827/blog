@@ -80,7 +80,7 @@ async function ArticleList({ searchParams }: { searchParams?: Promise<{ tag?: st
   )
 }
 
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+async function HomeBanner() {
   const seriesMode = await resolveHomeBannerMode()
   const mosaicPattern = readMosaicPattern()
   const seriesItems = getSeriesPreviewItems(
@@ -89,30 +89,42 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
   const pretextArticle =
     seriesMode === 'pretext' ? getPretextFeatureArticle() : null
 
+  if (isWebglHomeSeriesMode(seriesMode)) {
+    return (
+      <SeriesWebglBanner
+        items={seriesItems}
+        mode={seriesMode}
+        className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
+      />
+    )
+  }
+  if (isInteractiveHomeSeriesMode(seriesMode)) {
+    return (
+      <HomeInteractiveBanner
+        items={seriesItems}
+        mode={seriesMode}
+        pretextArticle={pretextArticle}
+        className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
+      />
+    )
+  }
+  return (
+    <SeriesCards
+      items={seriesItems}
+      variant={seriesMode === 'slide' ? 'slide' : 'mosaic'}
+      pattern={mosaicPattern}
+      className={styles.seriesStrip}
+      ariaLabel="Category"
+    />
+  )
+}
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
   return (
     <>
-      {isWebglHomeSeriesMode(seriesMode) ? (
-        <SeriesWebglBanner
-          items={seriesItems}
-          mode={seriesMode}
-          className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
-        />
-      ) : isInteractiveHomeSeriesMode(seriesMode) ? (
-        <HomeInteractiveBanner
-          items={seriesItems}
-          mode={seriesMode}
-          pretextArticle={pretextArticle}
-          className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
-        />
-      ) : (
-        <SeriesCards
-          items={seriesItems}
-          variant={seriesMode === 'slide' ? 'slide' : 'mosaic'}
-          pattern={mosaicPattern}
-          className={styles.seriesStrip}
-          ariaLabel="Category"
-        />
-      )}
+      <Suspense fallback={<div className={`${styles.seriesStrip} ${styles.seriesStripFlush}`} />}>
+        <HomeBanner />
+      </Suspense>
       <Suspense fallback={
         <div className={styles.hero}>
           <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.5 }}>Loading articles...</div>

@@ -19,7 +19,9 @@ import {
   applyAlignToNthImage,
   applyCropToNthImage,
   BODY_IMAGE_ALIGN_OPTIONS,
+  listBodyImageTokens,
   sanitizeBodyImageAlign,
+  srcMatches,
   type BodyImageAlign,
   type BodyImageCrop,
 } from '@/lib/bodyImageCrop'
@@ -732,6 +734,15 @@ export default function ArticleView({ article: initial }: Props) {
     [article.body, bodyEditing, canEdit, persistBody],
   )
 
+  /**
+   * Find the index of an image in a body by matching src.
+   * Uses srcMatches from bodyImageCrop to normalize src for comparison.
+   */
+  const findImageIndexBySrc = (bodyText: string, targetSrc: string): number => {
+    const tokens = listBodyImageTokens(bodyText)
+    return tokens.findIndex((token) => srcMatches(token.src, targetSrc))
+  }
+
   /** Tistory HTML read view: dblclick img → crop; contextmenu → align. */
   const resolveTistoryImageIndex = (
     root: HTMLElement,
@@ -747,13 +758,28 @@ export default function ArticleView({ article: initial }: Props) {
       const t = e.target as HTMLElement | null
       const img = t?.closest?.('img') as HTMLImageElement | null
       if (!img) return
-      const index = resolveTistoryImageIndex(e.currentTarget, img)
-      if (index < 0) return
+      const displayIndex = resolveTistoryImageIndex(e.currentTarget, img)
+      if (displayIndex < 0) return
       e.preventDefault()
+      
+      const imgSrc = img.getAttribute('src') || ''
+      const isTranslatedView = language === 'en' && article.body_en
+      
+      // When showing translated body, find the image in the Korean body by src
+      // to ensure we edit the correct image
+      const koreanBodyIndex = isTranslatedView 
+        ? findImageIndexBySrc(article.body, imgSrc)
+        : displayIndex
+      
+      if (koreanBodyIndex < 0) {
+        alert('이미지를 한국어 본문에서 찾지 못했습니다. (번역된 보기에서는 이미지 편집이 제한될 수 있습니다.)')
+        return
+      }
+      
       const ds = img.dataset
       setImageCropEdit({
-        index,
-        src: img.getAttribute('src') || '',
+        index: koreanBodyIndex,
+        src: imgSrc,
         alt: img.getAttribute('alt') || '',
         align: sanitizeBodyImageAlign(ds.align || ds.keAlign || ds.keStyle),
         crop:
@@ -768,7 +794,7 @@ export default function ArticleView({ article: initial }: Props) {
             : null,
       })
     },
-    [canEdit, bodyEditing],
+    [canEdit, bodyEditing, language, article.body_en, article.body],
   )
 
   const handleTistoryImageContextMenu = useCallback(
@@ -777,18 +803,33 @@ export default function ArticleView({ article: initial }: Props) {
       const t = e.target as HTMLElement | null
       const img = t?.closest?.('img') as HTMLImageElement | null
       if (!img) return
-      const index = resolveTistoryImageIndex(e.currentTarget, img)
-      if (index < 0) return
+      const displayIndex = resolveTistoryImageIndex(e.currentTarget, img)
+      if (displayIndex < 0) return
       e.preventDefault()
+      
+      const imgSrc = img.getAttribute('src') || ''
+      const isTranslatedView = language === 'en' && article.body_en
+      
+      // When showing translated body, find the image in the Korean body by src
+      // to ensure we edit the correct image
+      const koreanBodyIndex = isTranslatedView 
+        ? findImageIndexBySrc(article.body, imgSrc)
+        : displayIndex
+      
+      if (koreanBodyIndex < 0) {
+        alert('이미지를 한국어 본문에서 찾지 못했습니다. (번역된 보기에서는 이미지 편집이 제한될 수 있습니다.)')
+        return
+      }
+      
       const ds = img.dataset
       setImageAlignMenu({
-        index,
+        index: koreanBodyIndex,
         x: e.clientX,
         y: e.clientY,
         align: sanitizeBodyImageAlign(ds.align || ds.keAlign || ds.keStyle),
       })
     },
-    [canEdit, bodyEditing],
+    [canEdit, bodyEditing, language, article.body_en, article.body],
   )
 
   useEffect(() => {

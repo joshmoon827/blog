@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import ArticleCard from '@/components/ArticleCard'
 import ArticlesGrid from '@/components/ArticlesGrid'
 import HomeInteractiveBanner from '@/components/HomeInteractiveBanner'
@@ -17,30 +18,47 @@ import { getPretextFeatureArticle } from '@/lib/pretextArticle.server'
 import { getSeriesPreviewItems } from '@/lib/seriesItems'
 import styles from './page.module.css'
 
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
-
 interface ArticlesPageProps {
   searchParams?: Promise<{
     tag?: string | string[]
   }>
 }
 
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+async function ArticleList({ searchParams }: { searchParams?: Promise<{ tag?: string | string[] }> }) {
   const params = await searchParams
   const selectedTag = typeof params?.tag === 'string' ? params.tag : undefined
   const listed = getListedArticles()
-  const seriesMode = resolveHomeBannerMode()
+  const filteredArticles = selectedTag
+    ? listed.filter((article) => article.tags.includes(selectedTag))
+    : listed
+
+  return (
+    <>
+      <section className={styles.hero}>
+        <TagFilterBar articles={listed} selectedTag={selectedTag} />
+      </section>
+      <div className={styles.gridDesktop}>
+        <ArticlesGrid className={styles.grid} aria-label="Articles">
+          {filteredArticles.map((article, i) => (
+            <ArticleCard key={article.slug} article={article} index={i} />
+          ))}
+        </ArticlesGrid>
+      </div>
+      <div className={styles.listMobile}>
+        <SeriesArticleList articles={filteredArticles} />
+      </div>
+    </>
+  )
+}
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+  const seriesMode = await resolveHomeBannerMode()
   const mosaicPattern = readMosaicPattern()
   const seriesItems = getSeriesPreviewItems(
     seriesMode === 'mosaic' ? mosaicSlotCount(mosaicPattern) : 3,
   )
   const pretextArticle =
     seriesMode === 'pretext' ? getPretextFeatureArticle() : null
-  const filteredArticles = selectedTag
-    ? listed.filter((article) => article.tags.includes(selectedTag))
-    : listed
 
   return (
     <>
@@ -66,19 +84,13 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           ariaLabel="Category"
         />
       )}
-      <section className={styles.hero}>
-        <TagFilterBar articles={listed} selectedTag={selectedTag} />
-      </section>
-      <div className={styles.gridDesktop}>
-        <ArticlesGrid className={styles.grid} aria-label="Articles">
-          {filteredArticles.map((article, i) => (
-            <ArticleCard key={article.slug} article={article} index={i} />
-          ))}
-        </ArticlesGrid>
-      </div>
-      <div className={styles.listMobile}>
-        <SeriesArticleList articles={filteredArticles} />
-      </div>
+      <Suspense fallback={
+        <div className={styles.hero}>
+          <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.5 }}>Loading articles...</div>
+        </div>
+      }>
+        <ArticleList searchParams={searchParams} />
+      </Suspense>
     </>
   )
 }

@@ -8,7 +8,7 @@ export type BlogCategory = {
 export const BLOG_CATEGORIES: BlogCategory[] = [
   { id: '', label: '카테고리' },
   { id: 'articles', label: 'Articles' },
-  { id: 'series', label: 'Series' },
+  { id: 'category', label: 'Category' },
   { id: 'notes', label: 'Notes' },
   { id: 'drafts', label: 'Drafts' },
   { id: 'ai', label: 'AI' },

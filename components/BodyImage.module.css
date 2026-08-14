@@ -1,0 +1,165 @@
+.wrap {
+  position: relative;
+  display: block;
+  max-width: 100%;
+  margin: 0 0 1.4rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.alignLeft {
+  margin-left: 0;
+  margin-right: auto;
+  max-width: min(100%, 85%);
+}
+
+.alignCenter {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.alignRight {
+  margin-left: auto;
+  margin-right: 0;
+  max-width: min(100%, 85%);
+}
+
+.wrap.cropped {
+  width: 100%;
+  /* Height comes from inline aspect-ratio — matches crop modal frame */
+  position: relative;
+}
+
+.img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 !important;
+  border-radius: 8px;
+}
+
+.cropped .img {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+.editable {
+  cursor: zoom-in;
+  outline: 1px dashed transparent;
+  transition: outline-color 0.15s ease;
+}
+
+.editable:hover {
+  outline-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.badge {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 1;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(14, 165, 233, 0.9);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.editable:hover .badge {
+  opacity: 1;
+}
+
+.menu {
+  position: fixed;
+  z-index: 90;
+  min-width: 11rem;
+  padding: 0.35rem;
+  border-radius: 8px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.menuTitle {
+  margin: 0;
+  padding: 0.35rem 0.55rem 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem:hover,
+.menuItemActive {
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+}
+
+.menuItemActive {
+  font-weight: 750;
+}
+
+.menuSep {
+  height: 1px;
+  margin: 0.25rem 0.35rem;
+  background: var(--border);
+}
+
+.menuIcon {
+  display: block;
+  width: 1rem;
+  height: 0.7rem;
+  border: 1.5px solid currentColor;
+  border-radius: 1px;
+  opacity: 0.75;
+  position: relative;
+}
+
+.menuIcon::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  background: currentColor;
+}
+
+.menuIcon[data-align='alignLeft']::after {
+  left: 2px;
+}
+
+.menuIcon[data-align='alignCenter']::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.menuIcon[data-align='alignRight']::after {
+  right: 2px;
+}

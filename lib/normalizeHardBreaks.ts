@@ -1,7 +1,6 @@
 /**
- * Convert HTML `<br>` inserted by Muya (esp. table cells / Shift+Enter)
- * into markdown hard line breaks so read mode renders them.
- * Skips fenced code blocks.
+ * Convert HTML `<br>` (paste / rich editors) into markdown hard line breaks
+ * so read mode renders them. Skips fenced code blocks.
  */
 export function normalizeHardBreaks(source: string): string {
   if (!source || !/<br\s*\/?>/i.test(source)) return source

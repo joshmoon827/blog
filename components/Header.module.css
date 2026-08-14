@@ -196,6 +196,53 @@
   padding: 0.4rem;
 }
 
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.logoutBtn:hover:not(:disabled) {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.logoutBtn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.mobileLogout {
+  display: block;
+  width: 100%;
+  padding: 0.85rem 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobileLogout:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
 .writeLinkText {
   font-size: 0.7rem;
   font-weight: 700;

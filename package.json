@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
+    "dev:webpack": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "setup:image-env": "node scripts/setup-github-image-env.mjs",
@@ -13,13 +14,19 @@
     "generate:cover": "node scripts/generate-cover.mjs"
   },
   "dependencies": {
-    "@muyajs/core": "^0.2.0",
+    "@chenglou/pretext": "^0.0.8",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
     "@supabase/supabase-js": "^2.110.7",
     "@tinymce/tinymce-react": "^6.3.0",
     "framer-motion": "^12.0.0",
+    "gsap": "^3.15.0",
     "isomorphic-dompurify": "^3.21.0",
     "katex": "^0.17.0",
-    "next": "^15.3.0",
+    "matter-js": "^0.20.0",
+    "next": "^16.3.1-canary.15",
+    "p5": "^1.11.3",
+    "paper": "^0.12.18",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
@@ -29,14 +36,18 @@
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.2",
+    "three": "^0.185.1",
     "tinymce": "^8.8.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
     "@types/katex": "^0.16.8",
+    "@types/matter-js": "^0.20.2",
     "@types/node": "^22.0.0",
+    "@types/p5": "^1.7.7",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.185.4",
     "typescript": "^5.0.0"
   }
 }

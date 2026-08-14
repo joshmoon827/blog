@@ -17,6 +17,12 @@
   margin-left: var(--tag-align);
 }
 
+.wrapperCentered .shellCollapsed {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
 .measureShell {
   position: absolute;
   visibility: hidden;
@@ -42,6 +48,11 @@
   margin: 0;
   padding: 4px 0;
   list-style: none;
+}
+
+.wrapperCentered .collapsedList {
+  width: fit-content;
+  justify-content: center;
 }
 
 .collapsedList li {

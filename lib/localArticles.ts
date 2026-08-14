@@ -99,11 +99,11 @@ export function listTrashed(): ArticleData[] {
 }
 
 export function slugifyTitle(title: string): string {
+  // NFC keeps Hangul syllables intact (NFKD would split jamo and strip them).
   const base = title
     .trim()
     .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFC')
     .replace(/[^a-z0-9가-힣\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')

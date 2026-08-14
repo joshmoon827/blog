@@ -1,0 +1,40 @@
+.columns {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin: 1.25rem 0 1.75rem;
+  min-width: 0;
+}
+
+.column {
+  min-width: 0;
+}
+
+.column > *:first-child {
+  margin-top: 0;
+}
+
+.column > *:last-child {
+  margin-bottom: 0;
+}
+
+.column :global(img),
+.column :global(.bodyImage) {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+@media (max-width: 720px) {
+  .columns {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .column {
+    flex: 1 1 auto !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+}

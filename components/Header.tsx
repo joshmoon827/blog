@@ -10,7 +10,7 @@ import styles from './Header.module.css'
 
 const navItems = [
   { href: '/', label: 'Articles' },
-  { href: '/series', label: 'Series' },
+  { href: '/category', label: 'Category' },
 ]
 
 const languageItems = [
@@ -34,12 +34,28 @@ function LogoMark() {
 
 export default function Header() {
   const pathname = usePathname()
-  const { authenticated } = useAuth()
+  const { authenticated, refresh } = useAuth()
   const canWrite = authenticated && isAuthoringEnabled()
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [menuOpen, setMenuOpen] = useState(false)
   const [language, setLanguage] = useState<Language>('ko')
   const [languageOpen, setLanguageOpen] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  const logout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      })
+      await refresh()
+      setMenuOpen(false)
+    } finally {
+      setLoggingOut(false)
+    }
+  }
 
   useEffect(() => {
     const saved = (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
@@ -202,6 +218,16 @@ export default function Header() {
               >
                 <span className={styles.writeLinkText}>newrite</span>
               </Link>
+              <button
+                type="button"
+                className={styles.logoutBtn}
+                onClick={() => void logout()}
+                disabled={loggingOut}
+                aria-label="로그아웃"
+                title="로그아웃"
+              >
+                {loggingOut ? '…' : '로그아웃'}
+              </button>
             </>
           ) : null}
         </div>
@@ -234,6 +260,16 @@ export default function Header() {
                     <Link href="/newrite" onClick={() => setMenuOpen(false)}>
                       newrite
                     </Link>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className={styles.mobileLogout}
+                      onClick={() => void logout()}
+                      disabled={loggingOut}
+                    >
+                      {loggingOut ? '로그아웃 중…' : '로그아웃'}
+                    </button>
                   </li>
                 </>
               ) : null}

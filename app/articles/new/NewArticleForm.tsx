@@ -128,6 +128,7 @@ export default function NewArticleForm() {
   const [createdSlug, setCreatedSlug] = useState<string | null>(null)
   const [retrying, setRetrying] = useState(false)
   const [obsidianOpen, setObsidianOpen] = useState(false)
+  const [sourcePath, setSourcePath] = useState<string | undefined>()
   const bodyRef = useRef<HybridMarkdownEditorHandle>(null)
   const localTools = isLocalToolsEnabled()
 
@@ -142,6 +143,7 @@ export default function NewArticleForm() {
     setCreated(note.created || new Date().toISOString().slice(0, 10))
     setTagsText(formatTagsInput(note.tags))
     setBody(note.body)
+    setSourcePath(note.path)
   }
 
   const coverGenOptions = async (): Promise<CoverGenOptions> => ({
@@ -222,6 +224,8 @@ export default function NewArticleForm() {
           tags: parseTagsInput(tagsText),
           image,
           body,
+          format: sourcePath ? 'obsidian' : undefined,
+          sourcePath: sourcePath || undefined,
         }),
       })
       const data = (await res.json()) as { slug?: string; error?: string }

@@ -1,12 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useCoverMatteSettings } from '@/hooks/useCoverMatteSettings'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import { DEFAULT_COVER_MATTE_SETTINGS } from '@/lib/coverMatteSettings'
+import {
+  HOME_SERIES_ALL_OPTIONS,
+  HOME_SERIES_EXPERIMENT_OPTIONS,
+  HOME_SERIES_INTERACTIVE_OPTIONS,
+  HOME_SERIES_MODE_OPTIONS,
+  interactiveModeLabHref,
+  isInteractiveHomeSeriesMode,
+  isWebglHomeSeriesMode,
+  type HomeSeriesMode,
+} from '@/lib/homeSeriesMode'
 import styles from './settings.module.css'
 
 function SliderRow({
@@ -66,11 +76,24 @@ function SliderRow({
   )
 }
 
-export default function SettingsForm() {
+export default function SettingsForm({
+  initialSeriesMode,
+  initialRandomPool,
+  initialRandomEnabled,
+}: {
+  initialSeriesMode: HomeSeriesMode
+  initialRandomPool: HomeSeriesMode[]
+  initialRandomEnabled: boolean
+}) {
   const router = useRouter()
   const { loading, authenticated } = useAuth()
   const canWrite = authenticated && isAuthoringEnabled()
   const { settings, ready, update, reset } = useCoverMatteSettings()
+  const [seriesMode, setSeriesMode] = useState<HomeSeriesMode>(initialSeriesMode)
+  const [randomPool, setRandomPool] = useState<HomeSeriesMode[]>(initialRandomPool)
+  const [randomEnabled, setRandomEnabled] = useState(initialRandomEnabled)
+  const [seriesModeError, setSeriesModeError] = useState<string | null>(null)
+  const [savingMode, startSaveMode] = useTransition()
 
   useEffect(() => {
     if (loading) return
@@ -78,6 +101,100 @@ export default function SettingsForm() {
       router.replace(isAuthoringEnabled() ? '/login?next=/settings' : '/')
     }
   }, [loading, canWrite, router])
+
+  function selectSeriesMode(mode: HomeSeriesMode) {
+    if (mode === seriesMode || savingMode) return
+    const prev = seriesMode
+    setSeriesMode(mode)
+    setSeriesModeError(null)
+    startSaveMode(async () => {
+      try {
+        const res = await fetch('/api/home-series-mode', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode }),
+        })
+        if (!res.ok) {
+          const data = (await res.json().catch(() => null)) as {
+            error?: string
+          } | null
+          throw new Error(data?.error || `저장 실패 (${res.status})`)
+        }
+        const data = (await res.json()) as { mode: HomeSeriesMode }
+        setSeriesMode(data.mode)
+        router.refresh()
+      } catch (err) {
+        setSeriesMode(prev)
+        setSeriesModeError(
+          err instanceof Error ? err.message : '모드 저장에 실패했습니다.',
+        )
+      }
+    })
+  }
+
+  function toggleRandomEnabled() {
+    if (savingMode) return
+    const prev = randomEnabled
+    const next = !prev
+    setRandomEnabled(next)
+    setSeriesModeError(null)
+    startSaveMode(async () => {
+      try {
+        const res = await fetch('/api/home-series-mode', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ randomEnabled: next }),
+        })
+        if (!res.ok) {
+          const data = (await res.json().catch(() => null)) as {
+            error?: string
+          } | null
+          throw new Error(data?.error || `저장 실패 (${res.status})`)
+        }
+        const data = (await res.json()) as { randomEnabled: boolean }
+        setRandomEnabled(Boolean(data.randomEnabled))
+        router.refresh()
+      } catch (err) {
+        setRandomEnabled(prev)
+        setSeriesModeError(
+          err instanceof Error ? err.message : '랜덤 사용 저장에 실패했습니다.',
+        )
+      }
+    })
+  }
+
+  function toggleRandomPool(mode: HomeSeriesMode) {
+    if (savingMode) return
+    const prev = randomPool
+    const next = prev.includes(mode)
+      ? prev.filter((id) => id !== mode)
+      : [...prev, mode]
+    setRandomPool(next)
+    setSeriesModeError(null)
+    startSaveMode(async () => {
+      try {
+        const res = await fetch('/api/home-series-mode', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ randomPool: next }),
+        })
+        if (!res.ok) {
+          const data = (await res.json().catch(() => null)) as {
+            error?: string
+          } | null
+          throw new Error(data?.error || `저장 실패 (${res.status})`)
+        }
+        const data = (await res.json()) as { randomPool: HomeSeriesMode[] }
+        setRandomPool(data.randomPool)
+        router.refresh()
+      } catch (err) {
+        setRandomPool(prev)
+        setSeriesModeError(
+          err instanceof Error ? err.message : '랜덤 리스트 저장에 실패했습니다.',
+        )
+      }
+    })
+  }
 
   if (loading || !canWrite) {
     return <p className={styles.loading}>불러오는 중…</p>
@@ -147,6 +264,180 @@ export default function SettingsForm() {
             홈에서 확인
           </Link>
         </div>
+      </section>
+
+      <section className={styles.section} aria-labelledby="series-pattern-heading">
+        <h2 id="series-pattern-heading" className={styles.sectionTitle}>
+          홈 카테고리 패턴
+        </h2>
+        <p className={styles.sectionSub}>
+          홈 상단에 보여줄 카테고리 배너 스타일을 고릅니다. 랜덤 패턴 리스트를
+          켜면 새로고침마다 고른 패턴 중 하나가 나옵니다.
+        </p>
+
+        <div
+          className={styles.modeSwitch}
+          role="group"
+          aria-label="홈 카테고리 패턴"
+        >
+          {HOME_SERIES_MODE_OPTIONS.map((opt) => {
+            const active = seriesMode === opt.id
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                className={`${styles.modeBtn}${active ? ` ${styles.modeBtnActive}` : ''}`}
+                aria-pressed={active}
+                disabled={savingMode}
+                onClick={() => selectSeriesMode(opt.id)}
+              >
+                <span className={styles.modeBtnLabel}>{opt.label}</span>
+                <span className={styles.modeBtnHint}>{opt.hint}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className={styles.experimentBlock}>
+          <h3 className={styles.experimentTitle}>WebGL 실험 패턴</h3>
+          <p className={styles.hint}>
+            test-ui WebGL 장면입니다. 홈 모자이크와 같은 높이에 올라갑니다.
+          </p>
+          <div
+            className={styles.modeSwitch}
+            role="group"
+            aria-label="실험 패턴"
+          >
+            {HOME_SERIES_EXPERIMENT_OPTIONS.map((opt) => {
+              const active = seriesMode === opt.id
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={`${styles.modeBtn}${active ? ` ${styles.modeBtnActive}` : ''}`}
+                  aria-pressed={active}
+                  disabled={savingMode}
+                  onClick={() => selectSeriesMode(opt.id)}
+                >
+                  <span className={styles.modeBtnLabel}>{opt.label}</span>
+                  <span className={styles.modeBtnHint}>{opt.hint}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className={styles.experimentBlock}>
+          <h3 className={styles.experimentTitle}>인터랙티브 라이브러리 패턴</h3>
+          <p className={styles.hint}>
+            Pretext, GSAP, p5.js로 만든 test-ui 장면을 홈 상단에 적용합니다.
+          </p>
+          <div
+            className={styles.modeSwitch}
+            role="group"
+            aria-label="인터랙티브 라이브러리 패턴"
+          >
+            {HOME_SERIES_INTERACTIVE_OPTIONS.map((opt) => {
+              const active = seriesMode === opt.id
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={`${styles.modeBtn}${active ? ` ${styles.modeBtnActive}` : ''}`}
+                  aria-pressed={active}
+                  disabled={savingMode}
+                  onClick={() => selectSeriesMode(opt.id)}
+                >
+                  <span className={styles.modeBtnLabel}>{opt.label}</span>
+                  <span className={styles.modeBtnHint}>{opt.hint}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className={styles.experimentBlock}>
+          <div className={styles.randomHead}>
+            <h3 className={styles.experimentTitle}>랜덤 패턴 리스트</h3>
+            <button
+              type="button"
+              className={`${styles.randomUseBtn}${randomEnabled ? ` ${styles.randomUseBtnOn}` : ''}`}
+              aria-pressed={randomEnabled}
+              disabled={savingMode}
+              onClick={toggleRandomEnabled}
+            >
+              {randomEnabled ? '사용 중' : '사용'}
+            </button>
+          </div>
+          <p className={styles.hint}>
+            {randomEnabled
+              ? '사용 중이면 홈을 새로고침할 때마다 아래 고른 패턴 중 하나가 나옵니다.'
+              : '사용을 누르면 리스트에서 패턴을 고를 수 있습니다. 끄면 위에서 고른 고정 패턴을 씁니다.'}
+          </p>
+          {randomEnabled ? (
+            <div className={styles.randomList} role="group" aria-label="랜덤 패턴 리스트">
+              {HOME_SERIES_ALL_OPTIONS.map((opt) => {
+                const on = randomPool.includes(opt.id)
+                return (
+                  <label
+                    key={opt.id}
+                    className={`${styles.randomItem}${on ? ` ${styles.randomItemOn}` : ''}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={on}
+                      disabled={savingMode}
+                      onChange={() => toggleRandomPool(opt.id)}
+                    />
+                    <span>
+                      <span className={styles.modeBtnLabel}>{opt.label}</span>
+                      <span className={styles.randomHint}>{opt.hint}</span>
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+          ) : null}
+        </div>
+
+        {seriesModeError ? (
+          <p className={styles.modeError} role="alert">
+            {seriesModeError}
+          </p>
+        ) : null}
+
+        {seriesMode === 'mosaic' ? (
+          <div className={styles.actions}>
+            <Link href="/settings/mosaic" className={styles.homeLink}>
+              모자이크 패턴 편집 →
+            </Link>
+          </div>
+        ) : seriesMode === 'slide' ? (
+          <p className={styles.hint}>
+            슬라이드 패턴은 가로 스냅 카드로 카테고리를 보여줍니다.
+          </p>
+        ) : isWebglHomeSeriesMode(seriesMode) ? (
+          <div className={styles.actions}>
+            <Link href="/test-ui/webgl" className={styles.homeLink}>
+              WebGL 실험실에서 비교 →
+            </Link>
+            <Link href="/" className={styles.homeLink}>
+              홈에서 확인
+            </Link>
+          </div>
+        ) : isInteractiveHomeSeriesMode(seriesMode) ? (
+          <div className={styles.actions}>
+            <Link
+              href={interactiveModeLabHref(seriesMode)}
+              className={styles.homeLink}
+            >
+              test-ui에서 원본 비교 →
+            </Link>
+            <Link href="/" className={styles.homeLink}>
+              홈에서 확인
+            </Link>
+          </div>
+        ) : null}
       </section>
     </div>
   )

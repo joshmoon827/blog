@@ -51,14 +51,27 @@ export function getVaultRoot(): string {
 
 /**
  * Resolve a vault-relative path safely (no traversal outside vault).
+ * Also accepts an absolute path that already lives under the vault.
  * Returns absolute path or throws with `.status`.
  */
-export function resolveVaultPath(relativePath: string): string {
+export function resolveVaultPath(relativeOrAbsolute: string): string {
   const vault = getVaultRoot()
-  const cleaned = relativePath.replace(/\\/g, '/').replace(/^\/+/, '').trim()
-  if (!cleaned || cleaned.includes('\0')) {
+  const raw = relativeOrAbsolute.replace(/\\/g, '/').trim()
+  if (!raw || raw.includes('\0')) {
     throw Object.assign(new Error('Invalid path'), { status: 400 })
   }
+
+  // Absolute path under vault → treat as vault file
+  if (path.isAbsolute(raw) || raw.startsWith('/')) {
+    const abs = path.resolve(raw)
+    const vaultWithSep = vault.endsWith(path.sep) ? vault : vault + path.sep
+    if (abs !== vault && !abs.startsWith(vaultWithSep)) {
+      throw Object.assign(new Error('Path is outside the vault'), { status: 403 })
+    }
+    return abs
+  }
+
+  const cleaned = raw.replace(/^\/+/, '')
   if (cleaned.split('/').some((seg) => seg === '..')) {
     throw Object.assign(new Error('Path traversal is not allowed'), { status: 400 })
   }
@@ -69,6 +82,11 @@ export function resolveVaultPath(relativePath: string): string {
     throw Object.assign(new Error('Path is outside the vault'), { status: 403 })
   }
   return abs
+}
+
+/** Vault-relative path for API/query use (from absolute or relative). */
+export function toVaultRelativePath(relativeOrAbsolute: string): string {
+  return toVaultRelative(resolveVaultPath(relativeOrAbsolute), getVaultRoot())
 }
 
 function toVaultRelative(absPath: string, vault: string): string {
@@ -127,14 +145,17 @@ export function listVaultNotes(options?: { max?: number }): VaultNoteListItem[] 
 }
 
 export async function readVaultNote(
-  relativePath: string,
+  relativeOrAbsolute: string,
 ): Promise<VaultNoteContent & { imageUpload?: { uploaded: number; errors: string[] } }> {
-  const abs = resolveVaultPath(relativePath)
+  const abs = resolveVaultPath(relativeOrAbsolute)
   if (!abs.endsWith('.md')) {
     throw Object.assign(new Error('Only .md files are supported'), { status: 400 })
   }
   if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
-    throw Object.assign(new Error(`Note not found: ${relativePath}`), { status: 404 })
+    throw Object.assign(
+      new Error(`Note not found: ${relativeOrAbsolute}`),
+      { status: 404 },
+    )
   }
 
   const source = fs.readFileSync(abs, 'utf-8')

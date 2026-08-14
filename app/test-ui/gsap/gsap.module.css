@@ -1,0 +1,1107 @@
+.page {
+  padding: 3.5rem 1.5rem 9rem;
+  overflow: clip;
+}
+
+.pageHeader {
+  max-width: 1180px;
+  margin: 0 auto 1.4rem;
+}
+
+.kicker {
+  margin: 0 0 0.8rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pageHeader h1 {
+  max-width: 1040px;
+  margin: 0 0 1.3rem;
+  color: var(--text);
+  font-size: clamp(4rem, 9vw, 8.8rem);
+  font-weight: 700;
+  letter-spacing: -0.075em;
+  line-height: 0.8;
+}
+
+.lede {
+  max-width: 45rem;
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.lede strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.meta a {
+  color: var(--text-secondary);
+}
+
+.meta a:hover {
+  color: var(--text);
+}
+
+.exampleNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-width: 1180px;
+  margin: 0 auto 4rem;
+}
+
+.exampleNav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.72rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.exampleNav a:hover {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.exampleNav span {
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.gallery {
+  display: grid;
+  gap: clamp(5rem, 10vw, 9rem);
+}
+
+.example {
+  scroll-margin-top: 2rem;
+}
+
+.exampleHeader {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 42rem);
+  gap: 0.85rem;
+  max-width: 1180px;
+  margin: 0 auto 1.25rem;
+}
+
+.exampleNumber {
+  padding-top: 0.34rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.exampleHeader h2 {
+  margin: 0 0 0.25rem;
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+
+.exampleHeader p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  height: clamp(300px, 36.36vw, 440px);
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: clamp(18px, 2.2vw, 32px);
+  background: #0b0b10;
+  isolation: isolate;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  outline: none;
+  touch-action: none;
+}
+
+.scene:focus-visible {
+  outline: 3px solid #8bff65;
+  outline-offset: -5px;
+}
+
+.gesture {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  z-index: 20;
+  padding: 0.32rem 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.62rem;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.wordSpace {
+  display: inline-block;
+  width: 0.28em;
+}
+
+/* 01 — GSAP-home-inspired hero */
+.heroScene {
+  background: #0d100e;
+  color: #f6f3e3;
+  cursor: crosshair;
+}
+
+:global([data-theme='dark']) .heroScene {
+  background: #f6f3e3;
+  color: #0d100e;
+}
+
+.heroType {
+  position: absolute;
+  inset: 7% 5% 5%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: clamp(4.2rem, 10.3vw, 9.5rem);
+  font-weight: 650;
+  letter-spacing: -0.09em;
+  line-height: 0.75;
+  white-space: nowrap;
+  perspective: 1000px;
+}
+
+.heroLine {
+  display: flex;
+  align-items: flex-start;
+  height: 0.84em;
+}
+
+.heroLineSecond {
+  align-self: flex-end;
+  margin-top: 0.18em;
+  padding-right: 4%;
+}
+
+.heroWordSpace {
+  flex: 0 0 0.3em;
+}
+
+/* Hidden before useLayoutEffect installs every letter's entrance pose. */
+.heroGlyph {
+  position: relative;
+  display: inline-block;
+  height: 0.84em;
+  opacity: 0;
+  transform-origin: 50% 65%;
+  will-change: transform;
+}
+
+.heroGlyphClip {
+  position: relative;
+  display: block;
+  height: 0.84em;
+  min-width: 0.14em;
+  overflow: hidden;
+  line-height: 0.78;
+  perspective: 700px;
+}
+
+.heroGlyphLetter {
+  position: relative;
+  display: block;
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+
+.heroDuplicate {
+  position: absolute;
+  inset: 0;
+}
+
+.heroGlyph[data-hero-variant='counter'] {
+  width: 1.08em;
+}
+
+.heroCounterRail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 400%;
+  text-align: center;
+  will-change: transform;
+}
+
+.heroCounterRail > span {
+  display: grid;
+  flex: 0 0 25%;
+  place-items: start center;
+  width: 100%;
+  height: 25%;
+  line-height: 0.78;
+}
+
+.heroObject {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.heroObject::before,
+.heroObject::after {
+  position: absolute;
+  content: '';
+}
+
+.heroObject i {
+  position: absolute;
+  display: block;
+}
+
+.heroObjectA {
+  top: -0.42em;
+  left: 0.06em;
+  width: 0.58em;
+  aspect-ratio: 1;
+}
+
+.heroObjectB {
+  top: -0.08em;
+  left: 0.06em;
+  display: flex;
+  gap: 0.035em;
+  width: 0.5em;
+  height: 0.22em;
+}
+
+.heroObjectB i {
+  position: relative;
+  flex: 1;
+}
+
+.heroObjectC {
+  top: 0.04em;
+  left: -0.46em;
+  width: 0.5em;
+  aspect-ratio: 1;
+}
+
+.heroObjectE {
+  right: -0.3em;
+  bottom: -0.25em;
+  display: flex;
+  align-items: center;
+  transform-origin: 50% 50%;
+}
+
+.heroObjectE i {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* Bloom ornaments on remaining letter objects. */
+.heroScene .heroObjectA i {
+  width: 48%;
+  aspect-ratio: 1;
+  background: #ff7c75;
+  border-radius: 45% 55% 50% 50%;
+}
+
+.heroScene .heroObjectA i:nth-child(1) {
+  top: 2%;
+  left: 25%;
+}
+
+.heroScene .heroObjectA i:nth-child(2) {
+  top: 29%;
+  left: 2%;
+  background: #f4a9ff;
+}
+
+.heroScene .heroObjectA i:nth-child(3) {
+  top: 29%;
+  right: 2%;
+  background: #ffb84e;
+}
+
+.heroScene .heroObjectA i:nth-child(4) {
+  right: 25%;
+  bottom: 0;
+  background: #87e96d;
+}
+
+.heroScene .heroObjectA::after {
+  top: 37%;
+  left: 37%;
+  width: 26%;
+  aspect-ratio: 1;
+  background: #fff3a4;
+  border-radius: 50%;
+}
+
+.heroScene .heroObjectB i {
+  aspect-ratio: 1;
+  background: #fff3a4;
+  border-radius: 50%;
+}
+
+.heroScene .heroObjectB i:nth-child(2) {
+  background: #ff8f6b;
+}
+
+.heroScene .heroObjectB i:nth-child(3) {
+  background: #8fe773;
+}
+
+.heroScene .heroObjectC::before {
+  inset: 3%;
+  background: linear-gradient(145deg, #c6ff7b, #4ebd72);
+  border-radius: 100% 0 100% 0;
+  box-shadow: inset -0.04em -0.04em 0 rgb(19 74 49 / 18%);
+}
+
+.heroScene .heroObjectE i {
+  width: 0.2em;
+  height: 0.13em;
+  margin-left: -0.04em;
+  background: linear-gradient(145deg, #bffc75, #3eae6b);
+  border-radius: 100% 0 100% 0;
+}
+
+.heroScene .heroObjectE i:nth-child(2n) {
+  background: linear-gradient(145deg, #ffb667, #f47c78);
+  border-radius: 0 100% 0 100%;
+}
+
+.heroScene[data-hero-ready='true']
+  .heroGlyph:not([data-hero-variant='counter']):not(
+    [data-hero-variant='double-one']
+  ):not([data-hero-variant='double-two'])
+  .heroGlyphClip {
+  overflow: visible;
+}
+
+/* 02 — vertical type machine */
+.slotScene {
+  --slot-size: clamp(1.5rem, 5.6vw, 4.65rem);
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(90deg, rgba(15, 25, 12, 0.07) 1px, transparent 1px) 0 0 / 6.25% 100%,
+    #bdff5b;
+  color: #11170e;
+  cursor: ns-resize;
+}
+
+.slotWords {
+  position: absolute;
+  inset: 0 3.5%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.8vw, 2rem);
+}
+
+.slotWord {
+  display: flex;
+  gap: clamp(0.08rem, 0.3vw, 0.3rem);
+}
+
+.slotColumn {
+  position: relative;
+  display: block;
+  width: 0.82em;
+  height: calc(var(--slot-size) * 1.1);
+  overflow: visible;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  font-size: var(--slot-size);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.88;
+}
+
+.slotRail {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+  will-change: transform;
+}
+
+.slotRail > span {
+  display: block;
+  flex: 0 0 0.88em;
+  width: 100%;
+  height: 0.88em;
+  line-height: 0.88em;
+  text-align: center;
+  opacity: 0.24;
+  filter: blur(0.45px);
+}
+
+.slotRail .slotTarget {
+  opacity: 1;
+  filter: none;
+}
+
+.slotCenterLine {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: calc(var(--slot-size) * 1.05);
+  border-block: 1px solid rgba(15, 25, 12, 0.2);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* 03 — elastic baseline */
+.waveScene {
+  display: grid;
+  place-items: center;
+  background: #efe8d8;
+  color: #1c1612;
+  cursor: crosshair;
+}
+
+.waveType {
+  position: relative;
+  z-index: 2;
+  width: 92%;
+  font-size: clamp(3.3rem, 9.4vw, 8.7rem);
+  font-weight: 760;
+  letter-spacing: -0.09em;
+  line-height: 0.72;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.waveType > div:last-child {
+  color: #f0442e;
+}
+
+.waveChar {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+.waveHalo {
+  position: absolute;
+  width: 55%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(28, 22, 18, 0.12);
+  border-radius: 50%;
+}
+
+.waveHalo::before,
+.waveHalo::after {
+  position: absolute;
+  inset: 13%;
+  border: inherit;
+  border-radius: inherit;
+  content: '';
+}
+
+.waveHalo::after {
+  inset: 28%;
+}
+
+.waveBaseline {
+  position: absolute;
+  right: 4%;
+  bottom: 12%;
+  left: 4%;
+  height: 1px;
+  background: rgba(28, 22, 18, 0.16);
+}
+
+/* 04 — signal decoder */
+.decoderScene {
+  --decoder-x: 50%;
+  --decoder-y: 50%;
+  background: #050806;
+  color: #aaff62;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  cursor: pointer;
+}
+
+.decoderScene::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    circle 180px at var(--decoder-x) var(--decoder-y),
+    rgba(167, 255, 101, 0.15),
+    transparent 72%
+  );
+  content: '';
+  pointer-events: none;
+}
+
+.decoderGrid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(170, 255, 98, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(170, 255, 98, 0.13) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, #000, transparent 92%);
+}
+
+.decoderChrome {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.3rem;
+  left: 1.3rem;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(170, 255, 98, 0.56);
+  font-size: clamp(0.55rem, 1vw, 0.72rem);
+  letter-spacing: 0.12em;
+}
+
+.decoderChrome > span:last-child {
+  color: #ff684f;
+}
+
+.decoderOutput {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 100%;
+  padding: 0 2.5%;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  color: #d4ffac;
+  font-size: clamp(1.42rem, 5.8vw, 5.25rem);
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-shadow: 0 0 25px rgba(170, 255, 98, 0.26);
+  white-space: pre;
+}
+
+.decoderProgress {
+  position: absolute;
+  right: 8%;
+  bottom: 20%;
+  left: 8%;
+  z-index: 3;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(170, 255, 98, 0.16);
+}
+
+.decoderProgress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #aaff62;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.decoderReadout {
+  position: absolute;
+  right: 1.3rem;
+  bottom: 1.1rem;
+  z-index: 3;
+  color: rgba(170, 255, 98, 0.38);
+  font-size: clamp(0.48rem, 1vw, 0.68rem);
+  letter-spacing: 0.08em;
+}
+
+/* 05 — type constellation */
+.orbitScene {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(98, 119, 255, 0.26), transparent 32%),
+    radial-gradient(circle at 12% 16%, rgba(255, 106, 184, 0.14), transparent 28%),
+    #090c1a;
+  color: #f5f1ff;
+  perspective: 900px;
+  cursor: crosshair;
+}
+
+.orbitScene::before {
+  position: absolute;
+  inset: 0;
+  opacity: 0.26;
+  background-image: radial-gradient(circle, #fff 0 0.7px, transparent 0.8px);
+  background-size: 23px 23px;
+  content: '';
+}
+
+.orbitSystem {
+  position: absolute;
+  inset: 7% 12%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.orbitRing {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(226, 219, 255, 0.18);
+  border-radius: 50%;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.orbitRing::before {
+  position: absolute;
+  inset: 13%;
+  border: 1px solid rgba(226, 219, 255, 0.1);
+  border-radius: 50%;
+  content: '';
+}
+
+.orbitChar {
+  position: absolute;
+  display: grid;
+  width: clamp(25px, 3.2vw, 42px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(226, 219, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(15, 19, 43, 0.72);
+  color: #e8e2ff;
+  font-size: clamp(0.75rem, 1.7vw, 1.2rem);
+  font-weight: 750;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(6px);
+}
+
+.orbitChar:nth-child(3n) {
+  border-color: rgba(255, 117, 190, 0.5);
+  color: #ff87c4;
+}
+
+.orbitCore {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.orbitCore span {
+  color: rgba(232, 226, 255, 0.58);
+  font-size: clamp(0.62rem, 1.2vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.32em;
+}
+
+.orbitCore strong {
+  color: #fff;
+  font-size: clamp(2.4rem, 7vw, 6.2rem);
+  font-weight: 720;
+  letter-spacing: -0.08em;
+  line-height: 0.95;
+  text-shadow: 0 0 45px rgba(131, 109, 255, 0.44);
+}
+
+/* 06 — sliced editorial type */
+.sliceScene {
+  background: #11100f;
+  cursor: ew-resize;
+}
+
+.slice {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #ff5b42;
+  color: #11100f;
+  will-change: transform;
+}
+
+.slice:nth-child(2n) {
+  background: #f4e9cc;
+}
+
+.slice:nth-child(3n) {
+  background: #ffb648;
+}
+
+.sliceType {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(3.7rem, 9.8vw, 9rem);
+  font-weight: 800;
+  letter-spacing: -0.095em;
+  line-height: 0.7;
+  white-space: nowrap;
+}
+
+.sliceType strong {
+  align-self: flex-end;
+  padding-right: 8%;
+  font: inherit;
+}
+
+.sliceIndex {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1rem;
+  z-index: 10;
+  color: rgba(17, 16, 15, 0.65);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+/* 07 — velocity marquee */
+.marqueeScene {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% var(--marquee-y, 50%), rgba(255, 174, 237, 0.28), transparent 28%),
+    #612dff;
+  color: #f7f0ff;
+  cursor: e-resize;
+}
+
+.marqueeRow {
+  display: flex;
+  height: 25%;
+  align-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(247, 240, 255, 0.18);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.marqueeRow:last-child {
+  border-bottom: 0;
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  color: #f7f0ff;
+  font-size: clamp(2rem, 5.4vw, 4.9rem);
+  font-weight: 780;
+  letter-spacing: -0.065em;
+  line-height: 1;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.marqueeTrack > span {
+  display: block;
+}
+
+.marqueeOutline .marqueeTrack {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #f7f0ff;
+}
+
+/* 08 — Flip poster */
+.posterScene {
+  background: #f2ee45;
+  color: #12110f;
+  cursor: pointer;
+}
+
+.posterScene::before {
+  position: absolute;
+  inset: 0;
+  opacity: 0.23;
+  background-image: radial-gradient(#12110f 0 1px, transparent 1.2px);
+  background-size: 18px 18px;
+  content: '';
+}
+
+.posterPiece {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  will-change: transform, top, right, bottom, left, width, height, font-size;
+}
+
+.posterWelcome {
+  top: 5%;
+  left: 4%;
+  font-size: clamp(3.2rem, 9.7vw, 8.8rem);
+  font-weight: 850;
+  letter-spacing: -0.105em;
+  line-height: 0.9;
+}
+
+.posterTo {
+  bottom: 8%;
+  left: 5%;
+  display: grid;
+  width: clamp(68px, 10vw, 125px);
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: #161511;
+  color: #f2ee45;
+  font-size: clamp(1.45rem, 3.2vw, 2.8rem);
+  font-weight: 800;
+}
+
+.posterJosh {
+  right: 4%;
+  bottom: 1%;
+  color: #ff5538;
+  font-size: clamp(3.5rem, 10.5vw, 9.5rem);
+  font-weight: 850;
+  letter-spacing: -0.11em;
+  line-height: 0.88;
+}
+
+.posterDisc {
+  top: 12%;
+  right: 6%;
+  width: clamp(42px, 7vw, 90px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #6b36ff;
+}
+
+.posterCross {
+  right: 23%;
+  bottom: 37%;
+  color: #6b36ff;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 0.7;
+}
+
+.posterMicro {
+  top: 48%;
+  left: 5%;
+  color: rgba(18, 17, 15, 0.65);
+  font-size: clamp(0.5rem, 1vw, 0.68rem);
+  font-weight: 750;
+  letter-spacing: 0.16em;
+}
+
+.posterScene.posterAlt {
+  background: #ff5538;
+  color: #f8f1df;
+}
+
+.posterAlt .posterWelcome {
+  top: auto;
+  bottom: 2%;
+  left: 18%;
+  color: #f8f1df;
+  font-size: clamp(3rem, 8.7vw, 7.7rem);
+}
+
+.posterAlt .posterTo {
+  top: 7%;
+  right: 6%;
+  bottom: auto;
+  left: auto;
+  width: clamp(92px, 15vw, 180px);
+  background: #f2ee45;
+  color: #12110f;
+  font-size: clamp(2rem, 4.5vw, 4rem);
+}
+
+.posterAlt .posterJosh {
+  top: 2%;
+  right: auto;
+  bottom: auto;
+  left: 3%;
+  color: #12110f;
+  font-size: clamp(3.6rem, 10.5vw, 9.5rem);
+}
+
+.posterAlt .posterDisc {
+  top: auto;
+  right: 5%;
+  bottom: 6%;
+  width: clamp(50px, 8vw, 100px);
+  border: 10px solid #12110f;
+  background: transparent;
+}
+
+.posterAlt .posterCross {
+  right: 42%;
+  bottom: 36%;
+  color: #f2ee45;
+  transform: rotate(45deg);
+}
+
+.posterAlt .posterMicro {
+  top: 46%;
+  right: 5%;
+  left: auto;
+  color: rgba(248, 241, 223, 0.72);
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 2.25rem 0.8rem 6rem;
+  }
+
+  .pageHeader,
+  .exampleHeader {
+    padding-inline: 0.25rem;
+  }
+
+  .pageHeader h1 {
+    font-size: clamp(3.6rem, 18vw, 6rem);
+  }
+
+  .exampleNav {
+    margin-bottom: 3.25rem;
+    padding-inline: 0.25rem;
+  }
+
+  .exampleNav a {
+    font-size: 0.72rem;
+  }
+
+  .gallery {
+    gap: 5.5rem;
+  }
+
+  .stage {
+    min-height: 300px;
+    border-radius: 20px;
+  }
+
+  .gesture {
+    top: 0.8rem;
+    right: 0.8rem;
+  }
+
+  .heroType {
+    inset-inline: 4%;
+    font-size: clamp(3rem, 12.8vw, 5rem);
+  }
+
+  .heroLineSecond {
+    padding-right: 1%;
+  }
+
+  .slotScene {
+    --slot-size: clamp(1.25rem, 5.6vw, 2rem);
+  }
+
+  .slotWords {
+    inset-inline: 2%;
+    gap: 0.48rem;
+  }
+
+  .waveType {
+    font-size: clamp(2.65rem, 12.2vw, 4.8rem);
+  }
+
+  .decoderOutput {
+    font-size: clamp(1.22rem, 6.2vw, 2rem);
+  }
+
+  .orbitSystem {
+    inset: 13% 4%;
+  }
+
+  .orbitChar {
+    width: 25px;
+    font-size: 0.72rem;
+  }
+
+  .sliceType {
+    font-size: clamp(2.8rem, 12.5vw, 4.8rem);
+  }
+
+  .posterWelcome {
+    top: 14%;
+  }
+
+  .posterJosh {
+    bottom: 11%;
+  }
+
+  .posterAlt .posterWelcome {
+    bottom: 12%;
+    left: 5%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroGlyph,
+  .heroGlyphLetter,
+  .heroDuplicate,
+  .heroCounterRail,
+  .heroObject,
+  .slotRail,
+  .waveChar,
+  .orbitRing,
+  .orbitChar,
+  .slice,
+  .marqueeTrack,
+  .posterPiece {
+    animation: none !important;
+    transition: none !important;
+  }
+}

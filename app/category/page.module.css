@@ -1,0 +1,354 @@
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 3rem;
+}
+
+.heroRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.hero p {
+  margin-top: 0.85rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.settingsBtn {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.settingsBtn:hover {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.settingsBtnOn {
+  border-color: var(--accent, #3485fa);
+  background: var(--accent-soft, rgba(52, 133, 250, 0.14));
+  color: var(--accent, #3485fa);
+}
+
+.adminPanel {
+  max-width: 1200px;
+  margin: 0 auto 1.25rem;
+  padding: 1rem 1.25rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.adminHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.adminHead h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.adminToast {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.adminBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adminLabel {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.colPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.colBtn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 4.5rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, #fff);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.colBtn:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--text) 35%, var(--border));
+}
+
+.colBtnOn {
+  border-color: var(--accent, #3485fa);
+  box-shadow: inset 0 0 0 1px var(--accent, #3485fa);
+}
+
+.colPreview {
+  display: grid;
+  gap: 3px;
+  width: 2.6rem;
+  height: 1.1rem;
+}
+
+.colPreview[data-cols='1'] {
+  grid-template-columns: 1fr;
+}
+.colPreview[data-cols='2'] {
+  grid-template-columns: 1fr 1fr;
+}
+.colPreview[data-cols='3'] {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.colPreview span {
+  display: block;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text) 28%, transparent);
+}
+
+.checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.checkRow input {
+  margin-top: 0.15rem;
+}
+
+.orderList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card, #fff);
+}
+
+.orderTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.orderActions {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.orderBtn {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.orderBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.orderBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.createHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.createToggle,
+.submitBtn,
+.orderBtnWide {
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.createToggle:hover:not(:disabled),
+.orderBtnWide:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.submitBtn {
+  align-self: flex-start;
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg, #fff);
+}
+
+.submitBtn:disabled,
+.createToggle:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card, #fff);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.field input,
+.addRow select {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.coverPick {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.coverPreview {
+  position: relative;
+  width: min(100%, 220px);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.coverPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.coverHint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.coverActions,
+.addRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.addRow select {
+  flex: 1 1 12rem;
+}
+
+.memberEmpty {
+  padding: 0.55rem 0.15rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 2.5rem 1.25rem 2rem;
+  }
+  .adminPanel {
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+  }
+}
+
+.seriesList {
+  padding-bottom: 5rem;
+}
+
+@media (max-width: 640px) {
+  .seriesList {
+    padding-bottom: 4rem;
+  }
+}

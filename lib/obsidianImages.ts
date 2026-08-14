@@ -25,10 +25,25 @@ const MIME_BY_EXT: Record<string, string> = {
 const ATTACHMENT_DIRS = [
   '99_Attachments',
   'Attachments',
+  '00_inbox',
+  'inbox',
   'assets',
   'Assets',
   'images',
 ]
+
+/** Skip when walking the vault for a basename match. */
+const SKIP_WALK_DIRS = new Set([
+  '.obsidian',
+  '.git',
+  '.agents',
+  '.claude',
+  '.claudian',
+  '.cursor',
+  'node_modules',
+  'Excalidraw',
+  '_System',
+])
 
 export type ObsidianImageRewriteResult = {
   body: string
@@ -47,7 +62,8 @@ function mimeFor(filePath: string): string | null {
 
 /**
  * Resolve an Obsidian image target to an absolute file path inside the vault.
- * Tries note-relative, vault-relative, and common attachment folders.
+ * Tries note-relative, vault-relative, common attachment folders, then a
+ * basename walk (for paste targets that land in 00_inbox, etc.).
  */
 export function resolveVaultImagePath(
   target: string,
@@ -73,11 +89,11 @@ export function resolveVaultImagePath(
   }
 
   const seen = new Set<string>()
+  const vaultWithSep = vault.endsWith(path.sep) ? vault : vault + path.sep
   for (const abs of candidates) {
     const norm = path.normalize(abs)
     if (seen.has(norm)) continue
     seen.add(norm)
-    const vaultWithSep = vault.endsWith(path.sep) ? vault : vault + path.sep
     if (norm !== vault && !norm.startsWith(vaultWithSep)) continue
     try {
       if (fs.existsSync(norm) && fs.statSync(norm).isFile()) return norm
@@ -85,7 +101,97 @@ export function resolveVaultImagePath(
       /* ignore */
     }
   }
+
+  // Bare filename still missing — walk vault (case-insensitive basename).
+  if (base === cleaned || !cleaned.includes('/')) {
+    const found = findFileByBasename(vault, base, seen)
+    if (found) return found
+  }
   return null
+}
+
+function findFileByBasename(
+  root: string,
+  baseName: string,
+  alreadyTried: Set<string>,
+): string | null {
+  const want = baseName.toLowerCase()
+  const queue = [root]
+  let visited = 0
+  const MAX_DIRS = 4000
+
+  while (queue.length && visited < MAX_DIRS) {
+    const dir = queue.shift()!
+    visited += 1
+    let entries: fs.Dirent[]
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true })
+    } catch {
+      continue
+    }
+    for (const ent of entries) {
+      if (ent.name === '.' || ent.name === '..') continue
+      if (ent.name.startsWith('.') && ent.name !== baseName) {
+        if (ent.isDirectory() && SKIP_WALK_DIRS.has(ent.name)) continue
+      }
+      const abs = path.join(dir, ent.name)
+      if (ent.isDirectory()) {
+        if (SKIP_WALK_DIRS.has(ent.name)) continue
+        queue.push(abs)
+        continue
+      }
+      if (!ent.isFile()) continue
+      if (alreadyTried.has(abs)) continue
+      if (ent.name.toLowerCase() === want) return abs
+    }
+  }
+  return null
+}
+
+function escapeHtmlAttr(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+}
+
+/** Obsidian `![[file.png|700]]` pipe suffix — width px, WxH, or alt label. */
+export type ObsidianImagePipeSpec =
+  | { kind: 'width'; px: number }
+  | { kind: 'size'; width: number; height: number }
+  | { kind: 'alt'; text: string }
+
+export function parseObsidianImagePipe(
+  pipe: string | undefined,
+): ObsidianImagePipeSpec | null {
+  const s = pipe?.trim() ?? ''
+  if (!s) return null
+  if (/^\d+$/.test(s)) return { kind: 'width', px: Number(s) }
+  const dim = /^(\d+)x(\d+)$/i.exec(s)
+  if (dim) {
+    return { kind: 'size', width: Number(dim[1]), height: Number(dim[2]) }
+  }
+  return { kind: 'alt', text: s }
+}
+
+/** Markdown/HTML snippet for an uploaded Obsidian image embed. */
+export function markdownForObsidianImage(
+  url: string,
+  fileName: string,
+  pipe?: string,
+): string {
+  const defaultAlt = path.parse(fileName).name
+  const spec = parseObsidianImagePipe(pipe)
+  if (!spec || spec.kind === 'alt') {
+    const alt = spec?.kind === 'alt' ? spec.text : defaultAlt
+    return `![${alt}](${url})`
+  }
+  if (spec.kind === 'width') {
+    const w = spec.px
+    return `<img src="${url}" alt="${escapeHtmlAttr(defaultAlt)}" style="width:${w}px;max-width:100%;height:auto;display:block;" />`
+  }
+  const { width, height } = spec
+  return `<img src="${url}" alt="${escapeHtmlAttr(defaultAlt)}" width="${width}" height="${height}" style="max-width:100%;height:auto;display:block;" />`
 }
 
 async function uploadLocalImage(absPath: string): Promise<string> {
@@ -168,9 +274,7 @@ export async function rewriteObsidianImagesInBody(
       out = out.replace(full, `*[image upload failed: ${target}]*`)
       continue
     }
-    const alt =
-      alias && !/^\d+$/.test(alias) ? alias : path.parse(target).name
-    out = out.replace(full, `![${alt}](${url})`)
+    out = out.replace(full, markdownForObsidianImage(url, target, alias))
   }
 
   // Relative markdown images (skip remote / already-hosted)

@@ -7,7 +7,7 @@
  *   npm run import:obsidian -- note.md --force
  */
 
-import { existsSync, readFileSync, writeFileSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, statSync, readdirSync } from 'node:fs'
 import {
   basename,
   dirname,
@@ -37,10 +37,23 @@ const MIME = {
 const ATTACHMENT_DIRS = [
   '99_Attachments',
   'Attachments',
+  '00_inbox',
+  'inbox',
   'assets',
   'Assets',
   'images',
 ]
+const SKIP_WALK_DIRS = new Set([
+  '.obsidian',
+  '.git',
+  '.agents',
+  '.claude',
+  '.claudian',
+  '.cursor',
+  'node_modules',
+  'Excalidraw',
+  '_System',
+])
 
 function loadDotEnv() {
   const envPath = join(root, '.env.local')
@@ -138,11 +151,11 @@ function parseMarkdown(source) {
 }
 
 function slugifyTitle(title) {
+  // NFC keeps Hangul syllables intact (NFKD would split jamo and strip them).
   const base = title
     .trim()
     .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFC')
     .replace(/[^a-z0-9가-힣\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
@@ -168,16 +181,43 @@ function isImagePath(p) {
   return IMAGE_EXTS.has(extname(p).toLowerCase())
 }
 
+function findFileByBasename(root, baseName, alreadyTried) {
+  const want = baseName.toLowerCase()
+  const queue = [root]
+  let visited = 0
+  const MAX_DIRS = 4000
+  while (queue.length && visited < MAX_DIRS) {
+    const dir = queue.shift()
+    visited += 1
+    let entries
+    try {
+      entries = readdirSync(dir, { withFileTypes: true })
+    } catch {
+      continue
+    }
+    for (const ent of entries) {
+      if (ent.name === '.' || ent.name === '..') continue
+      const abs = join(dir, ent.name)
+      if (ent.isDirectory()) {
+        if (SKIP_WALK_DIRS.has(ent.name) || ent.name.startsWith('.')) continue
+        queue.push(abs)
+        continue
+      }
+      if (!ent.isFile()) continue
+      if (alreadyTried.has(abs)) continue
+      if (ent.name.toLowerCase() === want) return abs
+    }
+  }
+  return null
+}
+
 function resolveVaultImage(target, noteAbs, vault) {
   const cleaned = target.trim().replace(/\\/g, '/').replace(/^\/+/, '')
   if (!cleaned || cleaned.includes('\0') || cleaned.split('/').includes('..')) {
     return null
   }
   const noteDir = dirname(noteAbs)
-  const candidates = [
-    resolve(noteDir, cleaned),
-    resolve(vault, cleaned),
-  ]
+  const candidates = [resolve(noteDir, cleaned), resolve(vault, cleaned)]
   const base = basename(cleaned)
   for (const dir of ATTACHMENT_DIRS) {
     candidates.push(resolve(vault, dir, base))
@@ -191,6 +231,9 @@ function resolveVaultImage(target, noteAbs, vault) {
     seen.add(norm)
     if (norm !== vault && !norm.startsWith(vaultWithSep)) continue
     if (existsSync(norm) && statSync(norm).isFile()) return norm
+  }
+  if (base === cleaned || !cleaned.includes('/')) {
+    return findFileByBasename(vault, base, seen)
   }
   return null
 }
@@ -273,6 +316,30 @@ async function rewriteImages(body, noteAbs, vault) {
 
   let out = body
   const wikiEmbedRe = /!\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g
+
+  const escapeHtmlAttr = (value) =>
+    String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+
+  const markdownForObsidianImage = (url, fileName, pipe) => {
+    const defaultAlt = parsePath(fileName).name
+    const s = pipe?.trim() ?? ''
+    if (/^\d+$/.test(s)) {
+      const w = Number(s)
+      return `<img src="${url}" alt="${escapeHtmlAttr(defaultAlt)}" style="width:${w}px;max-width:100%;height:auto;display:block;" />`
+    }
+    const dim = /^(\d+)x(\d+)$/i.exec(s)
+    if (dim) {
+      const width = Number(dim[1])
+      const height = Number(dim[2])
+      return `<img src="${url}" alt="${escapeHtmlAttr(defaultAlt)}" width="${width}" height="${height}" style="max-width:100%;height:auto;display:block;" />`
+    }
+    const alt = s || defaultAlt
+    return `![${alt}](${url})`
+  }
+
   for (const match of [...body.matchAll(wikiEmbedRe)]) {
     const full = match[0]
     const target = String(match[1] || '').trim()
@@ -293,8 +360,7 @@ async function rewriteImages(body, noteAbs, vault) {
       out = out.replace(full, `*[image upload failed: ${target}]*`)
       continue
     }
-    const alt = alias && !/^\d+$/.test(alias) ? alias : parsePath(target).name
-    out = out.replace(full, `![${alt}](${url})`)
+    out = out.replace(full, markdownForObsidianImage(url, target, alias))
   }
 
   const mdImgRe = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g
@@ -371,16 +437,25 @@ async function importFile(filePath, { force, slug, image }) {
 
   const article = await toArticle(abs, { slug, image })
   const all = readAll()
-  const idx = all.findIndex((a) => a.slug === article.slug)
+  let idx = all.findIndex((a) => a.slug === article.slug)
+  // Prefer matching an existing import of the same vault file (stable re-import).
+  if (idx === -1) {
+    idx = all.findIndex(
+      (a) =>
+        typeof a.sourcePath === 'string' &&
+        resolve(a.sourcePath) === abs,
+    )
+  }
 
   if (idx !== -1 && !force) {
     throw new Error(
-      `Slug already exists: ${article.slug}. Re-run with --force to overwrite.`,
+      `Slug already exists: ${all[idx].slug}. Re-run with --force to overwrite.`,
     )
   }
 
   if (idx !== -1) {
-    all[idx] = { ...all[idx], ...article, slug: article.slug }
+    const keepSlug = all[idx].slug
+    all[idx] = { ...all[idx], ...article, slug: keepSlug }
     writeAll(all)
     return { action: 'updated', article: all[idx] }
   }

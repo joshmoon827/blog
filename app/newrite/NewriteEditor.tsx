@@ -280,6 +280,7 @@ export default function NewriteEditor() {
   const [coverGenMessage, setCoverGenMessage] = useState('')
   const [createdSlug, setCreatedSlug] = useState<string | null>(null)
   const [obsidianOpen, setObsidianOpen] = useState(false)
+  const [sourcePath, setSourcePath] = useState<string | undefined>()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [spellOpen, setSpellOpen] = useState(false)
@@ -288,6 +289,17 @@ export default function NewriteEditor() {
   const [draftCount, setDraftCount] = useState(0)
   const [draftSaving, setDraftSaving] = useState(false)
   const [draftSavedSlug, setDraftSavedSlug] = useState<string | null>(null)
+  const [draftListOpen, setDraftListOpen] = useState(false)
+  const [draftList, setDraftList] = useState<
+    Array<{
+      slug: string
+      title: string
+      description?: string
+      created?: string
+      image?: string
+    }>
+  >([])
+  const [draftListLoading, setDraftListLoading] = useState(false)
   const [autoSavedAt, setAutoSavedAt] = useState<number | null>(null)
   const [hydrated, setHydrated] = useState(false)
   const [editorMode, setEditorMode] = useState<EditorViewMode>('wysiwyg')
@@ -299,7 +311,11 @@ export default function NewriteEditor() {
   const categoryRef = useRef<HTMLDivElement>(null)
   const localTools = isLocalToolsEnabled()
   const isMarkdownMode = editorMode === 'markdown'
-  const articleFormat = isMarkdownMode ? 'default' : 'tistory'
+  const articleFormat = sourcePath
+    ? 'obsidian'
+    : isMarkdownMode
+      ? 'default'
+      : 'tistory'
 
   const handleSideMarginChange = (pct: number) => {
     const next = clampSideMargin(pct)
@@ -412,6 +428,43 @@ export default function NewriteEditor() {
     }
   }, [])
 
+  const openDraftList = async () => {
+    setDraftListOpen(true)
+    setDraftListLoading(true)
+    try {
+      const res = await fetch('/api/articles')
+      if (!res.ok) throw new Error(`목록 불러오기 실패 (${res.status})`)
+      const articles = (await res.json()) as Array<{
+        slug: string
+        title: string
+        description?: string
+        created?: string
+        image?: string
+        draft?: boolean
+        trashed?: boolean
+      }>
+      const drafts = articles.filter((a) => a.draft && !a.trashed)
+      setDraftList(
+        drafts.map((a) => ({
+          slug: a.slug,
+          title: a.title || '제목 없음',
+          description: a.description,
+          created: a.created,
+          image: a.image,
+        })),
+      )
+      setDraftCount(drafts.length)
+    } catch (err) {
+      alert(
+        '임시저장 목록을 불러오지 못했습니다: ' +
+          (err instanceof Error ? err.message : String(err)),
+      )
+      setDraftListOpen(false)
+    } finally {
+      setDraftListLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (!hydrated) return
     bodyRef.current?.setSpellcheck(spellcheckOn)
@@ -499,6 +552,7 @@ export default function NewriteEditor() {
     setCreated(note.created || new Date().toISOString().slice(0, 10))
     setTagsText(formatTagsInput(note.tags))
     setMdBody(note.body)
+    setSourcePath(note.path)
     setEditorMode('markdown')
     setSettingsOpen(false)
   }
@@ -587,6 +641,7 @@ export default function NewriteEditor() {
           category: category || undefined,
           format: articleFormat,
           body: liveBody,
+          sourcePath: sourcePath || undefined,
           draft: true,
         }),
       })
@@ -693,6 +748,7 @@ export default function NewriteEditor() {
           format: articleFormat,
           image,
           body: liveBody,
+          sourcePath: sourcePath || undefined,
         }),
       })
       const data = (await res.json()) as { slug?: string; error?: string }
@@ -1041,12 +1097,21 @@ export default function NewriteEditor() {
             <Link
               href="/drafts"
               className={styles.draftCount}
-              title="임시저장 목록 보기"
+              title="임시저장 목록 페이지"
               aria-label={`임시저장 ${draftCount}개`}
             >
               {draftCount}
             </Link>
           </div>
+          <button
+            type="button"
+            className={styles.draftListBtn}
+            onClick={() => void openDraftList()}
+            disabled={busy}
+            title="임시저장 리스트 보기"
+          >
+            임시저장 리스트보기
+          </button>
           <button
             type="submit"
             form="newrite-form"
@@ -1063,6 +1128,98 @@ export default function NewriteEditor() {
           </button>
         </div>
       </footer>
+
+      {draftListOpen ? (
+        <div className={styles.modalRoot} role="presentation">
+          <button
+            type="button"
+            className={styles.modalBackdrop}
+            aria-label="임시저장 목록 닫기"
+            onClick={() => setDraftListOpen(false)}
+          />
+          <div
+            className={styles.draftListModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label="임시저장 리스트"
+          >
+            <div className={styles.previewHeader}>
+              <h2 className={styles.previewTitle}>
+                임시저장 리스트
+                {!draftListLoading ? (
+                  <span className={styles.draftListCount}>
+                    {draftList.length}
+                  </span>
+                ) : null}
+              </h2>
+              <div className={styles.previewHeaderActions}>
+                <Link
+                  href="/drafts"
+                  className={styles.previewExpandBtn}
+                  onClick={() => setDraftListOpen(false)}
+                >
+                  전체 페이지
+                </Link>
+                <button
+                  type="button"
+                  className={styles.drawerClose}
+                  onClick={() => setDraftListOpen(false)}
+                  aria-label="닫기"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className={styles.draftListBody}>
+              {draftListLoading ? (
+                <p className={styles.draftListEmpty}>불러오는 중…</p>
+              ) : draftList.length === 0 ? (
+                <p className={styles.draftListEmpty}>
+                  저장된 임시글이 없습니다.
+                </p>
+              ) : (
+                <ul className={styles.draftList}>
+                  {draftList.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/articles/${item.slug}`}
+                        className={styles.draftListItem}
+                        onClick={() => setDraftListOpen(false)}
+                      >
+                        {item.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={item.image}
+                            alt=""
+                            className={styles.draftListThumb}
+                          />
+                        ) : (
+                          <span className={styles.draftListThumbEmpty} aria-hidden />
+                        )}
+                        <span className={styles.draftListText}>
+                          <span className={styles.draftListItemTitle}>
+                            {item.title}
+                          </span>
+                          {item.description ? (
+                            <span className={styles.draftListItemDesc}>
+                              {item.description}
+                            </span>
+                          ) : null}
+                          {item.created ? (
+                            <span className={styles.draftListItemMeta}>
+                              {item.created}
+                            </span>
+                          ) : null}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {previewOpen ? (
         <div className={styles.modalRoot} role="presentation">
@@ -1269,6 +1426,7 @@ export default function NewriteEditor() {
                     photos={coverReferencePhotos}
                     onChange={setCoverReferencePhotos}
                     disabled={busy}
+                    captureWindowPaste
                   />
                   <CoverBackgroundPicker
                     value={coverBackgroundColor}

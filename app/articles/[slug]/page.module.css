@@ -50,7 +50,7 @@
 .back:hover { color: var(--text); }
 
 /* buttons */
-.btnEdit, .btnSave, .btnCancel, .btnSettings {
+.btnEdit, .btnSave, .btnCancel, .btnSettings, .btnObsidianSync {
   padding: 0.4rem 1rem;
   border-radius: 6px;
   font-family: var(--font);
@@ -89,6 +89,16 @@
 }
 .btnSave:disabled { opacity: 0.5; }
 .btnSave:not(:disabled):hover { opacity: 0.85; }
+
+.btnObsidianSync {
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btnObsidianSync:disabled { opacity: 0.5; }
+.btnObsidianSync:not(:disabled):hover {
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
 
 .btnCancel {
   background: transparent;
@@ -138,6 +148,14 @@
   line-height: 1.4;
 }
 
+.coverGenCancelled {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .coverGenLink {
   color: var(--accent);
   text-decoration: underline;
@@ -177,7 +195,8 @@
 
 .coverGenBanner,
 .coverGenBannerError,
-.coverGenBannerOk {
+.coverGenBannerOk,
+.coverGenBannerCancelled {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -202,6 +221,11 @@
   background: rgba(74, 222, 128, 0.1);
   color: var(--text-muted);
 }
+.coverGenBannerCancelled {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--text-muted);
+  font-weight: 600;
+}
 
 .btnGenerateCover {
   padding: 0.35rem 0.85rem;
@@ -220,6 +244,28 @@
   background: rgba(255, 255, 255, 0.12);
 }
 .btnGenerateCover:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnCancelCover {
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  transition: opacity 0.2s, color 0.2s, border-color 0.2s;
+}
+.btnCancelCover:hover:not(:disabled) {
+  color: var(--danger, #f87171);
+  border-color: var(--danger, #f87171);
+}
+.btnCancelCover:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -526,7 +572,7 @@
 .body > *:first-child {
   margin-top: 0;
 }
-.body > :is(h1, h2, h3, h4):first-child {
+.body > :is(h1, h2, h3, h4, h5):first-child {
   /* Keep section heading air even as first body child (~3× prior 2rem). */
   margin-top: 6rem;
 }
@@ -536,18 +582,49 @@
 .body p {
   margin-bottom: 1.4rem;
 }
+/* Docs Ladder (test-ui/h1 #docs · Version 07) */
 .body h1,
 .body h2,
-.body h3 {
+.body h3,
+.body h4,
+.body h5 {
   color: var(--text);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin: 6rem 0 0.85rem;
+  margin: 6rem 0 0.55rem;
+  line-height: 1.3;
 }
-.body h1 { font-size: 1.75rem; }
-.body h2 { font-size: 1.45rem; }
-.body h3 { font-size: 1.2rem; }
+.body h1 {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 1.9rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 2rem 0 0.55rem;
+  /* Raise highlight ~3px toward the glyphs */
+  padding-bottom: calc(0.2rem - 3px);
+  box-shadow: inset 0 -0.38em 0 color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.body h2 {
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.body h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.body h4 {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.body h5 {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
 .body a {
   color: var(--accent);
   text-decoration: underline;
@@ -639,16 +716,103 @@
 .body hr {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 2rem 0;
+  margin: 4rem 0;
 }
 .body img,
 .bodyImage {
   display: block;
-  width: 100%;
   max-width: 100%;
   height: auto;
   margin: 0 0 1.4rem;
   border-radius: 8px;
+}
+
+/* Admin: tistory HTML host — dblclick crop · right-click align */
+.bodyImageEditableHost {
+  cursor: default;
+}
+.bodyImageEditableHost :global(img) {
+  cursor: context-menu;
+  outline: 1px dashed transparent;
+  transition: outline-color 0.15s ease;
+}
+.bodyImageEditableHost :global(img:hover) {
+  outline-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.bodyImageEditableHost :global(img[data-align='alignLeft']) {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  max-width: min(100%, 85%);
+}
+.bodyImageEditableHost :global(img[data-align='alignCenter']) {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.bodyImageEditableHost :global(img[data-align='alignRight']) {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  max-width: min(100%, 85%);
+}
+
+.imageAlignMenu {
+  position: fixed;
+  z-index: 90;
+  min-width: 10.5rem;
+  padding: 0.35rem;
+  border-radius: 8px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+.imageAlignMenuTitle {
+  margin: 0;
+  padding: 0.35rem 0.55rem 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.imageAlignMenuItem {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.imageAlignMenuItem:hover,
+.imageAlignMenuItemActive {
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+}
+.imageAlignMenuItemActive {
+  font-weight: 750;
+}
+
+/* Persist align for all article bodies (markdown HTML imgs) */
+.body :global(img[data-align='alignLeft']) {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  max-width: min(100%, 85%);
+}
+.body :global(img[data-align='alignCenter']) {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.body :global(img[data-align='alignRight']) {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  max-width: min(100%, 85%);
+}
+
+/* Full-width only when no Obsidian width (`|700`) inline style */
+.body img:not([style*='width']) {
+  width: 100%;
 }
 
 /* KaTeX math ($$ … $$ / $ … $) */
@@ -657,7 +821,7 @@
   color: var(--text);
 }
 .body :global(.katex-display) {
-  margin: 0 0 1.4rem;
+  margin: 3px 0 1.4rem;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.35rem 0;
@@ -667,12 +831,19 @@
 }
 
 /* —— format: obsidian —— */
+/* h1 uses Docs Ladder ink highlight (same as default / test-ui #docs) */
 .body:global(.article-format-obsidian) h1 {
-  font-size: 1.85rem;
-  margin: 6rem 0 0.75rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid var(--border);
-  font-weight: 650;
+  display: inline-block;
+  max-width: 100%;
+  font-size: 1.9rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 2rem 0 0.55rem;
+  border-bottom: none;
+  /* Raise highlight ~3px toward the glyphs */
+  padding-bottom: calc(0.2rem - 3px);
+  box-shadow: inset 0 -0.38em 0 color-mix(in srgb, var(--accent) 28%, transparent);
 }
 .body:global(.article-format-obsidian) h2 {
   font-size: 1.45rem;
@@ -703,367 +874,6 @@
   padding-left: 0.25rem;
 }
 
-/* Muya edit surface — same type rhythm as markdown elements above (no visual fork) */
-.body :global(.mu-editor),
-.body :global(.mu-container) {
-  font: inherit;
-  color: inherit;
-  background: transparent !important;
-  max-width: none !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 0 !important;
-  box-shadow: none !important;
-  border: none !important;
-  outline: none !important;
-}
-
-.body :global(.mu-paragraph),
-.body :global(p.mu-paragraph) {
-  margin: 0 0 1.4rem;
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-}
-
-.body :global(.mu-atx-heading),
-.body :global(.mu-setext-heading) {
-  color: var(--text);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin: 6rem 0 0.85rem;
-}
-
-.body :global(h1.mu-atx-heading),
-.body :global(h1.mu-setext-heading) {
-  font-size: 1.75rem;
-}
-.body :global(h2.mu-atx-heading),
-.body :global(h2.mu-setext-heading) {
-  font-size: 1.45rem;
-}
-.body :global(h3.mu-atx-heading),
-.body :global(h3.mu-setext-heading) {
-  font-size: 1.2rem;
-}
-.body :global(h4.mu-atx-heading),
-.body :global(h4.mu-setext-heading) {
-  font-size: 1.1rem;
-}
-
-.body :global(.mu-bullet-list),
-.body :global(.mu-order-list),
-.body :global(ul.mu-bullet-list),
-.body :global(ol.mu-order-list) {
-  margin: 0 0 1.4rem;
-  padding-left: 1.5rem;
-  color: inherit;
-}
-
-.body :global(.mu-list-item),
-.body :global(.mu-order-list-item),
-.body :global(.mu-bullet-list-item) {
-  margin-bottom: 0.4rem;
-  line-height: 1.7;
-}
-
-.body :global(.mu-thematic-break),
-.body :global(hr.mu-thematic-break) {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2rem 0;
-  height: 0;
-  padding: 0;
-}
-
-.body :global(.mu-task-list) {
-  list-style: none;
-  padding-left: 0;
-  margin: 0 0 1.4rem;
-}
-
-.body :global(.mu-task-list-item) {
-  list-style: none;
-}
-
-/* Strip Muya container defaults that diverge from .body */
-.body :global(.mu-container p),
-.body :global(.mu-container blockquote),
-.body :global(.mu-container ul),
-.body :global(.mu-container ol),
-.body :global(.mu-container dl),
-.body :global(.mu-container table),
-.body :global(.mu-container figure:not(.mu-table)) {
-  padding: 0 !important;
-}
-
-.body :global(.mu-container p),
-.body :global(.mu-paragraph) {
-  margin: 0 0 1.4rem !important;
-}
-
-.body :global(.mu-container ul),
-.body :global(.mu-container ol) {
-  margin: 0 0 1.4rem !important;
-  padding-left: 1.5rem !important;
-}
-
-.body :global(.mu-container blockquote) {
-  margin: 0 0 1.4rem !important;
-  padding: 0.15rem 0 0.15rem 1rem !important;
-}
-
-.body :global(.mu-container table),
-.body :global(.mu-container figure:not(.mu-table)) {
-  margin: 0 0 1.4rem !important;
-}
-
-.body :global(.mu-container h1),
-.body :global(.mu-container h2),
-.body :global(.mu-container h3),
-.body :global(.mu-container h4),
-.body :global(.mu-container h5),
-.body :global(.mu-container h6) {
-  color: var(--text) !important;
-  cursor: text;
-  margin: 2rem 0 0.85rem !important;
-  padding: 0 !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em;
-  line-height: 1.25 !important;
-}
-
-.body :global(.mu-container h1) { font-size: 1.75rem !important; }
-.body :global(.mu-container h2) { font-size: 1.45rem !important; }
-.body :global(.mu-container h3) { font-size: 1.2rem !important; }
-.body :global(.mu-container h4) { font-size: 1.1rem !important; }
-
-.body :global(.mu-container blockquote:before) {
-  display: none !important;
-  content: none !important;
-}
-
-/* Tables — match read .body table (kill Muya ::before borders / min-width) */
-.body :global(figure.mu-table) {
-  margin: 0 0 1.4rem !important;
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  outline: none !important;
-}
-
-.body :global(.mu-table-inner),
-.body :global(table.mu-table-inner) {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse !important;
-  border-spacing: 0 !important;
-  display: block !important;
-  overflow-x: auto !important;
-  font-size: 0.95rem !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  word-break: normal !important;
-}
-
-.body :global(.mu-table-inner tr),
-.body :global(.mu-table-row) {
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-}
-
-.body :global(.mu-table-inner th),
-.body :global(.mu-table-inner td),
-.body :global(.mu-table-cell) {
-  text-align: left !important;
-  margin: 0 !important;
-  padding: 0.55rem 0.75rem !important;
-  vertical-align: top !important;
-  border: 1px solid var(--border) !important;
-  position: relative;
-  font-weight: inherit;
-  background: transparent !important;
-  color: var(--text-secondary) !important;
-  min-width: 0 !important;
-  box-shadow: none !important;
-}
-
-.body :global(.mu-table-inner th),
-.body :global(.mu-table-row:first-child .mu-table-cell),
-.body :global(.mu-table-row:first-child th) {
-  color: var(--text) !important;
-  font-weight: 600 !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-}
-
-/* Muya draws borders via ::before — remove so we use real cell borders */
-.body :global(.mu-table-inner th:before),
-.body :global(.mu-table-inner td:before),
-.body :global(.mu-table-cell:before),
-.body :global(.mu-table-cell:after) {
-  display: none !important;
-  content: none !important;
-  border: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-.body :global(.mu-table-cell-content) {
-  min-width: 0 !important;
-  width: auto !important;
-  font: inherit !important;
-  color: inherit !important;
-  line-height: inherit !important;
-  outline: none !important;
-}
-
-.body :global(.mu-table-inner td[data-align='left']),
-.body :global(.mu-table-cell[data-align='left']) {
-  text-align: left !important;
-}
-.body :global(.mu-table-inner td[data-align='center']),
-.body :global(.mu-table-cell[data-align='center']) {
-  text-align: center !important;
-}
-.body :global(.mu-table-inner td[data-align='right']),
-.body :global(.mu-table-cell[data-align='right']) {
-  text-align: right !important;
-}
-
-.body :global(.mu-block-quote),
-.body :global(blockquote.mu-block-quote) {
-  margin: 0 0 1.4rem;
-  padding: 0.15rem 0 0.15rem 1rem;
-  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  color: var(--text-muted);
-}
-
-.body :global(.mu-block-quote .mu-paragraph) {
-  margin: 0 0 0.6rem !important;
-}
-
-.body :global(.mu-block-quote .mu-paragraph:last-child) {
-  margin-bottom: 0 !important;
-}
-
-/* Nested list paragraphs — match tight read lists */
-.body :global(li .mu-paragraph),
-.body :global(.mu-list-item .mu-paragraph),
-.body :global(.mu-bullet-list-item .mu-paragraph),
-.body :global(.mu-order-list-item .mu-paragraph),
-.body :global(.mu-task-list-item .mu-paragraph) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.body :global(.mu-code-block) {
-  margin: 0 0 1.4rem !important;
-  margin-top: 0 !important;
-  padding: 1rem 1.1rem !important;
-  overflow-x: auto;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--text) 5%, transparent);
-  border: 1px solid var(--border);
-}
-
-.body :global(.mu-code),
-.body :global(.mu-codeblock-content) {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: var(--text);
-}
-
-.body :global(.mu-inline-code),
-.body :global(code.mu-inline-code) {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.88em;
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-  color: var(--text);
-}
-
-.body :global(a.mu-inline-rule),
-.body :global(span.mu-inline-rule.mu-link),
-.body :global(.mu-link) {
-  color: var(--accent) !important;
-  text-decoration: underline !important;
-  text-underline-offset: 2px;
-}
-
-.body :global(.mu-strong),
-.body :global(strong) {
-  color: var(--text);
-  font-weight: 700;
-}
-
-.body :global(.mu-thematic-break:before),
-.body :global(.mu-thematic-break:after) {
-  display: none !important;
-  content: none !important;
-}
-
-.body :global(figure.mu-paragraph img),
-.body :global(.mu-image-container img) {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  margin: 0 0 1.4rem;
-  border-radius: 8px;
-}
-
-.body :global(figure.mu-html-block),
-.body :global(figure.mu-math-block:not(.mu-active)) {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.body :global(figure.mu-active.mu-math-block) {
-  margin: 0 0 1.4rem;
-}
-
-.body :global(figure.mu-math-block .mu-math-preview),
-.body :global(.katex) {
-  color: var(--text);
-}
-
-.body :global(figure.mu-math-block .mu-math-preview .katex-display) {
-  margin: 0;
-  padding: 0.35rem 0;
-}
-
-.body :global(figure.mu-active.mu-math-block .mu-math-container) {
-  margin: 0 0 0.75rem;
-  padding: 0.75rem 0.9rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--text) 5%, transparent);
-  color: var(--text-secondary);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.9rem;
-  line-height: 1.55;
-}
-
-.body :global(figure.mu-active.mu-math-block > .mu-math-preview) {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  transform: none !important;
-  width: 100%;
-  margin: 0;
-  padding: 0.35rem 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
-
 .bodyInput {
   width: 100%;
   font-family: var(--font);
@@ -1081,7 +891,7 @@
 .bodyInput:focus { border-color: var(--accent); }
 
 @media (max-width: 640px) {
-  .article { padding: 1.5rem 1.25rem 4rem; }
+  .article { padding: 0 1.25rem 4rem; }
   .banner { aspect-ratio: 4 / 3; }
 }
 

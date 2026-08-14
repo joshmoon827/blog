@@ -9,6 +9,10 @@ import {
   writeFileSync,
 } from 'node:fs'
 import path from 'node:path'
+import {
+  cancelCoverJob,
+  healStaleRunningCoverJob,
+} from '../../../scripts/lib/cover-job.mjs'
 
 export const runtime = 'nodejs'
 export const maxDuration = 300
@@ -128,6 +132,7 @@ function readArticleImage(slug: string): string | null {
 /**
  * GET /api/generate-cover?slug=…
  * Poll background job status (and current article.image).
+ * Heals zombie "running" jobs whose worker PID is already dead.
  */
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get('slug')?.trim()
@@ -135,7 +140,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'slug is required' }, { status: 400 })
   }
 
-  const job = readJob(slug)
+  let job = readJob(slug)
+  if (job?.status === 'running') {
+    job = healStaleRunningCoverJob(slug, job) as Record<string, unknown> | null
+  }
   const image = readArticleImage(slug)
   const generated =
     typeof image === 'string' && image.includes('/images/generated/')
@@ -191,6 +199,40 @@ export async function GET(req: NextRequest) {
     startedAt: job.startedAt ?? null,
     finishedAt: job.finishedAt ?? null,
     job,
+  })
+}
+
+/**
+ * DELETE /api/generate-cover?slug=…
+ * Cancel a background cover job (kill worker + mark cancelled).
+ */
+export async function DELETE(req: NextRequest) {
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_COVER_GENERATE !== '1') {
+    return NextResponse.json(
+      { error: 'Cover generation cancel is disabled in production.' },
+      { status: 403 },
+    )
+  }
+
+  const slug = req.nextUrl.searchParams.get('slug')?.trim()
+  if (!slug) {
+    return NextResponse.json({ error: 'slug is required' }, { status: 400 })
+  }
+
+  const result = cancelCoverJob(slug) as {
+    ok: boolean
+    slug: string
+    status: string
+    killed?: boolean
+    killSignal?: string | null
+    killError?: string | null
+    already?: string
+    job?: Record<string, unknown>
+  }
+
+  return NextResponse.json({
+    cancelled: result.status === 'cancelled' || result.already === 'cancelled',
+    ...result,
   })
 }
 
@@ -358,7 +400,14 @@ export async function POST(req: NextRequest) {
   }
 
   if (background) {
-    const existing = prevJob
+    // Heal zombies before the already-running gate (dead PID must not block).
+    let existing = prevJob
+    if (existing?.status === 'running') {
+      existing = healStaleRunningCoverJob(slug, existing) as Record<
+        string,
+        unknown
+      > | null
+    }
     if (existing?.status === 'running') {
       const startedAt = existing.startedAt
         ? Date.parse(String(existing.startedAt))

@@ -9,6 +9,10 @@ const PROTECTED_API_MUTATION_PREFIXES = [
   '/api/upload-image',
   '/api/generate-cover',
   '/api/obsidian',
+  '/api/mosaic-pattern',
+  '/api/mosaic-presets',
+  '/api/home-series-mode',
+  '/api/category',
 ]
 
 function authoringOn(req: NextRequest) {
@@ -93,5 +97,13 @@ export const config = {
     '/api/generate-cover/:path*',
     '/api/obsidian',
     '/api/obsidian/:path*',
+    '/api/mosaic-pattern',
+    '/api/mosaic-pattern/:path*',
+    '/api/mosaic-presets',
+    '/api/mosaic-presets/:path*',
+    '/api/home-series-mode',
+    '/api/home-series-mode/:path*',
+    '/api/category',
+    '/api/category/:path*',
   ],
 }

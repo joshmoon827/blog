@@ -105,7 +105,7 @@ export function extractHighlightPhrases(plainText: string, _body: string): strin
     ),
     sliceBlock(
       text,
-      '인코더가 뽑은 zt가 dynamics prior와 정렬되도록 유도',
+      '분포를 맞춤',
       '손실 설계가 개선됨',
     ),
   ].filter((phrase): phrase is string => Boolean(phrase))

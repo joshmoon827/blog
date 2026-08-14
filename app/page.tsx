@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticlesGrid from '@/components/ArticlesGrid'
 import HomeInteractiveBanner from '@/components/HomeInteractiveBanner'
@@ -16,8 +17,36 @@ import { mosaicSlotCount } from '@/lib/mosaicPattern'
 import { readMosaicPattern } from '@/lib/mosaicPattern.server'
 import { getPretextFeatureArticle } from '@/lib/pretextArticle.server'
 import { getSeriesPreviewItems } from '@/lib/seriesItems'
+import { siteConfig, getDefaultDescription } from '@/lib/siteConfig'
 import styles from './page.module.css'
 
+export const metadata: Metadata = {
+  title: 'Articles',
+  description: getDefaultDescription('ko'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: `Articles | ${siteConfig.siteName}`,
+    description: getDefaultDescription('ko'),
+    url: siteConfig.siteUrl,
+    siteName: siteConfig.siteName,
+    locale: 'ko_KR',
+    type: 'website',
+    images: [
+      {
+        url: `${siteConfig.siteUrl}/blog-logo.svg`,
+        alt: siteConfig.siteName,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Articles | ${siteConfig.siteName}`,
+    description: getDefaultDescription('ko'),
+    images: [`${siteConfig.siteUrl}/blog-logo.svg`],
+  },
+}
 interface ArticlesPageProps {
   searchParams?: Promise<{
     tag?: string | string[]

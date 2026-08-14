@@ -15,6 +15,7 @@ import type { Article } from '@/data/articles'
 import { useAuth } from '@/hooks/useAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import { useArticleAdmin } from '@/components/ArticleAdminContext'
+import { useLanguage } from '@/components/LocalizedText'
 import ImageCarousel from './ImageCarousel'
 import styles from './ArticleCard.module.css'
 
@@ -29,11 +30,15 @@ const TAP_MAX_MS = 280
 
 export default function ArticleCard({ article, index, variant = 'default' }: Props) {
   const router = useRouter()
+  const language = useLanguage()
   const { authenticated, loading: authLoading } = useAuth()
   const adminCtx = useArticleAdmin()
   const isAdmin = !authLoading && authenticated && isAuthoringEnabled()
   const deleteMode = Boolean(adminCtx?.deleteMode)
   const hidden = adminCtx?.isHidden(article.slug) ?? false
+  
+  const title = language === 'en' && article.title_en ? article.title_en : article.title
+  const description = language === 'en' && article.description_en ? article.description_en : article.description
 
   const cardRef = useRef<HTMLElement>(null)
   const pressTimer = useRef<number | null>(null)
@@ -273,7 +278,7 @@ export default function ArticleCard({ article, index, variant = 'default' }: Pro
         >
         <ImageCarousel
           src={article.image}
-          alt={article.title}
+          alt={title}
           aspectRatio={variant === 'wide' ? '3 / 1' : undefined}
           priority={index < 3}
           edgeMatte
@@ -299,10 +304,10 @@ export default function ArticleCard({ article, index, variant = 'default' }: Pro
                 flashAndNavigate()
               }}
             >
-              {article.title}
+              {title}
             </Link>
           </h2>
-          <p className={styles.desc}>{article.description}</p>
+          <p className={styles.desc}>{description}</p>
         </div>
       </div>
     </motion.article>

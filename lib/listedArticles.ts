@@ -7,6 +7,8 @@ function toListed(item: ArticleData): Article {
     title: item.title,
     description: item.description,
     image: item.image,
+    title_en: item.title_en,
+    description_en: item.description_en,
     tags: item.tags || [],
     related: [],
     draft: item.draft || undefined,

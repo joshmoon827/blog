@@ -5,6 +5,10 @@ export interface Article extends Pick<VaultNoteMetadata, 'tags' | 'related'> {
   title: string
   description: string
   image: string
+  /** English translation of title */
+  title_en?: string
+  /** English translation of description */
+  description_en?: string
   /** True for 임시저장 drafts (same card/article presentation). */
   draft?: boolean
   /** True for 보관(archived) articles — hidden from main listings. */

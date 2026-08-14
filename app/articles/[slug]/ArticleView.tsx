@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { coverPickerImages, coverLabel, coverPalette } from '@/data/covers'
 import CoverPaletteThumb from '@/components/CoverPaletteThumb'
 import type { ArticleData } from '@/lib/localArticles'
+import { useLanguage } from '@/components/LocalizedText'
 import { renderArticleBody } from '@/lib/renderArticleBody'
 import {
   applyAlignToNthImage,
@@ -170,9 +171,14 @@ async function fetchCoverStatus(slug: string) {
 export default function ArticleView({ article: initial }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const language = useLanguage()
   const { authenticated } = useAuth()
   const canEdit = authenticated && isAuthoringEnabled()
   const [article, setArticle] = useState(initial)
+  
+  const title = language === 'en' && article.title_en ? article.title_en : article.title
+  const description = language === 'en' && article.description_en ? article.description_en : article.description
+  const body = language === 'en' && article.body_en ? article.body_en : article.body
   const [coverEditing, setCoverEditing] = useState(false)
   const [bodyEditing, setBodyEditing] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -625,6 +631,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleBodySave = async () => {
     setSaving(true)
     try {
+      // IMPORTANT: bodyValue always contains the Korean body being edited
       const payload = { ...article, body: bodyValue }
       const res = await fetch(`/api/articles/${article.slug}`, {
         method: 'PUT',
@@ -647,6 +654,7 @@ export default function ArticleView({ article: initial }: Props) {
   }
 
   const handleBodyCancel = () => {
+    // Always reset to the Korean body
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(false)
@@ -689,6 +697,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleApplyBodyImageCrop = useCallback(
     async (crop: BodyImageCrop) => {
       if (!imageCropEdit) return
+      // IMPORTANT: Always apply crop to the Korean body, never the displayed English
       const nextBody = applyCropToNthImage(
         article.body,
         imageCropEdit.index,
@@ -707,6 +716,7 @@ export default function ArticleView({ article: initial }: Props) {
   const handleAlignBodyImage = useCallback(
     async (req: BodyImageAlignRequest) => {
       if (!canEdit || bodyEditing) return
+      // IMPORTANT: Always apply alignment to the Korean body, never the displayed English
       const nextBody = applyAlignToNthImage(
         article.body,
         req.index,
@@ -845,6 +855,7 @@ export default function ArticleView({ article: initial }: Props) {
 
   const enterBodyEditing = useCallback(() => {
     setCoverEditing(false)
+    // Always edit the Korean body, never the displayed English translation
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(true)
@@ -852,6 +863,7 @@ export default function ArticleView({ article: initial }: Props) {
   }, [article.body])
 
   const exitBodyEditing = useCallback(() => {
+    // Always reset to the Korean body
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(false)
@@ -900,7 +912,7 @@ export default function ArticleView({ article: initial }: Props) {
       <TistoryMoreLessHydrate />
       <ArticleCoverBanner
         src={coverEditing ? imageValue : article.image}
-        alt={article.title}
+        alt={title}
         priority
       />
 
@@ -1127,7 +1139,7 @@ export default function ArticleView({ article: initial }: Props) {
             onChange={(e) => (draft.current.title = e.target.value)}
           />
         ) : (
-          <h1 className={styles.title}>{article.title}</h1>
+          <h1 className={styles.title}>{title}</h1>
         )}
 
         {canEdit && coverEditing ? (
@@ -1298,8 +1310,8 @@ export default function ArticleView({ article: initial }: Props) {
                 {article.created}
               </time>
             )}
-            {article.description ? (
-              <p className={styles.description}>{article.description}</p>
+            {description ? (
+              <p className={styles.description}>{description}</p>
             ) : null}
           </div>
         )}
@@ -1322,7 +1334,7 @@ export default function ArticleView({ article: initial }: Props) {
                 }
               >
                 <TistoryPreviewBody
-                  html={article.body}
+                  html={body}
                   hydrate={false}
                 />
               </div>
@@ -1344,7 +1356,7 @@ export default function ArticleView({ article: initial }: Props) {
                   disabled={uploading}
                 />
               ) : (
-                renderArticleBody(article.body, {
+                renderArticleBody(body, {
                   imageClassName: styles.bodyImage,
                   format: article.format,
                   editableImages: imageEditable,

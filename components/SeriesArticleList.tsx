@@ -1,6 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Article } from '@/data/articles'
+import { useLanguage } from '@/components/LocalizedText'
 import styles from './SeriesArticleList.module.css'
 
 type Props = {
@@ -10,6 +13,7 @@ type Props = {
 
 /** Toss Feed series article rows — text left, 5:4 thumb right. */
 export default function SeriesArticleList({ articles, className }: Props) {
+  const language = useLanguage()
   if (!articles.length) return null
 
   return (
@@ -18,6 +22,8 @@ export default function SeriesArticleList({ articles, className }: Props) {
         const tags = article.tags || []
         const eyebrow = tags[0]
         const restTags = tags.slice(1)
+        const title = language === 'en' && article.title_en ? article.title_en : article.title
+        const description = language === 'en' && article.description_en ? article.description_en : article.description
         return (
           <li key={article.slug}>
             <Link
@@ -28,9 +34,9 @@ export default function SeriesArticleList({ articles, className }: Props) {
                 {eyebrow ? (
                   <span className={styles.eyebrow}>{eyebrow}</span>
                 ) : null}
-                <h3 className={styles.title}>{article.title}</h3>
-                {article.description ? (
-                  <p className={styles.desc}>{article.description}</p>
+                <h3 className={styles.title}>{title}</h3>
+                {description ? (
+                  <p className={styles.desc}>{description}</p>
                 ) : null}
                 {restTags.length ? (
                   <p className={styles.tags}>

@@ -55,6 +55,9 @@ type ArticleLayout = {
   width: number
   height: number
   isNarrow: boolean
+  chromeX: number
+  chromeY: number
+  recomposeRight: number
   titleFontSize: number
   titleLineHeight: number
   titleLetterSpacing: number
@@ -424,7 +427,18 @@ function buildArticleLayout(
         ? clamp(width * 0.0875, 70, 130)
         : clamp(width * 0.13, 110, 180),
   )
-  const titleTop = compact ? (isNarrow ? 52 : 52) : isNarrow ? 118 : 82
+  const chromeY = compact ? 16 : 22
+  const chromeHeight = 34
+  const bylineGap = compact ? 9 : isNarrow ? 16 : 20
+  const bodyAfterByline = compact
+    ? isNarrow
+      ? 32
+      : 36
+    : isNarrow
+      ? 62
+      : 54
+  const titleBodyGap = bylineGap + bodyAfterByline
+  const titleTop = chromeY + chromeHeight + titleBodyGap
   const titleWidth = width - gutter * 2
   const headline = fitHeadline(
     bundle,
@@ -445,8 +459,8 @@ function buildArticleLayout(
   }))
   const titleBottom =
     titleTop + headline.result.lines.length * headline.lineHeight
-  const bylineY = titleBottom + (compact ? 9 : isNarrow ? 16 : 20)
-  const bodyTop = bylineY + (compact ? (isNarrow ? 32 : 36) : isNarrow ? 62 : 54)
+  const bylineY = titleBottom + bylineGap
+  const bodyTop = bylineY + bodyAfterByline
   const bottom = height - (compact ? 24 : gutter + 34)
 
   let figureWidth: number
@@ -551,6 +565,9 @@ function buildArticleLayout(
     width,
     height,
     isNarrow,
+    chromeX: gutter,
+    chromeY,
+    recomposeRight: gutter,
     titleFontSize: headline.size,
     titleLineHeight: headline.lineHeight,
     titleLetterSpacing: headline.letterSpacing,
@@ -860,7 +877,15 @@ export default function PretextArticleLab({
           </h2>
           <p className={styles.srOnly}>{articleText}</p>
 
-          <div className={styles.stageChrome} aria-hidden>
+          <div
+            className={styles.stageChrome}
+            aria-hidden
+            style={
+              layout
+                ? { top: layout.chromeY, left: layout.chromeX }
+                : undefined
+            }
+          >
             <span>JOSH!OG JOURNAL</span>
             <span>
               {articleDate || 'ARCHIVE'} · {characterLabel} CHARACTERS
@@ -871,6 +896,11 @@ export default function PretextArticleLab({
             type="button"
             className={styles.recompose}
             onClick={resetFigure}
+            style={
+              layout
+                ? { top: layout.chromeY, right: layout.recomposeRight }
+                : undefined
+            }
           >
             Reset cover
             <span>↺</span>

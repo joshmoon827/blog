@@ -119,11 +119,10 @@
 .stageChrome {
   position: absolute;
   z-index: 8;
-  top: 22px;
-  left: clamp(18px, 5.2vw, 72px);
   display: flex;
   gap: 2rem;
   align-items: center;
+  min-height: 34px;
   color: rgb(237 233 220 / 62%);
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 10px;
@@ -140,8 +139,6 @@
 .recompose {
   position: absolute;
   z-index: 12;
-  top: 14px;
-  right: clamp(18px, 5.2vw, 72px);
   display: inline-flex;
   gap: 1.5rem;
   align-items: center;
@@ -481,27 +478,12 @@
     border-radius: 0;
   }
 
-  .stageChrome {
-    top: 76px;
-    left: 18px;
-  }
-
-  .articleStageEmbedded .stageChrome {
-    top: 16px;
-  }
-
   .stageChrome span + span {
     display: none;
   }
 
   .recompose {
-    top: 68px;
-    right: 18px;
     gap: 0.7rem;
-  }
-
-  .articleStageEmbedded .recompose {
-    top: 10px;
   }
 
   .byline {

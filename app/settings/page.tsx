@@ -1,20 +1,27 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { RequestOnly } from '@/components/RequestOnly'
 import { readHomeSeriesSettings } from '@/lib/homeSeriesMode.server'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import SettingsForm from './SettingsForm'
 import styles from './settings.module.css'
 
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
+export const instant = false
 
 export const metadata = {
   title: '설정 | josh log',
 }
 
-export default async function SettingsPage() {
+export default function SettingsPage() {
+  return (
+    <RequestOnly>
+      <SettingsBody />
+    </RequestOnly>
+  )
+}
+
+async function SettingsBody() {
   const h = await headers()
   const host = h.get('x-forwarded-host') || h.get('host')
   if (!isAuthoringEnabled(host)) {

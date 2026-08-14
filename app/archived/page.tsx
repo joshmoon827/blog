@@ -1,18 +1,25 @@
 import ArticleCard from '@/components/ArticleCard'
 import ArticlesGrid from '@/components/ArticlesGrid'
 import Link from 'next/link'
+import { RequestOnly } from '@/components/RequestOnly'
 import { getArchivedArticles } from '@/lib/listedArticles'
 import styles from './page.module.css'
 
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
+export const instant = false
 
 export const metadata = {
   title: '보관 글 | josh log',
 }
 
 export default function ArchivedPage() {
+  return (
+    <RequestOnly>
+      <ArchivedBody />
+    </RequestOnly>
+  )
+}
+
+function ArchivedBody() {
   const archived = getArchivedArticles()
 
   return (

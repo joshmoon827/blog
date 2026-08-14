@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { Suspense } from 'react'
+import { connection } from 'next/server'
 import ArticleCard from '@/components/ArticleCard'
 import ImageCarousel from '@/components/ImageCarousel'
 import type { Article } from '@/data/articles'
@@ -109,7 +111,20 @@ export function getHomeVariant(id: HomeVariantNumber) {
   return homeVariants.find((variant) => variant.id === id) ?? homeVariants[0]
 }
 
+function articleHref(slug: string) {
+  return `/articles/${encodeURIComponent(slug)}`
+}
+
 export default function HomeVariantPage({ variant }: { variant: HomeVariantNumber }) {
+  return (
+    <Suspense fallback={null}>
+      <HomeVariantInner variant={variant} />
+    </Suspense>
+  )
+}
+
+async function HomeVariantInner({ variant }: { variant: HomeVariantNumber }) {
+  await connection()
   const articles = getListedArticles()
   const config = getHomeVariant(variant)
   const featuredIndex = Math.min(config.featuredIndex, Math.max(articles.length - 1, 0))
@@ -129,7 +144,7 @@ export default function HomeVariantPage({ variant }: { variant: HomeVariantNumbe
             <h1 id="home-variant-title">{config.title}</h1>
             <p>{config.deck}</p>
             <div className={styles.heroActions}>
-              <Link href={`/articles/${featuredArticle.slug}`}>{config.cta}</Link>
+              <Link href={articleHref(featuredArticle.slug)}>{config.cta}</Link>
               <span>{articles.length} essays on psychology, UX, and design craft</span>
             </div>
           </div>
@@ -161,7 +176,7 @@ function ExampleNav({ active }: { active: HomeVariantNumber }) {
 
 function FeaturedVisual({ article }: { article: Article }) {
   return (
-    <Link href={`/articles/${article.slug}`} className={styles.featuredVisual}>
+    <Link href={articleHref(article.slug)} className={styles.featuredVisual}>
       <ImageCarousel src={article.image} alt={article.title} aspectRatio="16 / 11" />
       <div>
         <span>Featured</span>
@@ -181,7 +196,7 @@ function SplitPosterHero({ article }: { article: Article }) {
           <span>&amp;VISION</span>
         </h1>
         <Link
-          href={`/articles/${article.slug}`}
+          href={articleHref(article.slug)}
           className={styles.posterImageStrip}
           aria-label={`Read ${article.title}`}
         >
@@ -215,7 +230,7 @@ function renderVariantContent(config: HomeVariantConfig, orderedArticles: Articl
 function MagazineLayout({ articles: orderedArticles }: { articles: Article[] }) {
   return (
     <section className={styles.magazineLayout} aria-label="Editorial article selection">
-      <Link href={`/articles/${orderedArticles[0].slug}`} className={styles.leadStory}>
+      <Link href={articleHref(orderedArticles[0].slug)} className={styles.leadStory}>
         <ImageCarousel
           src={orderedArticles[0].image}
           alt={orderedArticles[0].title}
@@ -280,7 +295,7 @@ function GalleryLayout({ articles: orderedArticles }: { articles: Article[] }) {
   return (
     <section className={styles.galleryLayout} aria-label="Visual article gallery">
       {orderedArticles.slice(0, 6).map((article, index) => (
-        <Link key={article.slug} href={`/articles/${article.slug}`} className={styles.galleryCard}>
+        <Link key={article.slug} href={articleHref(article.slug)} className={styles.galleryCard}>
           <ImageCarousel
             src={article.image}
             alt={article.title}
@@ -300,7 +315,7 @@ function PathLayout({ articles: orderedArticles }: { articles: Article[] }) {
   return (
     <section className={styles.pathLayout} aria-label="Guided reading path">
       {orderedArticles.slice(0, 5).map((article, index) => (
-        <Link key={article.slug} href={`/articles/${article.slug}`} className={styles.pathItem}>
+        <Link key={article.slug} href={articleHref(article.slug)} className={styles.pathItem}>
           <span>{String(index + 1).padStart(2, '0')}</span>
           <div>
             <h2>{article.title}</h2>
@@ -333,7 +348,7 @@ function StudioLayout({ articles: orderedArticles }: { articles: Article[] }) {
     <section className={styles.studioLayout} aria-label="Featured UX tracks">
       <div className={styles.trackGrid}>
         {orderedArticles.slice(0, 4).map((article, index) => (
-          <Link key={article.slug} href={`/articles/${article.slug}`} className={styles.trackCard}>
+          <Link key={article.slug} href={articleHref(article.slug)} className={styles.trackCard}>
             <span>Track {index + 1}</span>
             <h2>{article.tags.join(' + ')}</h2>
             <p>{article.title}</p>
@@ -351,7 +366,7 @@ function StudioLayout({ articles: orderedArticles }: { articles: Article[] }) {
 
 function TextLinkCard({ article }: { article: Article }) {
   return (
-    <Link href={`/articles/${article.slug}`} className={styles.textCard}>
+    <Link href={articleHref(article.slug)} className={styles.textCard}>
       <span>{article.tags.join(' / ')}</span>
       <h2>{article.title}</h2>
       <p>{article.description}</p>

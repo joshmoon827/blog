@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { RequestOnly } from '@/components/RequestOnly'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import { mosaicSlotCount } from '@/lib/mosaicPattern'
 import {
@@ -11,15 +12,21 @@ import { getSeriesPreviewItems } from '@/lib/seriesItems'
 import MosaicEditor from './MosaicEditor'
 import styles from '../settings.module.css'
 
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
+export const instant = false
 
 export const metadata = {
   title: '모자이크 패턴 | josh log',
 }
 
-export default async function MosaicSettingsPage() {
+export default function MosaicSettingsPage() {
+  return (
+    <RequestOnly>
+      <MosaicSettingsBody />
+    </RequestOnly>
+  )
+}
+
+async function MosaicSettingsBody() {
   const h = await headers()
   const host = h.get('x-forwarded-host') || h.get('host')
   if (!isAuthoringEnabled(host)) {

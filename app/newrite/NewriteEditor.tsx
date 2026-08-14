@@ -785,7 +785,7 @@ export default function NewriteEditor() {
     <div className={styles.shell} data-newrite>
       <TistoryMoreLessHydrate />
       <header className={styles.topBar}>
-        <Link href="/" className={styles.brand} aria-label="Laws of UX 홈">
+        <Link href="/" className={styles.brand} aria-label="josh log 홈">
           <span className={styles.brandMark} aria-hidden="true" />
         </Link>
         <NewriteToolbar

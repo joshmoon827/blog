@@ -89,7 +89,7 @@ export default function Header() {
   return (
     <header className={styles.header} data-site-chrome="header">
       <div className={styles.inner}>
-        <Link href="/" className={`${styles.logo} ${styles.desktopLogo}`} aria-label="Laws of UX">
+        <Link href="/" className={`${styles.logo} ${styles.desktopLogo}`} aria-label="josh log">
           <LogoMark />
         </Link>
 

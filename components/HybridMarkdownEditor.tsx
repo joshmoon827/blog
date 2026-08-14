@@ -3,37 +3,19 @@
 import {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useRef,
-  useState,
   type ClipboardEvent,
 } from 'react'
-import type { Muya } from '@muyajs/core'
-import type { MuyaImageUploader } from '@/lib/muya/muyaClient'
 import { normalizeHardBreaks } from '@/lib/normalizeHardBreaks'
-import { normalizeMathMarkdown } from '@/lib/normalizeMathMarkdown'
-import { useQuickInsertMenu } from '@/lib/muya/useQuickInsertMenu'
-import {
-  applyToolbarBlock,
-  insertEmoji as insertEmojiAtCursor,
-  insertLink as insertLinkAtCursor,
-  wrapAlign as wrapAlignAtCursor,
-  wrapColor as wrapColorAtCursor,
-  wrapHighlight as wrapHighlightAtCursor,
-  wrapSelection as wrapSelectionAtCursor,
-} from '@/lib/muya/toolbarFormat'
-import { QuickInsertMenu } from '@/components/QuickInsertMenu'
-import './HybridMarkdownEditor.muya-body.css'
-import '@/styles/muya-read-parity.css'
 import styles from './HybridMarkdownEditor.module.css'
+
+export type MarkdownImageUploader = (file: File) => Promise<string>
 
 export type HybridMarkdownEditorHandle = {
   insertAtCursor: (text: string) => { value: string; caret: number }
   focus: () => void
-  /** Apply a Muya quick-insert block (heading, list, quote, table, hr, …). */
   applyBlock: (label: string) => string | null
-  /** Wrap selection with markdown/HTML markers. */
   wrapSelection: (
     before: string,
     after?: string,
@@ -46,9 +28,7 @@ export type HybridMarkdownEditorHandle = {
   ) => string | null
   wrapColor: (color: string) => string | null
   wrapHighlight: (color: string) => string | null
-  /** Open file picker and upload an image (requires uploadImage prop). */
   pickImage: () => void
-  /** Toggle browser/OS spellcheck on the editable surface. */
   setSpellcheck: (enabled: boolean) => void
   getMarkdown: () => string
 }
@@ -62,10 +42,40 @@ type Props = {
   className?: string
   previewClassName?: string
   imageClassName?: string
-  uploadImage?: MuyaImageUploader
+  uploadImage?: MarkdownImageUploader
   onUploadingChange?: (uploading: boolean) => void
   /** boxed: form field (new article). inline: blends into article body (⌘E edit). */
   variant?: 'boxed' | 'inline'
+}
+
+const BLOCK_SNIPPETS: Record<string, string> = {
+  paragraph: '',
+  'thematic-break': '\n\n---\n\n',
+  'atx-heading 1': '\n\n# ',
+  'atx-heading 2': '\n\n## ',
+  'atx-heading 3': '\n\n### ',
+  'atx-heading 4': '\n\n#### ',
+  'atx-heading 5': '\n\n##### ',
+  'atx-heading 6': '\n\n###### ',
+  'atx-heading': '\n\n# ',
+  table:
+    '\n\n|  |  |\n| --- | --- |\n|  |  |\n\n',
+  'code-block': '\n\n```\n\n```\n\n',
+  'block-quote': '\n\n> ',
+  'order-list': '\n\n1. ',
+  'bullet-list': '\n\n- ',
+  'task-list': '\n\n- [ ] ',
+  'math-block': '\n\n$$\nE = mc^2\n$$\n\n',
+}
+
+function replaceRange(
+  value: string,
+  start: number,
+  end: number,
+  insertion: string,
+): { next: string; caret: number } {
+  const next = value.slice(0, start) + insertion + value.slice(end)
+  return { next, caret: start + insertion.length }
 }
 
 export const HybridMarkdownEditor = forwardRef<HybridMarkdownEditorHandle, Props>(
@@ -84,146 +94,126 @@ export const HybridMarkdownEditor = forwardRef<HybridMarkdownEditorHandle, Props
     ref,
   ) {
     const inline = variant === 'inline'
-    const hostRef = useRef<HTMLDivElement>(null)
-    const muyaRef = useRef<Muya | null>(null)
-    const lastEmitted = useRef(value)
-    const syncingRef = useRef(false)
-    const insertTextRef = useRef<
-      ((muya: Muya, text: string) => string) | null
-    >(null)
-    const [ready, setReady] = useState(false)
-    const [initError, setInitError] = useState<string | null>(null)
+    const taRef = useRef<HTMLTextAreaElement>(null)
+    const spellcheckRef = useRef(true)
 
-    const { menuProps: quickInsertMenuProps } = useQuickInsertMenu({
-      muyaRef,
-      hostRef,
-      ready,
-      disabled,
-      onMarkdownChange: (md) => {
-        const next = normalizeHardBreaks(md)
-        lastEmitted.current = next
-        onChange(next)
-      },
-    })
-
-    const emitMarkdown = useCallback(
-      (md: string) => {
-        const next = normalizeHardBreaks(md)
-        if (next === lastEmitted.current) return
-        lastEmitted.current = next
-        onChange(next)
-      },
-      [onChange],
-    )
-
-    useEffect(() => {
-      let cancelled = false
-      const host = hostRef.current
-      if (!host || muyaRef.current) return
-
-      ;(async () => {
-        try {
-          const { createMuyaEditor } = await import('@/lib/muya/muyaClient')
-          const { insertTextAtMuyaCursor } = await import('@/lib/muya/insertText')
-          if (cancelled) return
-
-          insertTextRef.current = insertTextAtMuyaCursor
-
-          const editorRoot = document.createElement('div')
-          editorRoot.className = styles.muyaRoot
-          if (inline) editorRoot.dataset.hideSyntax = 'true'
-          host.appendChild(editorRoot)
-
-          const muya = createMuyaEditor(editorRoot, value, {
-            hideSyntaxMarkers: inline,
-          })
-          if (cancelled) {
-            muya.destroy()
-            editorRoot.remove()
-            return
-          }
-
-          muyaRef.current = muya
-          lastEmitted.current = value
-
-          const onJsonChange = () => {
-            if (syncingRef.current) return
-            emitMarkdown(muya.getMarkdown())
-          }
-          muya.on('json-change', onJsonChange)
-
-          const { applyMuyaPatches } = await import('@/lib/muya/muyaPatches')
-          applyMuyaPatches(muya)
-
-          document.body.classList.add('muya-edit')
-          if (inline) document.body.classList.add('muya-inline-edit')
-          setReady(true)
-        } catch (err) {
-          if (!cancelled) {
-            const msg = err instanceof Error ? err.message : String(err)
-            setInitError(msg)
-            console.error('[HybridMarkdownEditor] init failed:', err)
-          }
-        }
-      })()
-
-      return () => {
-        cancelled = true
-        document.body.classList.remove('muya-edit', 'muya-inline-edit')
-        const muya = muyaRef.current
-        if (muya) {
-          muya.destroy()
-          muyaRef.current = null
-        }
-        if (host) host.innerHTML = ''
-        setReady(false)
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    useEffect(() => {
-      const muya = muyaRef.current
-      if (!muya || !ready) return
-      if (value === lastEmitted.current) return
-      syncingRef.current = true
-      muya.setContent(normalizeHardBreaks(normalizeMathMarkdown(value)), false)
-      lastEmitted.current = value
-      syncingRef.current = false
-    }, [value, ready])
-
-    useEffect(() => {
-      const muya = muyaRef.current
-      const host = hostRef.current
-      if (!muya || !host || !ready) return
-      host.dataset.disabled = disabled ? 'true' : 'false'
-      const surface = muya.domNode
-      surface.setAttribute('aria-disabled', disabled ? 'true' : 'false')
-      if (disabled) surface.setAttribute('contenteditable', 'false')
-      else surface.removeAttribute('contenteditable')
-    }, [disabled, ready])
-
-    const emitFromMuya = useCallback(
-      (next: string | null | undefined) => {
-        if (next == null) return null
+    const emit = useCallback(
+      (next: string, caret?: number) => {
         const normalized = normalizeHardBreaks(next)
-        lastEmitted.current = normalized
         onChange(normalized)
+        if (caret != null) {
+          requestAnimationFrame(() => {
+            const ta = taRef.current
+            if (!ta) return
+            ta.focus()
+            ta.setSelectionRange(caret, caret)
+          })
+        }
         return normalized
       },
       [onChange],
     )
 
+    const selection = useCallback(() => {
+      const ta = taRef.current
+      if (!ta) return { start: value.length, end: value.length }
+      return {
+        start: ta.selectionStart ?? value.length,
+        end: ta.selectionEnd ?? value.length,
+      }
+    }, [value.length])
+
     const insertAtCursor = useCallback(
       (text: string) => {
-        const muya = muyaRef.current
-        const insert = insertTextRef.current
-        if (!muya || !insert) return { value, caret: text.length }
-        const next = insert(muya, text)
-        lastEmitted.current = next
-        onChange(next)
-        return { value: next, caret: text.length }
+        const { start, end } = selection()
+        const { next, caret } = replaceRange(value, start, end, text)
+        emit(next, caret)
+        return { value: next, caret }
       },
-      [onChange, value],
+      [emit, selection, value],
+    )
+
+    const wrapSelection = useCallback(
+      (before: string, after = '', placeholderText = '텍스트') => {
+        const { start, end } = selection()
+        const selected = value.slice(start, end)
+        const inner = selected || placeholderText
+        const insertion = `${before}${inner}${after}`
+        const { next } = replaceRange(value, start, end, insertion)
+        const caretStart = start + before.length
+        const caretEnd = caretStart + inner.length
+        const normalized = emit(next)
+        requestAnimationFrame(() => {
+          const ta = taRef.current
+          if (!ta) return
+          ta.focus()
+          ta.setSelectionRange(caretStart, caretEnd)
+        })
+        return normalized
+      },
+      [emit, selection, value],
+    )
+
+    const applyBlock = useCallback(
+      (label: string) => {
+        const snippet =
+          BLOCK_SNIPPETS[label] ??
+          BLOCK_SNIPPETS[label.replace(/\s+\d+$/, '')] ??
+          null
+        if (snippet == null) return null
+        if (!snippet) return value
+        return insertAtCursor(snippet).value
+      },
+      [insertAtCursor, value],
+    )
+
+    const replacePlaceholder = useCallback(
+      (md: string, placeholderMd: string, replacement: string) => {
+        if (md.includes(placeholderMd)) {
+          return md.replace(placeholderMd, replacement)
+        }
+        return md + replacement
+      },
+      [],
+    )
+
+    const uploadAndInsert = useCallback(
+      async (file: File) => {
+        if (!uploadImage || disabled) return
+        const placeholderMd = '![uploading…]()'
+        const { start, end } = selection()
+        const { next: withPlaceholder, caret } = replaceRange(
+          value,
+          start,
+          end,
+          placeholderMd,
+        )
+        emit(withPlaceholder, caret)
+
+        onUploadingChange?.(true)
+        try {
+          const url = await uploadImage(file)
+          const markdown = `![image](${url})`
+          const current = taRef.current?.value ?? withPlaceholder
+          emit(replacePlaceholder(current, placeholderMd, markdown))
+        } catch (err) {
+          const current = taRef.current?.value ?? withPlaceholder
+          emit(replacePlaceholder(current, placeholderMd, ''))
+          const msg = err instanceof Error ? err.message : String(err)
+          alert('이미지 업로드 실패: ' + msg)
+        } finally {
+          onUploadingChange?.(false)
+        }
+      },
+      [
+        disabled,
+        emit,
+        onUploadingChange,
+        replacePlaceholder,
+        selection,
+        uploadImage,
+        value,
+      ],
     )
 
     const pickImage = useCallback(() => {
@@ -231,115 +221,70 @@ export const HybridMarkdownEditor = forwardRef<HybridMarkdownEditorHandle, Props
       const input = document.createElement('input')
       input.type = 'file'
       input.accept = 'image/*'
-      input.onchange = async () => {
+      input.onchange = () => {
         const file = input.files?.[0]
-        if (!file) return
-        const muya = muyaRef.current
-        const insert = insertTextRef.current
-        if (!muya || !insert) return
-
-        const placeholder = '![uploading…]()'
-        let md = insert(muya, placeholder)
-        lastEmitted.current = md
-        onChange(md)
-
-        onUploadingChange?.(true)
-        try {
-          const url = await uploadImage(file)
-          const markdown = `![image](${url})`
-          md = muya.getMarkdown().replace(placeholder, markdown)
-          syncingRef.current = true
-          muya.setContent(md, true)
-          syncingRef.current = false
-          lastEmitted.current = md
-          onChange(md)
-        } catch (err) {
-          md = muya.getMarkdown().replace(placeholder, '')
-          syncingRef.current = true
-          muya.setContent(md, true)
-          syncingRef.current = false
-          lastEmitted.current = md
-          onChange(md)
-          const msg = err instanceof Error ? err.message : String(err)
-          alert('이미지 업로드 실패: ' + msg)
-        } finally {
-          onUploadingChange?.(false)
-        }
+        if (file) void uploadAndInsert(file)
       }
       input.click()
-    }, [disabled, onChange, onUploadingChange, uploadImage])
+    }, [disabled, uploadAndInsert, uploadImage])
 
     const setSpellcheck = useCallback((enabled: boolean) => {
-      const muya = muyaRef.current
-      const host = hostRef.current
-      if (!muya) return
-      const surface = muya.domNode as HTMLElement
-      surface.setAttribute('spellcheck', enabled ? 'true' : 'false')
-      if (host) host.dataset.spellcheck = enabled ? 'true' : 'false'
-      surface.querySelectorAll('[contenteditable]').forEach((el) => {
-        el.setAttribute('spellcheck', enabled ? 'true' : 'false')
-      })
+      spellcheckRef.current = enabled
+      const ta = taRef.current
+      if (ta) ta.spellcheck = enabled
     }, [])
 
     useImperativeHandle(
       ref,
       () => ({
         insertAtCursor,
-        focus: () => muyaRef.current?.focus(),
-        applyBlock: (label) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(applyToolbarBlock(muya, label))
-        },
-        wrapSelection: (before, after, placeholder) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(
-            wrapSelectionAtCursor(muya, before, after, placeholder),
-          )
-        },
+        focus: () => taRef.current?.focus(),
+        applyBlock,
+        wrapSelection: (before, after, placeholderText) =>
+          wrapSelection(before, after ?? '', placeholderText),
         insertLink: () => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(insertLinkAtCursor(muya))
+          const url = window.prompt('링크 URL')
+          if (!url) return value
+          const href = url.trim()
+          if (!href) return value
+          return wrapSelection('[', `](${href})`, '링크')
         },
-        insertEmoji: (emoji) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(insertEmojiAtCursor(muya, emoji))
-        },
-        wrapAlign: (align) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(wrapAlignAtCursor(muya, align))
-        },
-        wrapColor: (color) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(wrapColorAtCursor(muya, color))
-        },
-        wrapHighlight: (color) => {
-          const muya = muyaRef.current
-          if (!muya) return null
-          return emitFromMuya(wrapHighlightAtCursor(muya, color))
-        },
+        insertEmoji: (emoji) => insertAtCursor(emoji).value,
+        wrapAlign: (align) =>
+          wrapSelection(
+            `<div style="text-align:${align}">`,
+            '</div>',
+            '텍스트',
+          ),
+        wrapColor: (color) =>
+          wrapSelection(
+            `<span style="color:${color}">`,
+            '</span>',
+            '텍스트',
+          ),
+        wrapHighlight: (color) =>
+          wrapSelection(
+            `<mark style="background:${color}">`,
+            '</mark>',
+            '텍스트',
+          ),
         pickImage,
         setSpellcheck,
-        getMarkdown: () => muyaRef.current?.getMarkdown() ?? value,
+        getMarkdown: () => taRef.current?.value ?? value,
       }),
-      [emitFromMuya, insertAtCursor, pickImage, setSpellcheck, value],
+      [applyBlock, insertAtCursor, pickImage, setSpellcheck, value, wrapSelection],
     )
 
-    const handlePasteCapture = useCallback(
-      async (e: ClipboardEvent<HTMLDivElement>) => {
-        if (disabled || !ready) return
+    const handlePaste = useCallback(
+      async (e: ClipboardEvent<HTMLTextAreaElement>) => {
+        if (disabled) return
         if (onPaste) {
-          onPaste(e as unknown as ClipboardEvent<HTMLTextAreaElement>)
+          onPaste(e)
           return
         }
 
         const items = e.clipboardData?.items
-        if (!items?.length) return
+        if (!items?.length || !uploadImage) return
 
         let imageFile: File | null = null
         for (const item of Array.from(items)) {
@@ -348,55 +293,13 @@ export const HybridMarkdownEditor = forwardRef<HybridMarkdownEditorHandle, Props
             break
           }
         }
-        if (!imageFile || !uploadImage) return
+        if (!imageFile) return
 
         e.preventDefault()
-        e.stopPropagation()
-
-        const muya = muyaRef.current
-        const insert = insertTextRef.current
-        if (!muya || !insert) return
-
-        const placeholder = '![uploading…]()'
-        let md = insert(muya, placeholder)
-        lastEmitted.current = md
-        onChange(md)
-
-        onUploadingChange?.(true)
-        try {
-          const url = await uploadImage(imageFile)
-          const markdown = `![image](${url})`
-          md = muya.getMarkdown().replace(placeholder, markdown)
-          syncingRef.current = true
-          muya.setContent(md, true)
-          syncingRef.current = false
-          lastEmitted.current = md
-          onChange(md)
-        } catch (err) {
-          md = muya.getMarkdown().replace(placeholder, '')
-          syncingRef.current = true
-          muya.setContent(md, true)
-          syncingRef.current = false
-          lastEmitted.current = md
-          onChange(md)
-          const msg = err instanceof Error ? err.message : String(err)
-          alert('이미지 업로드 실패: ' + msg)
-        } finally {
-          onUploadingChange?.(false)
-        }
+        await uploadAndInsert(imageFile)
       },
-      [disabled, onChange, onPaste, onUploadingChange, ready, uploadImage],
+      [disabled, onPaste, uploadAndInsert, uploadImage],
     )
-
-    const isEmpty = value.trim() === ''
-
-    if (initError) {
-      return (
-        <div className={`${styles.editor} ${styles.editorError} ${className ?? ''}`}>
-          <p>에디터를 불러오지 못했습니다: {initError}</p>
-        </div>
-      )
-    }
 
     const wrapperClass = inline
       ? `${styles.editorInline} ${className ?? ''}`
@@ -406,24 +309,19 @@ export const HybridMarkdownEditor = forwardRef<HybridMarkdownEditorHandle, Props
       <div
         className={wrapperClass}
         data-disabled={disabled || undefined}
-        data-ready={ready || undefined}
         data-variant={variant}
-        onPasteCapture={handlePasteCapture}
       >
-        {!ready && !inline && (
-          <p className={styles.loading}>MarkText 스타일 에디터 로딩 중…</p>
-        )}
-        {isEmpty && placeholder && ready ? (
-          <p
-            className={
-              inline ? styles.placeholderInline : styles.placeholder
-            }
-          >
-            {placeholder}
-          </p>
-        ) : null}
-        <div ref={hostRef} className={styles.host} />
-        <QuickInsertMenu {...quickInsertMenuProps} />
+        <textarea
+          ref={taRef}
+          className={inline ? styles.textareaInline : styles.textarea}
+          value={value}
+          onChange={(e) => onChange(normalizeHardBreaks(e.target.value))}
+          onPaste={handlePaste}
+          disabled={disabled}
+          placeholder={placeholder}
+          spellCheck={spellcheckRef.current}
+          aria-label="마크다운 본문"
+        />
       </div>
     )
   },

@@ -1,10 +1,9 @@
 /**
- * Normalize TeX delimiters for article view + Muya editor.
+ * Normalize TeX delimiters for article view / markdown storage.
  *
  * - Trims spaces/tabs immediately inside `$$ … $$` (Obsidian / paste quirks)
- * - Turns single-line display math into Muya block form:
+ * - Turns single-line display math into multiline fence form:
  *   `$$ P ... $$` → `$$\nP ...\n$$`
- *   (Muya only treats multiline `$$\n...\n$$` as math-block; one-liners are inlineMath.)
  *
  * Note: in `String.replace` replacement strings, `$$` means a single `$` —
  * always use a function replacer when emitting `$$`.

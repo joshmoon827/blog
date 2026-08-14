@@ -3,6 +3,19 @@ import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
 import ArticleView from './ArticleView'
 
+/** Local JSON changes at runtime; Unicode slugs break static param matching. */
+export const dynamic = 'force-dynamic'
+
+function resolveSlug(raw: string): string {
+  let slug = raw
+  try {
+    slug = decodeURIComponent(raw)
+  } catch {
+    /* keep raw */
+  }
+  return slug.normalize('NFC')
+}
+
 export function generateStaticParams() {
   return readAll()
     .filter((a) => !a.trashed)
@@ -10,7 +23,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+  const { slug: raw } = await params
+  const slug = resolveSlug(raw)
   if (slug === 'new') return { title: '새 글 작성 | Laws of UX' }
   const article = readOne(slug)
   if (!article || article.trashed) return { title: 'Not Found' }
@@ -18,7 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+  const { slug: raw } = await params
+  const slug = resolveSlug(raw)
   if (slug === 'new') redirect('/articles/new')
   const article = readOne(slug)
   if (!article || article.trashed) notFound()

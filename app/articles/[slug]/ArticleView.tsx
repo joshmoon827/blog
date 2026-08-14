@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
 } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -13,11 +14,24 @@ import { coverPickerImages, coverLabel, coverPalette } from '@/data/covers'
 import CoverPaletteThumb from '@/components/CoverPaletteThumb'
 import type { ArticleData } from '@/lib/localArticles'
 import { renderArticleBody } from '@/lib/renderArticleBody'
+import {
+  applyAlignToNthImage,
+  applyCropToNthImage,
+  BODY_IMAGE_ALIGN_OPTIONS,
+  sanitizeBodyImageAlign,
+  type BodyImageAlign,
+  type BodyImageCrop,
+} from '@/lib/bodyImageCrop'
 import TistoryPreviewBody from '@/components/TistoryPreviewBody'
+import type {
+  BodyImageAlignRequest,
+  BodyImageEditRequest,
+} from '@/components/BodyImage'
 import type { HybridMarkdownEditorHandle } from '@/components/HybridMarkdownEditor'
 import {
   CoverReferencePhotos,
   coverRefsToPayload,
+  imageFilesFromDataTransfer,
   revokeCoverReferencePhotos,
   type CoverReferencePhoto,
 } from '@/components/CoverReferencePhotos'
@@ -43,11 +57,16 @@ const HybridMarkdownEditor = dynamic(
   { ssr: false },
 )
 
+const BodyImageCropModal = dynamic(
+  () => import('@/components/BodyImageCropModal'),
+  { ssr: false },
+)
+
 interface Props {
   article: ArticleData
 }
 
-type CoverJobStatus = 'idle' | 'running' | 'success' | 'error'
+type CoverJobStatus = 'idle' | 'running' | 'success' | 'error' | 'cancelled'
 
 async function uploadImageFile(file: File): Promise<string> {
   const form = new FormData()
@@ -158,6 +177,7 @@ export default function ArticleView({ article: initial }: Props) {
   const [bodyEditing, setBodyEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [obsidianSyncing, setObsidianSyncing] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [coverStatus, setCoverStatus] = useState<CoverJobStatus>('idle')
   const [coverMessage, setCoverMessage] = useState('')
@@ -183,6 +203,14 @@ export default function ArticleView({ article: initial }: Props) {
   const popoverAnchor = useRef<{ x: number; y: number } | null>(null)
   const settingsBtnRef = useRef<HTMLButtonElement | null>(null)
   const popoverRef = useRef<HTMLDivElement | null>(null)
+  const [imageCropEdit, setImageCropEdit] =
+    useState<BodyImageEditRequest | null>(null)
+  const [imageAlignMenu, setImageAlignMenu] = useState<{
+    index: number
+    x: number
+    y: number
+    align: BodyImageAlign
+  } | null>(null)
 
   // gear 버튼이 직접 표지 편집으로 간 것을 popover 메뉴의 한 항목으로 분리.
   const openCoverEditing = useCallback(() => {
@@ -271,6 +299,34 @@ export default function ArticleView({ article: initial }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- revoke latest list on unmount
   }, [])
 
+  /** Metadata/cover edit: paste image → upload as cover when ref-photos didn't take it. */
+  useEffect(() => {
+    if (!coverEditing || !canEdit) return
+    const onPaste = (e: ClipboardEvent) => {
+      const files = imageFilesFromDataTransfer(e.clipboardData)
+      if (!files.length) return
+      // CoverReferencePhotos window listener handles paste when it has room.
+      if (isLocalToolsEnabled() && coverReferencePhotos.length < 4) return
+      e.preventDefault()
+      const file = files[0]
+      void (async () => {
+        setUploading(true)
+        try {
+          const url = await uploadImageFile(file)
+          draft.current.image = url
+          setImageValue(url)
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err)
+          alert('이미지 업로드 실패: ' + msg)
+        } finally {
+          setUploading(false)
+        }
+      })()
+    }
+    window.addEventListener('paste', onPaste)
+    return () => window.removeEventListener('paste', onPaste)
+  }, [canEdit, coverEditing, coverReferencePhotos.length])
+
   const selectCover = (src: string) => {
     draft.current.image = src
     setImageValue(src)
@@ -356,6 +412,12 @@ export default function ArticleView({ article: initial }: Props) {
         stopPolling()
         return
       }
+      if (status === 'cancelled') {
+        setCoverStatus('cancelled')
+        setCoverMessage(data.error || '표지 생성을 취소했습니다.')
+        stopPolling()
+        return
+      }
       // idle with no job — stop if we were waiting
       if (status === 'idle' || status === 'success') {
         stopPolling()
@@ -393,6 +455,9 @@ export default function ArticleView({ article: initial }: Props) {
         } else if (data.status === 'error') {
           setCoverStatus('error')
           setCoverMessage(data.error || '표지 생성에 실패했습니다.')
+        } else if (data.status === 'cancelled') {
+          setCoverStatus('cancelled')
+          setCoverMessage(data.error || '표지 생성을 취소했습니다.')
         } else if (data.status === 'success' && data.publicUrl) {
           if (data.publicUrl !== article.image) {
             applyCoverSuccess(data.publicUrl, data.keywords, data.logo)
@@ -489,6 +554,32 @@ export default function ArticleView({ article: initial }: Props) {
     }
   }
 
+  const handleCancelCoverGeneration = async () => {
+    if (coverStatus !== 'running') return
+    setCoverMessage('표지 생성 취소 중…')
+    try {
+      const res = await fetch(
+        `/api/generate-cover?slug=${encodeURIComponent(article.slug)}`,
+        { method: 'DELETE' },
+      )
+      const data = (await res.json()) as {
+        error?: string
+        status?: string
+        cancelled?: boolean
+      }
+      if (!res.ok) {
+        throw new Error(data.error || `Cancel failed (${res.status})`)
+      }
+      stopPolling()
+      setCoverStatus('cancelled')
+      setCoverMessage('표지 생성을 취소했습니다.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setCoverStatus('error')
+      setCoverMessage('표지 생성 취소 실패: ' + msg)
+    }
+  }
+
   const syncBody = (value: string) => {
     draft.current.body = value
     setBodyValue(value)
@@ -559,6 +650,197 @@ export default function ArticleView({ article: initial }: Props) {
     setBodyValue(article.body)
     draft.current.body = article.body
     setBodyEditing(false)
+  }
+
+  const handleEditBodyImage = useCallback((req: BodyImageEditRequest) => {
+    if (!canEdit || bodyEditing) return
+    setImageAlignMenu(null)
+    setImageCropEdit(req)
+  }, [canEdit, bodyEditing])
+
+  const persistBody = useCallback(
+    async (nextBody: string, failLabel: string) => {
+      setSaving(true)
+      try {
+        const payload = { ...article, body: nextBody }
+        const res = await fetch(`/api/articles/${article.slug}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) throw new Error('Save failed')
+        const updated = (await res.json()) as ArticleData
+        setArticle(updated)
+        setBodyValue(updated.body)
+        draft.current.body = updated.body
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2500)
+        return true
+      } catch (e) {
+        alert(`${failLabel}: ` + e)
+        return false
+      } finally {
+        setSaving(false)
+      }
+    },
+    [article],
+  )
+
+  const handleApplyBodyImageCrop = useCallback(
+    async (crop: BodyImageCrop) => {
+      if (!imageCropEdit) return
+      const nextBody = applyCropToNthImage(
+        article.body,
+        imageCropEdit.index,
+        crop,
+      )
+      if (nextBody == null) {
+        alert('이미지를 본문에서 찾지 못했습니다.')
+        return
+      }
+      const ok = await persistBody(nextBody, '이미지 크롭 저장 실패')
+      if (ok) setImageCropEdit(null)
+    },
+    [article.body, imageCropEdit, persistBody],
+  )
+
+  const handleAlignBodyImage = useCallback(
+    async (req: BodyImageAlignRequest) => {
+      if (!canEdit || bodyEditing) return
+      const nextBody = applyAlignToNthImage(
+        article.body,
+        req.index,
+        req.align,
+      )
+      if (nextBody == null) {
+        alert('이미지를 본문에서 찾지 못했습니다.')
+        return
+      }
+      setImageAlignMenu(null)
+      await persistBody(nextBody, '이미지 정렬 저장 실패')
+    },
+    [article.body, bodyEditing, canEdit, persistBody],
+  )
+
+  /** Tistory HTML read view: dblclick img → crop; contextmenu → align. */
+  const resolveTistoryImageIndex = (
+    root: HTMLElement,
+    img: HTMLImageElement,
+  ) => {
+    const imgs = Array.from(root.querySelectorAll('img'))
+    return imgs.indexOf(img)
+  }
+
+  const handleTistoryImageDoubleClick = useCallback(
+    (e: ReactMouseEvent<HTMLElement>) => {
+      if (!canEdit || bodyEditing) return
+      const t = e.target as HTMLElement | null
+      const img = t?.closest?.('img') as HTMLImageElement | null
+      if (!img) return
+      const index = resolveTistoryImageIndex(e.currentTarget, img)
+      if (index < 0) return
+      e.preventDefault()
+      const ds = img.dataset
+      setImageCropEdit({
+        index,
+        src: img.getAttribute('src') || '',
+        alt: img.getAttribute('alt') || '',
+        align: sanitizeBodyImageAlign(ds.align || ds.keAlign || ds.keStyle),
+        crop:
+          ds.cropScale || ds.cropPos || ds.cropRotate || ds.padColor
+            ? {
+                scale: Number(ds.cropScale || 1),
+                position: ds.cropPos || '50% 50%',
+                rotation: Number(ds.cropRotate || 0),
+                padColor: ds.padColor,
+                aspectRatio: ds.cropAspect,
+              }
+            : null,
+      })
+    },
+    [canEdit, bodyEditing],
+  )
+
+  const handleTistoryImageContextMenu = useCallback(
+    (e: ReactMouseEvent<HTMLElement>) => {
+      if (!canEdit || bodyEditing) return
+      const t = e.target as HTMLElement | null
+      const img = t?.closest?.('img') as HTMLImageElement | null
+      if (!img) return
+      const index = resolveTistoryImageIndex(e.currentTarget, img)
+      if (index < 0) return
+      e.preventDefault()
+      const ds = img.dataset
+      setImageAlignMenu({
+        index,
+        x: e.clientX,
+        y: e.clientY,
+        align: sanitizeBodyImageAlign(ds.align || ds.keAlign || ds.keStyle),
+      })
+    },
+    [canEdit, bodyEditing],
+  )
+
+  useEffect(() => {
+    if (!imageAlignMenu) return
+    const close = () => setImageAlignMenu(null)
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') close()
+    }
+    window.addEventListener('click', close)
+    window.addEventListener('scroll', close, true)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('click', close)
+      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [imageAlignMenu])
+
+  const handleObsidianSync = async () => {
+    const sourcePath = article.sourcePath?.trim()
+    if (!sourcePath) {
+      alert('이 글에 연결된 옵시디언 경로가 없습니다.')
+      return
+    }
+    if (
+      !window.confirm(
+        '옵시디언 노트에서 최신 본문을 가져와 편집기에 넣습니다.\n(아직 저장되지 않으며, 확인 후 저장을 눌러 주세요.)',
+      )
+    ) {
+      return
+    }
+
+    setObsidianSyncing(true)
+    try {
+      const res = await fetch(
+        `/api/obsidian/notes?path=${encodeURIComponent(sourcePath)}`,
+      )
+      const data = (await res.json()) as {
+        note?: {
+          body?: string
+          path?: string
+          imageUpload?: { errors?: string[] }
+        }
+        error?: string
+      }
+      if (!res.ok || typeof data.note?.body !== 'string') {
+        throw new Error(data.error || `불러오기 실패 (${res.status})`)
+      }
+      const errors = data.note.imageUpload?.errors
+      if (errors?.length) {
+        console.warn('[obsidian sync] image issues:', errors)
+      }
+      syncBody(data.note.body)
+      requestAnimationFrame(() => bodyRef.current?.focus())
+    } catch (e) {
+      alert(
+        '옵시디언 동기화 실패: ' +
+          (e instanceof Error ? e.message : String(e)),
+      )
+    } finally {
+      setObsidianSyncing(false)
+    }
   }
 
   const enterBodyEditing = useCallback(() => {
@@ -638,7 +920,19 @@ export default function ArticleView({ article: initial }: Props) {
             ) : null}
             {uploading && <span className={styles.savedBadge}>이미지 업로드 중…</span>}
             {localTools && generatingCover && (
-              <span className={styles.savedBadge}>표지 생성 중…</span>
+              <>
+                <span className={styles.savedBadge}>표지 생성 중…</span>
+                {canEdit && (
+                  <button
+                    type="button"
+                    className={styles.btnCancelCover}
+                    onClick={handleCancelCoverGeneration}
+                    title="백그라운드 표지 생성 취소"
+                  >
+                    생성 취소
+                  </button>
+                )}
+              </>
             )}
             {localTools && coverStatus === 'success' && (
               <span className={styles.savedBadge}>✓ 표지 생성됨</span>
@@ -653,8 +947,29 @@ export default function ArticleView({ article: initial }: Props) {
               </>
             ) : canEdit && bodyEditing ? (
               <>
-                <button className={styles.btnCancel} onClick={handleBodyCancel} disabled={uploading}>취소</button>
-                <button className={styles.btnSave} onClick={handleBodySave} disabled={saving || uploading}>
+                <button
+                  className={styles.btnCancel}
+                  onClick={handleBodyCancel}
+                  disabled={uploading || obsidianSyncing}
+                >
+                  취소
+                </button>
+                {localTools && article.sourcePath ? (
+                  <button
+                    type="button"
+                    className={styles.btnObsidianSync}
+                    onClick={handleObsidianSync}
+                    disabled={saving || uploading || obsidianSyncing}
+                    title={article.sourcePath}
+                  >
+                    {obsidianSyncing ? '동기화 중…' : '옵시디언 업데이트'}
+                  </button>
+                ) : null}
+                <button
+                  className={styles.btnSave}
+                  onClick={handleBodySave}
+                  disabled={saving || uploading || obsidianSyncing}
+                >
                   {saving ? '저장 중…' : '저장'}
                 </button>
               </>
@@ -753,7 +1068,10 @@ export default function ArticleView({ article: initial }: Props) {
         ) : null}
 
         {localTools &&
-          (coverStatus === 'running' || coverStatus === 'error' || coverStatus === 'success') &&
+          (coverStatus === 'running' ||
+            coverStatus === 'error' ||
+            coverStatus === 'success' ||
+            coverStatus === 'cancelled') &&
           coverMessage && (
             <div
               className={
@@ -761,12 +1079,25 @@ export default function ArticleView({ article: initial }: Props) {
                   ? styles.coverGenBannerError
                   : coverStatus === 'success'
                     ? styles.coverGenBannerOk
-                    : styles.coverGenBanner
+                    : coverStatus === 'cancelled'
+                      ? styles.coverGenBannerCancelled
+                      : styles.coverGenBanner
               }
               role="status"
             >
               <span>{coverMessage}</span>
-              {canEdit && coverStatus === 'error' && (
+              {canEdit && coverStatus === 'running' && (
+                <span className={styles.coverGenErrorActions}>
+                  <button
+                    type="button"
+                    className={styles.coverGenRetry}
+                    onClick={handleCancelCoverGeneration}
+                  >
+                    생성 취소
+                  </button>
+                </span>
+              )}
+              {canEdit && (coverStatus === 'error' || coverStatus === 'cancelled') && (
                 <span className={styles.coverGenErrorActions}>
                   <button
                     type="button"
@@ -838,6 +1169,7 @@ export default function ArticleView({ article: initial }: Props) {
                     photos={coverReferencePhotos}
                     onChange={setCoverReferencePhotos}
                     disabled={generatingCover || uploading || saving}
+                    captureWindowPaste
                   />
                   <CoverBackgroundPicker
                     value={coverBackgroundColor}
@@ -889,7 +1221,18 @@ export default function ArticleView({ article: initial }: Props) {
                     >
                       {generatingCover ? '표지 생성 중…' : '표지 생성'}
                     </button>
-                    {coverStatus === 'error' && (
+                    {generatingCover && (
+                      <button
+                        type="button"
+                        className={styles.btnCancelCover}
+                        onClick={handleCancelCoverGeneration}
+                        disabled={uploading || saving}
+                        title="백그라운드 표지 생성 취소"
+                      >
+                        생성 취소
+                      </button>
+                    )}
+                    {(coverStatus === 'error' || coverStatus === 'cancelled') && (
                       <span className={styles.coverGenErrorActions}>
                         <button
                           type="button"
@@ -913,7 +1256,11 @@ export default function ArticleView({ article: initial }: Props) {
                   {coverMessage && coverEditing && (
                     <p
                       className={
-                        coverStatus === 'error' ? styles.coverGenError : styles.coverGenStatus
+                        coverStatus === 'error'
+                          ? styles.coverGenError
+                          : coverStatus === 'cancelled'
+                            ? styles.coverGenCancelled
+                            : styles.coverGenStatus
                       }
                       role="status"
                     >
@@ -962,12 +1309,23 @@ export default function ArticleView({ article: initial }: Props) {
         {(() => {
           const format = resolveArticleFormat(article.format)
           const isTistory = format === 'tistory'
+          const imageEditable = canEdit && !bodyEditing
           if (isTistory && !(canEdit && bodyEditing)) {
             return (
-              <TistoryPreviewBody
-                html={article.body}
-                hydrate={false}
-              />
+              <div
+                className={imageEditable ? styles.bodyImageEditableHost : undefined}
+                onDoubleClick={
+                  imageEditable ? handleTistoryImageDoubleClick : undefined
+                }
+                onContextMenu={
+                  imageEditable ? handleTistoryImageContextMenu : undefined
+                }
+              >
+                <TistoryPreviewBody
+                  html={article.body}
+                  hydrate={false}
+                />
+              </div>
             )
           }
           return (
@@ -989,6 +1347,9 @@ export default function ArticleView({ article: initial }: Props) {
                 renderArticleBody(article.body, {
                   imageClassName: styles.bodyImage,
                   format: article.format,
+                  editableImages: imageEditable,
+                  onEditImage: handleEditBodyImage,
+                  onAlignImage: handleAlignBodyImage,
                 })
               )}
             </div>
@@ -999,6 +1360,49 @@ export default function ArticleView({ article: initial }: Props) {
           <CommentsSection articleSlug={article.slug} />
         )}
       </div>
+
+      {imageCropEdit ? (
+        <BodyImageCropModal
+          src={imageCropEdit.src}
+          alt={imageCropEdit.alt}
+          initialCrop={imageCropEdit.crop}
+          onClose={() => setImageCropEdit(null)}
+          onApply={handleApplyBodyImageCrop}
+        />
+      ) : null}
+
+      {imageAlignMenu ? (
+        <div
+          className={styles.imageAlignMenu}
+          style={{ left: imageAlignMenu.x, top: imageAlignMenu.y }}
+          role="menu"
+          onClick={(e) => e.stopPropagation()}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <p className={styles.imageAlignMenuTitle}>이미지 정렬</p>
+          {BODY_IMAGE_ALIGN_OPTIONS.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              role="menuitemradio"
+              aria-checked={imageAlignMenu.align === opt.id}
+              className={`${styles.imageAlignMenuItem}${
+                imageAlignMenu.align === opt.id
+                  ? ` ${styles.imageAlignMenuItemActive}`
+                  : ''
+              }`}
+              onClick={() =>
+                void handleAlignBodyImage({
+                  index: imageAlignMenu.index,
+                  align: opt.id,
+                })
+              }
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </article>
   )
 }

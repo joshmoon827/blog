@@ -2141,7 +2141,7 @@ export default function NewriteToolbar({
           {(
             [
               ['tistory 모드', 'wysiwyg', 'TinyMCE WYSIWYG (HTML)'],
-              ['기본 모드', 'markdown', '마크다운 편집 (Hybrid / Muya)'],
+              ['기본 모드', 'markdown', '마크다운 편집'],
               ['HTML', 'html', '소스 보기 (코드 편집)'],
             ] as const
           ).map(([label, mode, hint]) => (

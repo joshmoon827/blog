@@ -51,6 +51,27 @@ function updateJob(patch) {
   }
 }
 
+function installCancelSignalHandlers() {
+  if (!process.env.COVER_JOB_SLUG) return;
+  let handled = false;
+  const onSignal = (sig) => {
+    if (handled) return;
+    handled = true;
+    console.error(`[generate-cover] received ${sig}, cancelling…`);
+    updateJob({
+      status: "cancelled",
+      finishedAt: new Date().toISOString(),
+      error: `Cancelled (${sig})`,
+      pid: null,
+    });
+    process.exit(130);
+  };
+  process.on("SIGTERM", () => onSignal("SIGTERM"));
+  process.on("SIGINT", () => onSignal("SIGINT"));
+}
+
+installCancelSignalHandlers();
+
 const DB_PATH = join(BLOG_ROOT, "data", "articles.local.json");
 const PUBLIC_IMAGES = join(BLOG_ROOT, "public", "images");
 const GENERATED_DIR = join(PUBLIC_IMAGES, "generated");

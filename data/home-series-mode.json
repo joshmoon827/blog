@@ -8,6 +8,7 @@
     "gsap-columns",
     "gsap-wave",
     "gsap-slices",
-    "gsap-flip"
+    "gsap-flip",
+    "liquid"
   ]
 }

@@ -92,17 +92,16 @@
     radial-gradient(circle at 54% 49%, rgb(48 72 42 / 42%), transparent 27%),
     linear-gradient(115deg, rgb(255 255 255 / 7%), transparent 32%),
     #181b18;
-  border: 1px solid rgb(237 233 220 / 18%);
+  border: none;
   border-radius: 30px;
-  box-shadow:
-    0 50px 110px rgb(0 0 0 / 22%),
-    inset 0 0 0 1px rgb(255 255 255 / 8%);
+  box-shadow: 0 50px 110px rgb(0 0 0 / 22%);
   isolation: isolate;
 }
 
 .articleStageEmbedded {
   height: 100%;
   min-height: 0;
+  border: none;
   border-radius: 0;
   box-shadow: none;
 }

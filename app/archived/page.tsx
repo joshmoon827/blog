@@ -7,7 +7,7 @@ import styles from './page.module.css'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: '보관 글 | Laws of UX',
+  title: '보관 글 | josh log',
 }
 
 export default function ArchivedPage() {

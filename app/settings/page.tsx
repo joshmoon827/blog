@@ -7,7 +7,7 @@ import SettingsForm from './SettingsForm'
 import styles from './settings.module.css'
 
 export const metadata = {
-  title: '설정 | Laws of UX',
+  title: '설정 | josh log',
 }
 
 export default async function SettingsPage() {

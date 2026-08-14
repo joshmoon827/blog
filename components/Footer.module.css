@@ -26,11 +26,6 @@
 }
 .backToTop:hover { color: var(--text); }
 
-.copy {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .nav {
   display: flex;
   align-items: center;

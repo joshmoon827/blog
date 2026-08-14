@@ -99,7 +99,7 @@ export const homeVariantMetadata = Object.fromEntries(
   homeVariants.map((variant) => [
     variant.id,
     {
-      title: `${variant.eyebrow} | Laws of UX`,
+      title: `${variant.eyebrow} | josh log`,
       description: variant.deck,
     },
   ]),

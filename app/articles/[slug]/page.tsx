@@ -25,10 +25,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: raw } = await params
   const slug = resolveSlug(raw)
-  if (slug === 'new') return { title: '새 글 작성 | Laws of UX' }
+  if (slug === 'new') return { title: '새 글 작성 | josh log' }
   const article = readOne(slug)
   if (!article || article.trashed) return { title: 'Not Found' }
-  return { title: `${article.title} | Laws of UX` }
+  return { title: `${article.title} | josh log` }
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {

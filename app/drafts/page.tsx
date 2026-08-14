@@ -7,7 +7,7 @@ import styles from './page.module.css'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: '임시저장 | Laws of UX',
+  title: '임시저장 | josh log',
 }
 
 export default function DraftsPage() {

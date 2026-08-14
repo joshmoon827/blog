@@ -17,7 +17,6 @@ export default function Footer() {
           </svg>
           Back to Top
         </a>
-        <p className={styles.copy}>Laws of UX &copy; Jon Yablonski 2026</p>
         <nav className={styles.nav} aria-label="Footer navigation">
           <a href="#">Contact</a>
           <span aria-hidden="true">|</span>

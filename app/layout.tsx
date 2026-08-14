@@ -7,7 +7,7 @@ import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import { AuthProvider } from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
-  title: 'Articles | Laws of UX',
+  title: 'Articles | josh log',
   description: 'Selected articles on the intersection of psychology and user experience.',
 }
 

@@ -12,7 +12,7 @@ import MosaicEditor from './MosaicEditor'
 import styles from '../settings.module.css'
 
 export const metadata = {
-  title: '모자이크 패턴 | Laws of UX',
+  title: '모자이크 패턴 | josh log',
 }
 
 export default async function MosaicSettingsPage() {

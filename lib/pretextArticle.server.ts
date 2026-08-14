@@ -86,93 +86,29 @@ function articleBodyToPlainText(body: string) {
     .trim()
 }
 
-function flattenPhrase(value: string) {
-  return value
-    .replace(/[*_~`#\[\]]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+function sliceBlock(text: string, startNeedle: string, endNeedle: string) {
+  const lower = text.toLowerCase()
+  const start = lower.indexOf(startNeedle.toLowerCase())
+  const end = lower.indexOf(endNeedle.toLowerCase(), start >= 0 ? start : 0)
+  if (start < 0 || end < start) return null
+  return text.slice(start, end + endNeedle.length).trim()
 }
 
-function cuePhrases(body: string): string[] {
-  const decoded = decodeCommonEntities(body)
-  const found: string[] = []
-  for (const match of decoded.matchAll(/\*\*([^*]{2,72})\*\*/g)) {
-    found.push(flattenPhrase(match[1] ?? ''))
-  }
-  for (const match of decoded.matchAll(/__([^_]{2,72})__/g)) {
-    found.push(flattenPhrase(match[1] ?? ''))
-  }
-  for (const match of decoded.matchAll(/^#{1,3}\s+(.+)$/gm)) {
-    found.push(flattenPhrase(match[1] ?? ''))
-  }
-  return found.filter((phrase) => phrase.replace(/\s/g, '').length >= 2)
-}
-
-function splitSentences(text: string): string[] {
-  if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
-    return Array.from(
-      new Intl.Segmenter('ko', { granularity: 'sentence' }).segment(text),
-      (part) => part.segment.replace(/\s+/g, ' ').trim(),
-    ).filter(Boolean)
-  }
-  return text
-    .split(/(?<=[.!?。！？])\s+/)
-    .map((part) => part.trim())
-    .filter(Boolean)
-}
-
-/** Important sentences (not isolated words) to highlighter-mark in Pretext. */
-export function extractHighlightPhrases(plainText: string, body: string): string[] {
-  const cues = cuePhrases(body)
-  const sentences = splitSentences(plainText)
-  const scored = sentences.map((sentence) => {
-    const compact = sentence.replace(/\s/g, '')
-    if (compact.length < 14 || compact.length > 200) {
-      return { sentence, score: -1 }
-    }
-    let score = 1
-    for (const cue of cues) {
-      if (sentence.includes(cue) || cue.length >= 8 && sentence.includes(cue.slice(0, 12))) {
-        score += 4
-      }
-    }
-    if (/다\.|입니다|합니다|한다|이다|습니다|요\./.test(sentence)) score += 1
-    return { sentence, score }
-  })
-
-  const ranked = scored
-    .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || b.sentence.length - a.sentence.length)
-
-  const picked: string[] = []
-  const seen = new Set<string>()
-  for (const item of ranked) {
-    const key = item.sentence.toLowerCase()
-    if (seen.has(key)) continue
-    seen.add(key)
-    picked.push(item.sentence)
-    if (picked.length >= 7) break
-  }
-  return picked.flatMap((sentence) => splitSentenceIntoStrokes(sentence, 4))
-}
-
-function splitSentenceIntoStrokes(sentence: string, targetParts = 4): string[] {
-  const chars = Array.from(sentence.replace(/\s+/g, ' ').trim())
-  if (chars.length < 16) return [chars.join('')]
-  const parts = Math.min(targetParts, Math.max(2, Math.round(chars.length / 18)))
-  const gap = Math.max(1, Math.round(chars.length * 0.06))
-  const usable = Math.max(parts, chars.length - gap * (parts - 1))
-  const chunk = Math.floor(usable / parts)
-  const strokes: string[] = []
-  let index = 0
-  for (let part = 0; part < parts; part += 1) {
-    const take = part === parts - 1 ? chars.length - index : chunk
-    const slice = chars.slice(index, index + take).join('').trim()
-    if (slice.replace(/\s/g, '').length >= 2) strokes.push(slice)
-    index += take + gap
-    if (index >= chars.length) break
-  }
-  return strokes
+/** Continuous highlighter over each requested passage. */
+export function extractHighlightPhrases(plainText: string, _body: string): string[] {
+  const text = plainText.replace(/\s+/g, ' ').trim()
+  return [
+    sliceBlock(
+      text,
+      '월드모델과 AGI · Judea Pear',
+      '상상(imagination) 하며 시뮬레이션',
+    ),
+    sliceBlock(
+      text,
+      '인코더가 뽑은 zt가 dynamics prior와 정렬되도록 유도',
+      '손실 설계가 개선됨',
+    ),
+  ].filter((phrase): phrase is string => Boolean(phrase))
 }
 
 function publishedArticle(article: ArticleData) {

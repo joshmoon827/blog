@@ -134,6 +134,14 @@ function highlightRangesInText(text: string, phrases: string[]) {
     }
     if (found) continue
 
+    const trimmed = text.trim()
+    const trimmedLower = trimmed.toLowerCase()
+    if (trimmedLower.length >= 4 && needle.includes(trimmedLower)) {
+      const start = text.indexOf(trimmed)
+      if (start >= 0) hits.push({ start, end: start + trimmed.length })
+      continue
+    }
+
     const minPart = Math.min(6, needle.length)
     for (let len = Math.min(needle.length, lower.length); len >= minPart; len -= 1) {
       const prefix = needle.slice(0, len)
@@ -161,28 +169,8 @@ function highlightRangesInText(text: string, phrases: string[]) {
   return merged
 }
 
-function splitRangeIntoStrokes(start: number, end: number, targetParts = 4) {
-  const length = end - start
-  if (length <= 12) return [{ start, end }]
-  const parts = Math.min(targetParts, Math.max(2, Math.round(length / 10)))
-  const gap = Math.max(1, Math.round(length * 0.08))
-  const usable = Math.max(parts, length - gap * (parts - 1))
-  const chunk = Math.floor(usable / parts)
-  const strokes: Array<{ start: number; end: number }> = []
-  let cursor = start
-  for (let index = 0; index < parts; index += 1) {
-    const take = index === parts - 1 ? end - cursor : chunk
-    if (take >= 2) strokes.push({ start: cursor, end: cursor + take })
-    cursor += take + gap
-    if (cursor >= end) break
-  }
-  return strokes
-}
-
 function renderHighlightedLine(text: string, phrases: string[]) {
-  const ranges = highlightRangesInText(text, phrases).flatMap((range) =>
-    splitRangeIntoStrokes(range.start, range.end, 4),
-  )
+  const ranges = highlightRangesInText(text, phrases)
   if (!ranges.length) return text || '\u00a0'
   const parts: Array<{ text: string; mark: boolean; key: string }> = []
   let cursor = 0
@@ -431,10 +419,10 @@ function buildArticleLayout(
   const isNarrow = width < 760
   const gutter = Math.round(
     isNarrow
-      ? clamp(width * 0.055, 18, 28)
+      ? clamp(width * 0.1375, 45, 70)
       : compact
-        ? clamp(width * 0.035, 28, 52)
-        : clamp(width * 0.052, 44, 72),
+        ? clamp(width * 0.0875, 70, 130)
+        : clamp(width * 0.13, 110, 180),
   )
   const titleTop = compact ? (isNarrow ? 52 : 52) : isNarrow ? 118 : 82
   const titleWidth = width - gutter * 2

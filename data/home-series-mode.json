@@ -1,6 +1,6 @@
 {
   "mode": "pretext",
-  "randomEnabled": false,
+  "randomEnabled": true,
   "randomPool": [
     "gsap-scatter",
     "warp",

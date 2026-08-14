@@ -3,6 +3,7 @@
  */
 
 import { cacheTag } from 'next/cache'
+import { connection } from 'next/server'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import {
@@ -65,7 +66,9 @@ async function getCachedHomeSeriesSettings(): Promise<HomeSeriesSettings> {
 
 /** Home banner: random from pool on each request when set. */
 export async function resolveHomeBannerMode(): Promise<HomeSeriesMode> {
-  return pickHomeSeriesMode(await getCachedHomeSeriesSettings())
+  const settings = await getCachedHomeSeriesSettings()
+  await connection()
+  return pickHomeSeriesMode(settings)
 }
 
 export function writeHomeSeriesSettings(

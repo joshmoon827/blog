@@ -35,18 +35,3 @@ export async function settingsGitStatus() {
     : []
   return { dirty: files.length > 0, files }
 }
-
-export async function commitAndPushSettings() {
-  const before = await settingsGitStatus()
-  if (!before.dirty) {
-    return { pushed: false, ...before }
-  }
-  await git(['add', '--', ...before.files])
-  await git([
-    'commit',
-    '-m',
-    'Update home banner and mosaic settings.',
-  ])
-  await git(['push', 'origin', 'HEAD'])
-  return { pushed: true, dirty: false, files: [] as string[] }
-}

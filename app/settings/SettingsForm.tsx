@@ -19,6 +19,8 @@ import {
 } from '@/lib/homeSeriesMode'
 import styles from './settings.module.css'
 
+const SETTINGS_COMMIT_PROMPT = '/settings 페이지에 있는 설정 커밋푸쉬 해줘'
+
 function SliderRow({
   id,
   label,
@@ -95,7 +97,6 @@ export default function SettingsForm({
   const [seriesModeError, setSeriesModeError] = useState<string | null>(null)
   const [savingMode, startSaveMode] = useTransition()
   const [settingsDirty, setSettingsDirty] = useState(false)
-  const [pushingSettings, setPushingSettings] = useState(false)
   const [settingsGitError, setSettingsGitError] = useState<string | null>(null)
   const [settingsGitOk, setSettingsGitOk] = useState(false)
 
@@ -125,28 +126,15 @@ export default function SettingsForm({
     return () => window.clearInterval(timer)
   }, [canWrite, savingMode])
 
-  async function pushSettings() {
-    if (!settingsDirty || pushingSettings) return
-    setPushingSettings(true)
+  async function copySettingsCommitPrompt() {
+    if (!settingsDirty) return
     setSettingsGitError(null)
     setSettingsGitOk(false)
     try {
-      const res = await fetch('/api/settings-git', {
-        method: 'POST',
-        credentials: 'same-origin',
-      })
-      const data = (await res.json().catch(() => null)) as { error?: string } | null
-      if (!res.ok) {
-        setSettingsGitError(data?.error || '설정을 올리지 못했습니다.')
-        return
-      }
-      setSettingsDirty(false)
+      await navigator.clipboard.writeText(SETTINGS_COMMIT_PROMPT)
       setSettingsGitOk(true)
     } catch {
-      setSettingsGitError('설정을 올리지 못했습니다.')
-    } finally {
-      setPushingSettings(false)
-      void refreshSettingsDirty()
+      setSettingsGitError('클립보드에 복사하지 못했습니다.')
     }
   }
 
@@ -465,13 +453,13 @@ export default function SettingsForm({
           <button
             type="button"
             className={styles.gitPushBtn}
-            disabled={!settingsDirty || pushingSettings}
-            onClick={() => void pushSettings()}
+            disabled={!settingsDirty}
+            onClick={() => void copySettingsCommitPrompt()}
           >
-            {pushingSettings ? '올리는 중…' : '설정 커밋·푸시'}
+            설정 커밋·푸시
           </button>
-          {settingsGitOk && !settingsDirty ? (
-            <span className={styles.gitPushOk}>올렸습니다</span>
+          {settingsGitOk ? (
+            <span className={styles.gitPushOk}>프롬프트 복사됨</span>
           ) : null}
         </div>
         {settingsGitError ? (

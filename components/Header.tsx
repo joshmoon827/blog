@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
-import { setStoredLanguage, type Language } from './LocalizedText'
+import { setStoredLanguage, useLanguage, type Language } from './LocalizedText'
 import styles from './Header.module.css'
 
 const navItems = [
@@ -38,7 +38,7 @@ export default function Header() {
   const canWrite = authenticated && isAuthoringEnabled()
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [menuOpen, setMenuOpen] = useState(false)
-  const [language, setLanguage] = useState<Language>('ko')
+  const language = useLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
 
@@ -62,13 +62,6 @@ export default function Header() {
     setTheme(saved)
     document.documentElement.setAttribute('data-theme', saved)
 
-    const savedLanguage = localStorage.getItem('language')
-    if (savedLanguage === 'en' || savedLanguage === 'ko') {
-      setLanguage(savedLanguage)
-      document.documentElement.setAttribute('lang', savedLanguage)
-    } else {
-      document.documentElement.setAttribute('lang', 'ko')
-    }
   }, [])
 
   const toggleTheme = () => {
@@ -79,7 +72,6 @@ export default function Header() {
   }
 
   const selectLanguage = (next: Language) => {
-    setLanguage(next)
     setLanguageOpen(false)
     setStoredLanguage(next)
   }

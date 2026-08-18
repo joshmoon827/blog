@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Suspense } from 'react'
 import Header from '@/components/Header'
+import LanguageQuerySync from '@/components/LanguageQuerySync'
 import Footer from '@/components/Footer'
 import PageTransition from '@/components/PageTransition'
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
@@ -49,6 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ServiceWorkerRegistrar />
           <a className="skip-link" href="#main">Skip to main content</a>
+          <Suspense fallback={null}>
+            <LanguageQuerySync />
+          </Suspense>
           <Header />
           <PageTransition>
             <main id="main">{children}</main>

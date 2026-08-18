@@ -24,7 +24,9 @@
       "articleSlugs": [
         "v8",
         "supply-chain-attack"
-      ]
+      ],
+      "title_en": "Cloud",
+      "description_en": "Infrastructure, containers, cloud operations, and security."
     },
     {
       "slug": "opensource",
@@ -52,7 +54,9 @@
         "amaze-x3",
         "22cursor-cli",
         "agent-client-protocol-acp"
-      ]
+      ],
+      "title_en": "Open Source",
+      "description_en": "Open-source tools, runtimes, and development environments."
     },
     {
       "slug": "ai",
@@ -76,7 +80,9 @@
         "dreamer",
         "agi",
         "22cursor-cli"
-      ]
+      ],
+      "title_en": "AI",
+      "description_en": "LLMs, agents, learning, and prompts."
     },
     {
       "slug": "coss-academy",
@@ -89,7 +95,9 @@
         "agi",
         "article-mrlv2uja",
         "dreamer"
-      ]
+      ],
+      "title_en": "COSS ACADEMY",
+      "description_en": "https://academy.cossnet.com/coweek/intro\nNotes from a 5-day academy run by the COSS program. I attended as a Data Security Convergence major."
     }
   ]
 }

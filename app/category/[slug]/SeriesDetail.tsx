@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Article } from '@/data/articles'
 import ArticleCoverBanner from '@/components/ArticleCoverBanner'
 import { imageFilesFromDataTransfer } from '@/components/CoverReferencePhotos'
-import { LocalizedArticleCount } from '@/components/LocalizedText'
+import { LocalizedArticleCount, useLanguage } from '@/components/LocalizedText'
 import SeriesArticleList from '@/components/SeriesArticleList'
 import { useAuth } from '@/hooks/useAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
@@ -86,6 +86,13 @@ export default function SeriesDetail({
   )
 
   const displayArticles = editing ? memberArticles : articles
+  const language = useLanguage()
+  const displayTitle =
+    language === 'en' && series.title_en ? series.title_en : series.title
+  const displayDescription =
+    language === 'en' && series.description_en
+      ? series.description_en
+      : series.description
 
   const openEdit = () => {
     setTitle(series.title)
@@ -335,9 +342,9 @@ export default function SeriesDetail({
               <span aria-hidden> / </span>
               <span>{series.slug}</span>
             </p>
-            <h1>{editing ? title : series.title}</h1>
+            <h1>{editing ? title : displayTitle}</h1>
             <p className={styles.desc}>
-              {editing ? description : series.description}
+              {editing ? description : displayDescription}
             </p>
             <p className={styles.count}>
               <LocalizedArticleCount count={displayArticles.length} />

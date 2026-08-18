@@ -4,7 +4,7 @@ import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import ArticleCoverBanner from '@/components/ArticleCoverBanner'
 import MosaicBitmapImage from '@/components/MosaicBitmapImage'
-import { LocalizedArticleCount } from '@/components/LocalizedText'
+import { LocalizedArticleCount, useLanguage } from '@/components/LocalizedText'
 import type { SeriesCardItem } from '@/lib/seriesItems'
 import {
   DEFAULT_SERIES_LIST_LAYOUT,
@@ -33,7 +33,14 @@ type Props = {
   listLayout?: SeriesListLayout
 }
 
+
+function useLocalizedSeriesTitle(item: SeriesCardItem) {
+  const language = useLanguage()
+  return language === 'en' && item.title_en ? item.title_en : item.title
+}
+
 function SeriesCard({ item }: { item: SeriesCardItem }) {
+  const title = useLocalizedSeriesTitle(item)
   return (
     <Link href={item.href} className={styles.card}>
       <div className={styles.imageWrap}>
@@ -46,7 +53,7 @@ function SeriesCard({ item }: { item: SeriesCardItem }) {
             <span className={styles.labelIcon} aria-hidden="true" />
             <span>Category folder</span>
           </div>
-          <h2>{item.title}</h2>
+          <h2>{title}</h2>
         </div>
         <span className={styles.count}>
           <LocalizedArticleCount count={item.count} />
@@ -65,12 +72,13 @@ function MosaicShard({
   piece: MosaicPiece
   forceOverlay?: boolean
 }) {
+  const title = useLocalizedSeriesTitle(item)
   const overlay = forceOverlay || piece.overlay
   return (
     <Link
       href={item.href}
       className={`${styles.mosaicPiece} ${overlay ? styles.mosaicOverlay : ''}`.trim()}
-      aria-label={item.title}
+      aria-label={title}
       style={{
         clipPath: polygonCss(piece.points),
         zIndex: piece.zIndex,
@@ -200,18 +208,21 @@ function SeriesSlide({
   className: string
   ariaLabel: string
 }) {
+  const language = useLanguage()
   return (
     <section
       className={`${styles.layoutSlide} ${className}`.trim()}
       aria-label={ariaLabel}
     >
       <div className={styles.slideTrack}>
-        {items.map((item) => (
+        {items.map((item) => {
+          const title = language === 'en' && item.title_en ? item.title_en : item.title
+          return (
           <Link
             key={item.href}
             href={item.href}
             className={styles.slideCard}
-            aria-label={`${item.title} 카테고리`}
+            aria-label={language === 'en' ? `${title} category` : `${title} 카테고리`}
           >
             {item.image ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -227,13 +238,14 @@ function SeriesSlide({
             )}
             <div className={styles.slideShade} aria-hidden />
             <div className={styles.slideMeta}>
-              <span className={styles.slideTitle}>{item.title}</span>
+              <span className={styles.slideTitle}>{title}</span>
               <span className={styles.slideCount}>
                 <LocalizedArticleCount count={item.count} />
               </span>
             </div>
           </Link>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

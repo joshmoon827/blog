@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { imageFilesFromDataTransfer } from '@/components/CoverReferencePhotos'
 import SeriesCards from '@/components/SeriesCards'
+import { LocalizedText } from '@/components/LocalizedText'
 import { useAuth } from '@/hooks/useAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
 import { DEFAULT_SERIES_COVERS, type SeriesListLayout } from '@/lib/series'
@@ -220,8 +221,10 @@ export default function SeriesListAdmin({
           ) : null}
         </div>
         <p>
-          관련 아티클을 모은 폴더입니다. 클라우드 · 오픈소스 · AI 세 갈래로
-          나뉩니다.
+          <LocalizedText
+            ko="관련 아티클을 모은 폴더입니다. 클라우드 · 오픈소스 · AI 세 갈래로 나뉩니다."
+            en="Folders of related articles, grouped into Cloud, Open Source, and AI."
+          />
         </p>
       </section>
 

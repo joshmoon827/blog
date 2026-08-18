@@ -10,9 +10,11 @@ import { readSeriesList } from '@/lib/series.server'
 export type SeriesCardItem = {
   href: string
   title: string
+  title_en?: string
   image: string
   count: number
   description?: string
+  description_en?: string
   slug?: string
 }
 
@@ -86,9 +88,11 @@ export function getSeriesPreviewItems(
   return folders.slice(0, limit).map((s) => ({
     href: `/category/${s.slug}`,
     title: s.title,
+    title_en: s.title_en,
     image: s.coverImage,
     count: Math.max(0, s.articles.length),
     description: s.description,
+    description_en: s.description_en,
     slug: s.slug,
   }))
 }

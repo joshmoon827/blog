@@ -58,7 +58,9 @@ export default async function SeriesSlugPage({ params }: Props) {
       series={{
         slug: detail.slug,
         title: detail.title,
+        title_en: detail.title_en,
         description: detail.description,
+        description_en: detail.description_en,
         coverImage: detail.coverImage,
         matchTags: detail.matchTags,
         articleSlugs: detail.articleSlugs,

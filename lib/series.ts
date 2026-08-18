@@ -6,7 +6,9 @@
 export type SeriesRecord = {
   slug: string
   title: string
+  title_en?: string
   description: string
+  description_en?: string
   /** Public URL path, e.g. /images/category/cloud.jpg */
   coverImage: string
   /**
@@ -78,7 +80,9 @@ export const DEFAULT_SERIES: SeriesRecord[] = [
   {
     slug: 'cloud',
     title: '클라우드',
+    title_en: 'Cloud',
     description: '인프라, 컨테이너, 클라우드 운영과 보안.',
+    description_en: 'Infrastructure, containers, cloud operations, and security.',
     coverImage: DEFAULT_SERIES_COVERS.cloud,
     matchTags: [
       'cloud',
@@ -97,7 +101,9 @@ export const DEFAULT_SERIES: SeriesRecord[] = [
   {
     slug: 'opensource',
     title: '오픈소스',
+    title_en: 'Open Source',
     description: '오픈소스 도구, 런타임, 개발 환경.',
+    description_en: 'Open-source tools, runtimes, and development environments.',
     coverImage: DEFAULT_SERIES_COVERS.opensource,
     matchTags: [
       'oss',
@@ -117,7 +123,9 @@ export const DEFAULT_SERIES: SeriesRecord[] = [
   {
     slug: 'ai',
     title: 'AI',
+    title_en: 'AI',
     description: 'LLM, 에이전트, 학습과 프롬프트.',
+    description_en: 'LLMs, agents, learning, and prompts.',
     coverImage: DEFAULT_SERIES_COVERS.ai,
     matchTags: [
       'ai',
@@ -181,10 +189,15 @@ export function sanitizeSeriesRecord(
     articleSlugs = base.articleSlugs.slice(0, 500)
   }
 
+  const title_en = clampStr(raw?.title_en ?? base?.title_en, 80)
+  const description_en = clampStr(raw?.description_en ?? base?.description_en, 400)
+
   return {
     slug,
     title: clampStr(raw?.title ?? base?.title, 80, slug),
+    ...(title_en ? { title_en } : {}),
     description: clampStr(raw?.description ?? base?.description, 400),
+    ...(description_en ? { description_en } : {}),
     coverImage: clampStr(
       raw?.coverImage ?? base?.coverImage,
       500,
@@ -196,6 +209,15 @@ export function sanitizeSeriesRecord(
 }
 
 /** True when this series uses an explicit article list (not tag auto-match). */
+
+export function localizedSeriesText(
+  language: 'ko' | 'en',
+  ko: string,
+  en?: string,
+): string {
+  return language === 'en' && en ? en : ko
+}
+
 export function seriesUsesManualArticles(series: SeriesRecord): boolean {
   return Array.isArray(series.articleSlugs)
 }

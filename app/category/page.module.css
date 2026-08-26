@@ -1,7 +1,10 @@
 .hero {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 1.5rem 3rem;
+  text-align: left;
 }
 
 .heroRow {
@@ -9,6 +12,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
 }
 
 .hero h1 {
@@ -53,6 +57,8 @@
 }
 
 .adminPanel {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto 1.25rem;
   padding: 1rem 1.25rem 1.15rem;
@@ -344,11 +350,11 @@
 }
 
 .seriesList {
-  padding-bottom: 5rem;
+  padding-bottom: 8rem;
 }
 
 @media (max-width: 640px) {
   .seriesList {
-    padding-bottom: 4rem;
+    padding-bottom: 6rem;
   }
 }

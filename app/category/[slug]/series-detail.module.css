@@ -7,10 +7,13 @@
 .cover {
   position: relative;
   width: 100vw;
+  /* Punch through sticky header so the extra 64px is above, not below. */
+  margin-top: -64px;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  /* ~30% shorter than article 16/7 */
-  aspect-ratio: 16 / 4.9;
+  /* ~30% shorter than article 16/7, plus header overlay strip */
+  aspect-ratio: auto;
+  height: calc(100vw * 4.9 / 16 + 64px);
   border-radius: 0;
   overflow: hidden;
   background: #1a1a1a;
@@ -87,14 +90,78 @@
   opacity: 0.85;
 }
 
-.toolbar {
+.coverActions {
+  position: absolute;
+  z-index: 4;
+  top: calc(64px + 0.75rem);
+  right: max(1.5rem, calc((100vw - 1200px) / 2 + 1.5rem));
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.55rem;
-  max-width: 1200px;
-  margin: 0.85rem auto 0;
-  padding: 0 1.5rem;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  pointer-events: auto;
+}
+
+.coverBtn,
+.coverBtnGhost {
+  padding: 0.38rem 0.85rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.coverBtn {
+  border: 1px solid rgb(255 255 255 / 28%);
+  background: rgb(20 20 20 / 55%);
+  color: #fff;
+}
+
+.coverBtn:hover:not(:disabled) {
+  background: rgb(20 20 20 / 78%);
+}
+
+.coverBtnGhost {
+  border: 1px solid rgb(255 255 255 / 22%);
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+}
+
+.coverBtnGhost:hover:not(:disabled) {
+  background: rgb(255 255 255 / 24%);
+}
+
+:global(html[data-theme='light']) .coverBtn {
+  border-color: rgb(25 31 40 / 14%);
+  background: rgb(255 255 255 / 82%);
+  color: #191f28;
+}
+
+:global(html[data-theme='light']) .coverBtn:hover:not(:disabled) {
+  background: #fff;
+}
+
+:global(html[data-theme='light']) .coverBtnGhost {
+  border-color: rgb(25 31 40 / 12%);
+  background: rgb(255 255 255 / 55%);
+  color: #191f28;
+}
+
+.coverBtn:disabled,
+.coverBtnGhost:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.coverToast {
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: inherit;
+  opacity: 0.88;
 }
 
 .toast {
@@ -415,14 +482,16 @@
 
 @media (max-width: 640px) {
   .cover {
-    /* ~30% shorter than 4/3 */
-    aspect-ratio: 4 / 2.1;
+    /* ~30% shorter than 4/3, plus header overlay strip */
+    aspect-ratio: auto;
+    height: calc(100vw * 2.1 / 4 + 64px);
   }
   .coverMeta {
     padding: 1.25rem 1.25rem 1.15rem;
   }
-  .toolbar {
-    padding: 0 1.25rem;
+  .coverActions {
+    top: calc(64px + 0.55rem);
+    right: 1.25rem;
   }
   .editor {
     padding: 1rem 1.25rem 1.5rem;

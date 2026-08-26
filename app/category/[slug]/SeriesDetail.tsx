@@ -334,8 +334,42 @@ export default function SeriesDetail({
             alt=""
             priority
             fillParent
+            headerOverlay
           />
           <div className={styles.coverScrim} />
+          {canEdit ? (
+            <div className={styles.coverActions}>
+              {!editing ? (
+                <button
+                  type="button"
+                  className={styles.coverBtn}
+                  onClick={openEdit}
+                >
+                  수정
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className={styles.coverBtnGhost}
+                    onClick={cancelEdit}
+                    disabled={saving}
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.coverBtn}
+                    onClick={() => void saveMeta()}
+                    disabled={saving}
+                  >
+                    {saving ? '저장 중…' : '저장'}
+                  </button>
+                </>
+              )}
+              {message ? <span className={styles.coverToast}>{message}</span> : null}
+            </div>
+          ) : null}
           <div className={styles.coverMeta}>
             <p className={styles.eyebrow}>
               <Link href="/category">Category</Link>
@@ -351,40 +385,6 @@ export default function SeriesDetail({
             </p>
           </div>
         </div>
-
-        {canEdit ? (
-          <div className={styles.toolbar}>
-            {!editing ? (
-              <button
-                type="button"
-                className={styles.btnPrimary}
-                onClick={openEdit}
-              >
-                수정
-              </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  onClick={cancelEdit}
-                  disabled={saving}
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  className={styles.btnPrimary}
-                  onClick={() => void saveMeta()}
-                  disabled={saving}
-                >
-                  {saving ? '저장 중…' : '저장'}
-                </button>
-              </>
-            )}
-            {message ? <span className={styles.toast}>{message}</span> : null}
-          </div>
-        ) : null}
       </section>
 
       {canEdit && editing ? (

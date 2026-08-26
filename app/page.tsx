@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticlesGrid from '@/components/ArticlesGrid'
+import HomeCategorySlides from '@/components/HomeCategorySlides'
+import type { HomeCategoryArticle } from '@/components/HomeCategoryArticleList'
 import HomeInteractiveBanner from '@/components/HomeInteractiveBanner'
 import SeriesArticleList from '@/components/SeriesArticleList'
 import SeriesCards from '@/components/SeriesCards'
@@ -13,10 +15,12 @@ import {
 } from '@/lib/homeSeriesMode'
 import { resolveHomeBannerMode } from '@/lib/homeSeriesMode.server'
 import { getListedArticles } from '@/lib/listedArticles'
+import { getArticleBodyExcerpt } from '@/lib/articlePlainText'
+import { readOne } from '@/lib/localArticles'
 import { mosaicSlotCount } from '@/lib/mosaicPattern'
 import { readMosaicPattern } from '@/lib/mosaicPattern.server'
 import { getPretextFeatureArticle } from '@/lib/pretextArticle.server'
-import { getSeriesPreviewItems } from '@/lib/seriesItems'
+import { getSeriesPreviewItems, getSeriesWithArticles } from '@/lib/seriesItems'
 import { siteConfig, getDefaultDescription } from '@/lib/siteConfig'
 import styles from './page.module.css'
 
@@ -89,34 +93,60 @@ async function HomeBanner() {
   const pretextArticle =
     seriesMode === 'pretext' ? getPretextFeatureArticle() : null
 
-  if (isWebglHomeSeriesMode(seriesMode)) {
-    return (
-      <SeriesWebglBanner
-        items={seriesItems}
-        mode={seriesMode}
-        className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
-      />
-    )
-  }
-  if (isInteractiveHomeSeriesMode(seriesMode)) {
-    return (
-      <HomeInteractiveBanner
-        items={seriesItems}
-        mode={seriesMode}
-        pretextArticle={pretextArticle}
-        className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
-      />
-    )
-  }
-  return (
+  const banner = isWebglHomeSeriesMode(seriesMode) ? (
+    <SeriesWebglBanner
+      items={seriesItems}
+      mode={seriesMode}
+      className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
+    />
+  ) : isInteractiveHomeSeriesMode(seriesMode) ? (
+    <HomeInteractiveBanner
+      items={seriesItems}
+      mode={seriesMode}
+      pretextArticle={pretextArticle}
+      className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
+    />
+  ) : (
     <SeriesCards
       items={seriesItems}
       variant={seriesMode === 'slide' ? 'slide' : 'mosaic'}
       pattern={mosaicPattern}
-      className={styles.seriesStrip}
-      ariaLabel="Category"
+      className={`${styles.seriesStrip} ${styles.seriesStripFlush}`}
+      headerOverlay
     />
   )
+
+  return (
+    <div className={styles.homeCoverFrame}>
+      <div className={styles.homeCoverCard}>{banner}</div>
+    </div>
+  )
+}
+
+function withBodyExcerpt(article: ReturnType<typeof getListedArticles>[number]): HomeCategoryArticle {
+  const full = readOne(article.slug)
+  return {
+    ...article,
+    excerpt: getArticleBodyExcerpt(full?.body ?? '', 300),
+    excerpt_en: full?.body_en
+      ? getArticleBodyExcerpt(full.body_en, 300)
+      : undefined,
+  }
+}
+
+function HomeCategoryArticleSlides() {
+  const slides = getSeriesWithArticles()
+    .filter((series) => series.articles.length > 0)
+    .sort((a, b) => b.articles.length - a.articles.length)
+    .map((series) => ({
+      slug: series.slug,
+      title: series.title,
+      title_en: series.title_en,
+      coverImage: series.coverImage,
+      articles: series.articles.slice(0, 4).map(withBodyExcerpt),
+    }))
+
+  return <HomeCategorySlides slides={slides} />
 }
 
 export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
@@ -125,6 +155,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
       <Suspense fallback={<div className={`${styles.seriesStrip} ${styles.seriesStripFlush}`} />}>
         <HomeBanner />
       </Suspense>
+      <HomeCategoryArticleSlides />
       <Suspense fallback={
         <div className={styles.hero}>
           <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.5 }}>Loading articles...</div>

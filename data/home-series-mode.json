@@ -1,5 +1,5 @@
 {
-  "mode": "pretext",
+  "mode": "shards",
   "randomEnabled": true,
   "randomPool": [
     "gsap-scatter",

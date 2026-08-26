@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ['tinymce', '@tinymce/tinymce-react', 'three', '@react-three/fiber', '@react-three/drei', 'matter-js', 'p5', 'paper'],
   // Next 16.3+ canary: persist Turbopack compile cache under `.next` across restarts.
   experimental: {
+    authInterrupts: true,
     turbopackFileSystemCacheForDev: true,
   },
   webpack: (config, { dev }) => {

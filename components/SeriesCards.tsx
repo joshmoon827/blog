@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
+import HomeCoverHeaderOverlay from '@/components/HomeCoverHeaderOverlay'
 import ArticleCoverBanner from '@/components/ArticleCoverBanner'
 import MosaicBitmapImage from '@/components/MosaicBitmapImage'
 import { LocalizedArticleCount, useLanguage } from '@/components/LocalizedText'
@@ -31,6 +32,8 @@ type Props = {
   pattern?: MosaicPattern
   /** /series grid columns + featured-first (ignored for mosaic/slide). */
   listLayout?: SeriesListLayout
+  /** Home banner: transparent header while this cover is under the bar. */
+  headerOverlay?: boolean
 }
 
 
@@ -258,6 +261,7 @@ export default function SeriesCards({
   ariaLabel = 'Category',
   pattern = DEFAULT_MOSAIC_PATTERN,
   listLayout = DEFAULT_SERIES_LIST_LAYOUT,
+  headerOverlay = false,
 }: Props) {
   if (!items.length) return null
 
@@ -267,7 +271,7 @@ export default function SeriesCards({
       pattern.layout === 'free' ? 1 : pattern.columns.length,
       1,
     )
-    return (
+    const mosaic = (
       <SeriesMosaic
         items={items.slice(0, need)}
         className={className ?? ''}
@@ -275,15 +279,30 @@ export default function SeriesCards({
         pattern={pattern}
       />
     )
+    if (!headerOverlay) return mosaic
+    return (
+      <HomeCoverHeaderOverlay fallbackTone="light">
+        {mosaic}
+      </HomeCoverHeaderOverlay>
+    )
   }
 
   if (variant === 'slide') {
-    return (
+    const slide = (
       <SeriesSlide
         items={items}
         className={className ?? ''}
         ariaLabel={ariaLabel}
       />
+    )
+    if (!headerOverlay) return slide
+    return (
+      <HomeCoverHeaderOverlay
+        probeSrc={items[0]?.image}
+        fallbackTone="dark"
+      >
+        {slide}
+      </HomeCoverHeaderOverlay>
     )
   }
 

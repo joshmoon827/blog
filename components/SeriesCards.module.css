@@ -164,6 +164,8 @@
 
 /* /series — configurable grid (1–3 cols via --series-cols / data-*) */
 .layoutGrid {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 1200px;
   margin-inline: auto;
   padding: 0 1.5rem;
@@ -311,11 +313,30 @@
   }
 
   .layoutMosaic {
+    height: 100%;
     padding: 0;
   }
 
+  .mosaic {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+  }
+
+  .layoutSlide,
   .layoutSlide .slideTrack {
-    padding: 0 1.25rem;
+    height: 100%;
+    padding: 0;
+    gap: 0;
+  }
+
+  .layoutSlide .slideCard {
+    flex: 1 0 100%;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
   }
 
   .layoutGrid .list {

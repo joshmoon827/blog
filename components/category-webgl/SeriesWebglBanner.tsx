@@ -6,6 +6,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react'
+import HomeCoverHeaderOverlay from '@/components/HomeCoverHeaderOverlay'
 import {
   HOME_SERIES_EXPERIMENT_OPTIONS,
   type WebglHomeSeriesMode,
@@ -60,7 +61,11 @@ export default function SeriesWebglBanner({
   }
 
   return (
-    <div className={className}>
+    <HomeCoverHeaderOverlay
+      className={className}
+      probeSrc={items[0]?.image}
+      fallbackTone="dark"
+    >
       <section
         className={styles.stage}
         style={{ height }}
@@ -87,6 +92,6 @@ export default function SeriesWebglBanner({
           </div>
         ) : null}
       </section>
-    </div>
+    </HomeCoverHeaderOverlay>
   )
 }

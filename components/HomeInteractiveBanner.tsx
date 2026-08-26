@@ -8,6 +8,7 @@ import {
   type InteractiveHomeSeriesMode,
 } from '@/lib/homeSeriesMode'
 import { mosaicHeightCss } from '@/lib/mosaicPattern'
+import HomeCoverHeaderOverlay from '@/components/HomeCoverHeaderOverlay'
 import type { PretextFeatureArticle } from '@/lib/pretextArticle.server'
 import type { SeriesCardItem } from '@/lib/seriesItems'
 import styles from './HomeInteractiveBanner.module.css'
@@ -69,13 +70,21 @@ export default function HomeInteractiveBanner({
   const mosaicHeight = mosaicHeightCss('506 / 184')
   const pretextReady = mode === 'pretext' && pretextArticle
   const height = pretextReady
-    ? `max(360px, calc((${mosaicHeight}) * 1.2))`
+    ? `max(540px, calc((${mosaicHeight}) * 1.8))`
     : `max(300px, ${mosaicHeight})`
 
+  const probeSrc = pretextReady ? null : items[0]?.image
+  const fallbackTone = pretextReady ? 'light' : 'dark'
+
   return (
-    <div className={className}>
+    <HomeCoverHeaderOverlay
+      className={className}
+      probeSrc={probeSrc}
+      fallbackTone={fallbackTone}
+      matchHtmlTheme={pretextReady}
+    >
       <section
-        className={styles.stage}
+        className={`${styles.stage}${pretextReady ? ` ${styles.stagePretext}` : ''}`}
         style={{ height }}
         data-mode={mode}
         aria-label={meta?.label ?? 'Interactive home pattern'}
@@ -102,6 +111,6 @@ export default function HomeInteractiveBanner({
           </>
         ) : null}
       </section>
-    </div>
+    </HomeCoverHeaderOverlay>
   )
 }

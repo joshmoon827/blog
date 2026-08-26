@@ -1,4 +1,5 @@
 .page {
+  --pretext-max: 1440px;
   min-height: 100vh;
   padding: 3.5rem 1.5rem 9rem;
   overflow: clip;
@@ -12,14 +13,13 @@
 }
 
 .embeddedBlock {
-  width: 100%;
   height: 100%;
-  margin: 0;
 }
 
 .pageHeader,
-.demoBlock {
-  width: min(100%, 1440px);
+.demoBlock,
+.embeddedBlock {
+  width: min(100%, var(--pretext-max));
   margin-inline: auto;
 }
 
@@ -84,6 +84,8 @@
 .articleStage {
   position: relative;
   width: 100%;
+  max-width: var(--pretext-max);
+  container-type: inline-size;
   height: clamp(936px, calc((100svh - 90px) * 1.2), 1176px);
   min-height: 816px;
   overflow: hidden;
@@ -101,9 +103,15 @@
 .articleStageEmbedded {
   height: 100%;
   min-height: 0;
+  max-width: none;
   border: none;
   border-radius: 0;
   box-shadow: none;
+  background: transparent;
+}
+
+.articleStageEmbedded::before {
+  display: none;
 }
 
 .articleStage::before {
@@ -338,7 +346,7 @@
   top: 17px;
   left: 17px;
   font-family: 'Toss Product Sans', sans-serif;
-  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-size: clamp(2.8rem, 6cqw, 5.5rem);
   font-weight: 800;
   letter-spacing: -0.08em;
   line-height: 0.8;
@@ -353,7 +361,7 @@
   display: grid;
   gap: 0.42rem;
   font-family: 'Toss Product Sans', sans-serif;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-size: clamp(1.05rem, 1.7cqw, 1.4rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.05;
@@ -371,7 +379,7 @@
   position: absolute;
   z-index: 9;
   bottom: 18px;
-  left: clamp(18px, 5.2vw, 72px);
+  left: clamp(18px, 5.2cqw, 72px);
   margin: 0;
   color: rgb(237 233 220 / 52%);
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
@@ -492,11 +500,25 @@
   }
 
   .bodyLine {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .figure {
     border-radius: 2px;
+  }
+
+  .figureIndex {
+    top: 12px;
+    left: 12px;
+    font-size: clamp(1.7rem, 11cqi, 3rem);
+  }
+
+  .figureCaption {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    gap: 0.28rem;
+    font-size: clamp(0.78rem, 3.4cqi, 1.02rem);
   }
 
   .stats {
@@ -517,6 +539,12 @@
   box-shadow:
     0 50px 110px rgb(0 0 0 / 15%),
     inset 0 0 0 1px rgb(255 255 255 / 35%);
+}
+
+:global(html[data-theme='light']) .articleStageEmbedded {
+  background: transparent;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 :global(html[data-theme='light']) .stageChrome {

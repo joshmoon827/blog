@@ -24,8 +24,10 @@ import { probeCoverBorder } from '@/lib/coverBorderColor'
 import { LabNav } from '../LabChrome'
 import styles from './page.module.css'
 
-const BODY_FONT = '18px Georgia'
-const BODY_LINE_HEIGHT = 29
+const BODY_FONT_WIDE = '18px Georgia'
+const BODY_LINE_HEIGHT_WIDE = 29
+const BODY_FONT_NARROW = '14px Georgia'
+const BODY_LINE_HEIGHT_NARROW = 22
 const TITLE_FAMILY = '"Toss Product Sans"'
 
 type Rect = {
@@ -64,6 +66,8 @@ type ArticleLayout = {
   titleLines: TitleLine[]
   bylineX: number
   bylineY: number
+  bodyFontSize: number
+  bodyLineHeight: number
   bodyLines: PositionedLine[]
   figure: Rect & { rotation: number }
   figureBounds: {
@@ -76,7 +80,8 @@ type ArticleLayout = {
 }
 
 type PreparedBundle = {
-  body: PreparedTextWithSegments
+  bodyWide: PreparedTextWithSegments
+  bodyNarrow: PreparedTextWithSegments
   headlineBySize: Map<string, PreparedTextWithSegments>
 }
 
@@ -276,10 +281,10 @@ function fitHeadline(
   compact: boolean,
 ) {
   const maxLines = isNarrow ? (compact ? 2 : 3) : 2
-  let low = compact ? (isNarrow ? 28 : 36) : isNarrow ? 38 : 54
+  let low = compact ? (isNarrow ? 22 : 36) : isNarrow ? 30 : 54
   let high = Math.min(
-    compact ? (isNarrow ? 50 : 86) : isNarrow ? 86 : 148,
-    width * (compact ? (isNarrow ? 0.15 : 0.09) : isNarrow ? 0.22 : 0.15),
+    compact ? (isNarrow ? 40 : 86) : isNarrow ? 66 : 148,
+    width * (compact ? (isNarrow ? 0.115 : 0.09) : isNarrow ? 0.17 : 0.15),
   )
   let best:
     | {
@@ -312,7 +317,7 @@ function fitHeadline(
 
   if (best) return best
 
-  const size = compact ? (isNarrow ? 28 : 36) : isNarrow ? 38 : 54
+  const size = compact ? (isNarrow ? 22 : 36) : isNarrow ? 30 : 54
   const lineHeight = Math.round(size * 0.88)
   const letterSpacing = -size * 0.055
   const prepared = getHeadlinePrepared(bundle, headline, size, letterSpacing)
@@ -365,15 +370,16 @@ function layoutRegion(
   start: LayoutCursor,
   region: Region,
   obstacle: Rect,
+  lineHeight: number,
 ): { lines: PositionedLine[]; cursor: LayoutCursor; exhausted: boolean } {
   let cursor = start
   let lineTop = region.y
   const lines: PositionedLine[] = []
 
-  while (lineTop + BODY_LINE_HEIGHT <= region.y + region.height) {
-    const slots = getLineSlots(region, lineTop, BODY_LINE_HEIGHT, obstacle)
+  while (lineTop + lineHeight <= region.y + region.height) {
+    const slots = getLineSlots(region, lineTop, lineHeight, obstacle)
     if (!slots.length) {
-      lineTop += BODY_LINE_HEIGHT
+      lineTop += lineHeight
       continue
     }
 
@@ -400,10 +406,10 @@ function layoutRegion(
     }
 
     if (!placedOnRow) {
-      lineTop += BODY_LINE_HEIGHT
+      lineTop += lineHeight
       continue
     }
-    lineTop += BODY_LINE_HEIGHT
+    lineTop += lineHeight
   }
 
   return { lines, cursor, exhausted: false }
@@ -499,13 +505,18 @@ function buildArticleLayout(
   }
   const figureBounds = { minX, maxX, minY, maxY }
 
+  const bodyPrepared = isNarrow ? bundle.bodyNarrow : bundle.bodyWide
+  const bodyLineHeight = isNarrow
+    ? BODY_LINE_HEIGHT_NARROW
+    : BODY_LINE_HEIGHT_WIDE
+  const bodyFontSize = isNarrow ? 14 : 18
   let bodyLines: PositionedLine[] = []
   let cursor: LayoutCursor = { segmentIndex: 0, graphemeIndex: 0 }
   let exhausted = false
 
   if (isNarrow) {
     const result = layoutRegion(
-      bundle.body,
+      bodyPrepared,
       cursor,
       {
         x: gutter,
@@ -516,6 +527,7 @@ function buildArticleLayout(
         minLineWidth: MIN_GLYPH_SLOT,
       },
       figure,
+      bodyLineHeight,
     )
     bodyLines = result.lines
     cursor = result.cursor
@@ -525,7 +537,7 @@ function buildArticleLayout(
     const columnWidth = Math.round((width - gutter * 2 - centerGap) / 2)
     const regionHeight = Math.max(0, bottom - bodyTop)
     const left = layoutRegion(
-      bundle.body,
+      bodyPrepared,
       cursor,
       {
         x: gutter,
@@ -535,12 +547,13 @@ function buildArticleLayout(
         column: 'left',
       },
       figure,
+      bodyLineHeight,
     )
     cursor = left.cursor
     const right = left.exhausted
       ? { lines: [] as PositionedLine[], cursor, exhausted: true }
       : layoutRegion(
-          bundle.body,
+          bodyPrepared,
           cursor,
           {
             x: gutter + columnWidth + centerGap,
@@ -550,6 +563,7 @@ function buildArticleLayout(
             column: 'right',
           },
           figure,
+          bodyLineHeight,
         )
     cursor = right.cursor
     exhausted = right.exhausted
@@ -558,8 +572,11 @@ function buildArticleLayout(
 
   const hasRemainingText =
     !exhausted &&
-    layoutNextLine(bundle.body, cursor, Math.max(140, width - gutter * 2)) !==
-      null
+    layoutNextLine(
+      bodyPrepared,
+      cursor,
+      Math.max(140, width - gutter * 2),
+    ) !== null
 
   return {
     width,
@@ -574,6 +591,8 @@ function buildArticleLayout(
     titleLines,
     bylineX: gutter,
     bylineY,
+    bodyFontSize,
+    bodyLineHeight,
     bodyLines,
     figure,
     figureBounds,
@@ -623,21 +642,26 @@ export default function PretextArticleLab({
 
   useEffect(() => {
     let active = true
-    void Promise.all([
-      document.fonts.ready,
-      document.fonts.load(BODY_FONT),
-      document.fonts.load(`800 72px ${TITLE_FAMILY}`),
-    ]).then(() => {
+    const wrapOptions = {
+      whiteSpace: 'normal' as const,
+      wordBreak: 'normal' as const,
+    }
+    const commitPrepared = () => {
       if (!active) return
       setLocale('ko')
+      const wrapped = allowCharacterWrap(articleText)
       setPrepared({
-        body: prepareWithSegments(allowCharacterWrap(articleText), BODY_FONT, {
-          whiteSpace: 'normal',
-          wordBreak: 'normal',
-        }),
+        bodyWide: prepareWithSegments(wrapped, BODY_FONT_WIDE, wrapOptions),
+        bodyNarrow: prepareWithSegments(wrapped, BODY_FONT_NARROW, wrapOptions),
         headlineBySize: new Map(),
       })
-    })
+    }
+    commitPrepared()
+    void Promise.all([
+      document.fonts.ready,
+      document.fonts.load(BODY_FONT_WIDE),
+      document.fonts.load(`800 72px ${TITLE_FAMILY}`),
+    ]).then(commitPrepared)
     return () => {
       active = false
     }
@@ -646,20 +670,16 @@ export default function PretextArticleLab({
   useLayoutEffect(() => {
     const stage = stageRef.current
     if (!stage) return
-    let frame = 0
     const commit = (width: number, height: number) => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const next = {
-          width: Math.round(width),
-          height: Math.round(height),
-        }
-        setStageSize((current) =>
-          current.width === next.width && current.height === next.height
-            ? current
-            : next,
-        )
-      })
+      const next = {
+        width: Math.round(width),
+        height: Math.round(height),
+      }
+      setStageSize((current) =>
+        current.width === next.width && current.height === next.height
+          ? current
+          : next,
+      )
     }
     const measure = () => {
       const rect = stage.getBoundingClientRect()
@@ -673,24 +693,20 @@ export default function PretextArticleLab({
     measure()
     return () => {
       observer.disconnect()
-      cancelAnimationFrame(frame)
     }
   }, [])
 
-  const layout = useMemo(
-    () =>
-      prepared && stageSize.width > 0 && stageSize.height > 0
-        ? buildArticleLayout(
-            stageSize.width,
-            stageSize.height,
-            articleTitle,
-            figureAnchor,
-            prepared,
-            embedded,
-          )
-        : null,
-    [articleTitle, embedded, figureAnchor, prepared, stageSize],
-  )
+  const layout = useMemo(() => {
+    if (!prepared || stageSize.width <= 0 || stageSize.height <= 0) return null
+    return buildArticleLayout(
+      stageSize.width,
+      stageSize.height,
+      articleTitle,
+      figureAnchor,
+      prepared,
+      embedded,
+    )
+  }, [articleTitle, embedded, figureAnchor, prepared, stageSize])
 
   useLayoutEffect(() => {
     layoutRef.current = layout
@@ -707,11 +723,15 @@ export default function PretextArticleLab({
   )
 
   const lineStyleBase = useMemo<CSSProperties>(
-    () => ({
-      font: BODY_FONT,
-      lineHeight: `${BODY_LINE_HEIGHT}px`,
-    }),
-    [],
+    () =>
+      layout
+        ? {
+            font: `${layout.bodyFontSize}px Georgia`,
+            fontSize: layout.bodyFontSize,
+            lineHeight: `${layout.bodyLineHeight}px`,
+          }
+        : {},
+    [layout],
   )
 
   const queueFigureAnchor = (next: FigureAnchor) => {

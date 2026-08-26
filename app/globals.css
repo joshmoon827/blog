@@ -79,6 +79,9 @@
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
+  background-color: var(--bg);
+  overflow-x: clip;
+  overscroll-behavior-y: none;
 }
 
 html[data-theme='light'] {
@@ -94,9 +97,91 @@ body {
   letter-spacing: -0.02em;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
-  overflow-x: hidden;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Error pages: invert → saved theme settle */
+html[data-error-theme='from'] body,
+html[data-error-theme='to'] body,
+html[data-error-theme='from'] [data-site-chrome],
+html[data-error-theme='to'] [data-site-chrome] {
+  transition:
+    background-color 0.78s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.78s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.78s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-error-theme='from'] [data-error-scene],
+html[data-error-theme='to'] [data-error-scene] {
+  transition:
+    opacity 0.78s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.78s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-error-theme='from'] [data-error-scene] {
+  opacity: 0.72;
+  filter: saturate(0.85);
+}
+
+html[data-error-theme='to'] [data-error-scene] {
+  opacity: 1;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-error-theme='from'] body,
+  html[data-error-theme='to'] body,
+  html[data-error-theme='from'] [data-site-chrome],
+  html[data-error-theme='to'] [data-site-chrome],
+  html[data-error-theme='from'] [data-error-scene],
+  html[data-error-theme='to'] [data-error-scene] {
+    transition: none;
+  }
+
+  html[data-error-theme='from'] [data-error-scene] {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* Short pages (404 / 401 / …): pin footer to the bottom of the viewport */
+body > [data-site-chrome='footer'] {
+  margin-top: auto;
+}
+
+/* Cover punched under the sticky header: keep the bar glass.
+   --header-bg is white in light theme and would paint over the photo. */
+body:has([data-cover-under-header]) [data-site-chrome='header']:not([data-menu-open]) {
+  background-color: transparent;
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Main shell fills space between header and footer.
+   :has(#main) so a PageTransition wrapper around <main> still matches. */
+body > div:has(#main) {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+}
+
+#main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
 }
 
 a {

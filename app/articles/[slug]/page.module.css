@@ -1,14 +1,14 @@
 .article {
   max-width: 1200px;
   margin: 0 auto;
-  /* No top padding — cover banner sits flush under the header. */
+  /* No top padding — cover pulls up through the sticky header (y=0). */
   padding: 0 1.5rem 5rem;
 }
 
 .banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 16 / 9.1;
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 2.5rem;
@@ -19,6 +19,11 @@
 }
 
 .content {
+  width: 100%;
+}
+
+.commentsHost {
+  display: block;
   width: 100%;
 }
 
@@ -892,7 +897,7 @@
 
 @media (max-width: 640px) {
   .article { padding: 0 1.25rem 4rem; }
-  .banner { aspect-ratio: 4 / 3; }
+  .banner { aspect-ratio: 4 / 3.9; }
 }
 
 /* ===== article settings popover / archive menu */
@@ -986,6 +991,15 @@
   font-size: 0.72rem;
   color: var(--accent);
   letter-spacing: 0.03em;
+}
+
+.settingsRowError {
+  margin: 0.15rem 0.7rem 0.35rem;
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--danger);
 }
 
 .settingsDivider {

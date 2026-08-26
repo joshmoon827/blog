@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Suspense } from 'react'
 import Header from '@/components/Header'
+import { CoverHeaderOverlayProvider } from '@/components/CoverHeaderOverlay'
 import LanguageQuerySync from '@/components/LanguageQuerySync'
 import Footer from '@/components/Footer'
 import PageTransition from '@/components/PageTransition'
@@ -9,6 +10,7 @@ import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar'
 import { AuthProvider } from '@/components/AuthProvider'
 import { siteConfig, getDefaultDescription } from '@/lib/siteConfig'
 import { JsonLd } from '@/lib/jsonLd'
+import { THEME_BOOT_SCRIPT } from '@/lib/theme'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
@@ -45,8 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <html lang="ko" data-theme="dark">
+    <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <JsonLd data={websiteJsonLd} />
         <AuthProvider>
           <ServiceWorkerRegistrar />
@@ -54,11 +57,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense fallback={null}>
             <LanguageQuerySync />
           </Suspense>
+          <CoverHeaderOverlayProvider>
           <Header />
           <PageTransition>
             <main id="main">{children}</main>
           </PageTransition>
           <Footer />
+          </CoverHeaderOverlayProvider>
         </AuthProvider>
       </body>
     </html>

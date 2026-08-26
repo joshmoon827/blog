@@ -184,6 +184,7 @@ export default function ArticleView({ article: initial }: Props) {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [obsidianSyncing, setObsidianSyncing] = useState(false)
+  const [obsidianSyncError, setObsidianSyncError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [coverStatus, setCoverStatus] = useState<CoverJobStatus>('idle')
   const [coverMessage, setCoverMessage] = useState('')
@@ -807,6 +808,32 @@ export default function ArticleView({ article: initial }: Props) {
     }
   }, [imageAlignMenu])
 
+  const fetchObsidianNote = async (sourcePath: string) => {
+    const res = await fetch(
+      `/api/obsidian/notes?path=${encodeURIComponent(sourcePath)}`,
+    )
+    const data = (await res.json()) as {
+      note?: {
+        title?: string
+        description?: string
+        created?: string
+        tags?: string[]
+        body?: string
+        path?: string
+        imageUpload?: { errors?: string[] }
+      }
+      error?: string
+    }
+    if (!res.ok || typeof data.note?.body !== 'string') {
+      throw new Error(data.error || `불러오기 실패 (${res.status})`)
+    }
+    const errors = data.note.imageUpload?.errors
+    if (errors?.length) {
+      console.warn('[obsidian sync] image issues:', errors)
+    }
+    return data.note
+  }
+
   const handleObsidianSync = async () => {
     const sourcePath = article.sourcePath?.trim()
     if (!sourcePath) {
@@ -823,31 +850,62 @@ export default function ArticleView({ article: initial }: Props) {
 
     setObsidianSyncing(true)
     try {
-      const res = await fetch(
-        `/api/obsidian/notes?path=${encodeURIComponent(sourcePath)}`,
-      )
-      const data = (await res.json()) as {
-        note?: {
-          body?: string
-          path?: string
-          imageUpload?: { errors?: string[] }
-        }
-        error?: string
-      }
-      if (!res.ok || typeof data.note?.body !== 'string') {
-        throw new Error(data.error || `불러오기 실패 (${res.status})`)
-      }
-      const errors = data.note.imageUpload?.errors
-      if (errors?.length) {
-        console.warn('[obsidian sync] image issues:', errors)
-      }
-      syncBody(data.note.body)
+      const note = await fetchObsidianNote(sourcePath)
+      syncBody(note.body)
       requestAnimationFrame(() => bodyRef.current?.focus())
     } catch (e) {
       alert(
         '옵시디언 동기화 실패: ' +
           (e instanceof Error ? e.message : String(e)),
       )
+    } finally {
+      setObsidianSyncing(false)
+    }
+  }
+
+  const handleNoteUpdate = async () => {
+    const sourcePath = article.sourcePath?.trim()
+    if (!sourcePath) {
+      setObsidianSyncError('이 글에 연결된 옵시디언 경로가 없습니다.')
+      return
+    }
+
+    setObsidianSyncError('')
+    setObsidianSyncing(true)
+    try {
+      const note = await fetchObsidianNote(sourcePath)
+      const payload: ArticleData = {
+        ...article,
+        title: note.title?.trim() || article.title,
+        description: note.description ?? '',
+        created: note.created || article.created,
+        tags: note.tags || [],
+        body: note.body,
+        format: 'obsidian',
+        sourcePath: note.path || sourcePath,
+      }
+      const saveRes = await fetch(`/api/articles/${article.slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!saveRes.ok) throw new Error(`저장 실패 (${saveRes.status})`)
+      const updated = (await saveRes.json()) as ArticleData
+      setArticle(updated)
+      draft.current = { ...updated }
+      setBodyValue(updated.body)
+      setCreatedValue(updated.created || '')
+      setDescriptionValue(updated.description || '')
+      setTagsValue(formatTagsInput(updated.tags))
+      setImageValue(updated.image)
+      setCoverEditing(false)
+      setBodyEditing(false)
+      setSettingsOpen(false)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+      router.refresh()
+    } catch (e) {
+      setObsidianSyncError(e instanceof Error ? e.message : String(e))
     } finally {
       setObsidianSyncing(false)
     }
@@ -914,6 +972,7 @@ export default function ArticleView({ article: initial }: Props) {
         src={coverEditing ? imageValue : article.image}
         alt={title}
         priority
+        headerOverlay
       />
 
       <div className={styles.content}>
@@ -931,6 +990,9 @@ export default function ArticleView({ article: initial }: Props) {
               </span>
             ) : null}
             {uploading && <span className={styles.savedBadge}>이미지 업로드 중…</span>}
+            {localTools && obsidianSyncing && !bodyEditing && (
+              <span className={styles.savedBadge}>노트 업데이트 중…</span>
+            )}
             {localTools && generatingCover && (
               <>
                 <span className={styles.savedBadge}>표지 생성 중…</span>
@@ -1053,6 +1115,38 @@ export default function ArticleView({ article: initial }: Props) {
                   <span className={styles.settingsRowLabel}>표지·메타데이터 편집</span>
                 </button>
               </li>
+              {localTools && article.sourcePath ? (
+                <>
+                  <li>
+                    <hr className={styles.settingsDivider} aria-hidden="true" />
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className={styles.settingsRow}
+                      onClick={handleNoteUpdate}
+                      disabled={obsidianSyncing || saving || uploading}
+                      title={article.sourcePath}
+                      aria-busy={obsidianSyncing}
+                    >
+                      <svg width="16" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="M21 12a9 9 0 1 1-2.6-6.4" />
+                        <path d="M21 3v6h-6" />
+                      </svg>
+                      <span className={styles.settingsRowLabel}>노트 업데이트</span>
+                      {obsidianSyncing ? (
+                        <span className={styles.settingsRowStatus}>업데이트 중…</span>
+                      ) : null}
+                    </button>
+                    {obsidianSyncError ? (
+                      <p className={styles.settingsRowError} role="alert">
+                        {obsidianSyncError}
+                      </p>
+                    ) : null}
+                  </li>
+                </>
+              ) : null}
               <li>
                 <hr className={styles.settingsDivider} aria-hidden="true" />
               </li>
@@ -1368,9 +1462,11 @@ export default function ArticleView({ article: initial }: Props) {
           )
         })()}
 
-        {!bodyEditing && !coverEditing && (
-          <CommentsSection articleSlug={article.slug} />
-        )}
+        {!bodyEditing && !coverEditing ? (
+          <div className={styles.commentsHost}>
+            <CommentsSection articleSlug={article.slug} />
+          </div>
+        ) : null}
       </div>
 
       {imageCropEdit ? (

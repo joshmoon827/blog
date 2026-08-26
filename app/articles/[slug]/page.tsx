@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
@@ -65,6 +64,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+export const instant = false
+
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: raw } = await params
   const slug = resolveSlug(raw)
@@ -104,9 +105,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <JsonLd data={blogPostingJsonLd} />
-      <Suspense fallback={null}>
-        <ArticleView article={article} />
-      </Suspense>
+      <ArticleView article={article} />
     </>
   )
 }

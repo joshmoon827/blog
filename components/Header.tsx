@@ -5,7 +5,9 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
+import { applyTheme, oppositeTheme, readStoredTheme } from '@/lib/theme'
 import { setStoredLanguage, useLanguage, type Language } from './LocalizedText'
+import { useCoverHeaderOverlayState } from '@/components/CoverHeaderOverlay'
 import styles from './Header.module.css'
 
 const navItems = [
@@ -41,6 +43,9 @@ export default function Header() {
   const language = useLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
+  const coverOverlay = useCoverHeaderOverlayState()
+  const overCover = coverOverlay.overlapping && !menuOpen
+  const coverTone = coverOverlay.tone
 
   const logout = async () => {
     if (loggingOut) return
@@ -58,17 +63,19 @@ export default function Header() {
   }
 
   useEffect(() => {
-    const saved = (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
+    const saved = readStoredTheme()
     setTheme(saved)
-    document.documentElement.setAttribute('data-theme', saved)
-
+    // Error pages own the invert→settle animation; don't snap over it.
+    if (!document.documentElement.dataset.errorTheme) {
+      applyTheme(saved)
+    }
   }, [])
 
   const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark'
+    const next = oppositeTheme(theme)
     setTheme(next)
     localStorage.setItem('theme', next)
-    document.documentElement.setAttribute('data-theme', next)
+    applyTheme(next)
   }
 
   const selectLanguage = (next: Language) => {
@@ -79,7 +86,12 @@ export default function Header() {
   const selectedLanguage = languageItems.find((item) => item.value === language) ?? languageItems[0]
 
   return (
-    <header className={styles.header} data-site-chrome="header">
+    <header
+      className={`${styles.header}${menuOpen ? ` ${styles.menuOpen}` : ''}${overCover ? ` ${styles.overCover}${coverTone === 'light' ? ` ${styles.overCoverLight}` : coverTone === 'dark' ? ` ${styles.overCoverDark}` : ''}` : ''}`}
+      data-site-chrome="header"
+      data-over-cover={overCover ? coverTone ?? undefined : undefined}
+      data-menu-open={menuOpen ? '' : undefined}
+    >
       <div className={styles.inner}>
         <Link href="/" className={`${styles.logo} ${styles.desktopLogo}`} aria-label="josh log">
           <LogoMark />

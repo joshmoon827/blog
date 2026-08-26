@@ -14,6 +14,10 @@ import {
   type DbComment,
 } from '@/lib/supabase/client'
 import { useLanguage } from '@/components/LocalizedText'
+import JenyangAvatar from '@/components/jenyang/JenyangAvatar'
+import { isLegacyJenyangAuthor, randomJenyangNickname } from '@/lib/jenyangNicknames'
+import CommentComposer from './CommentComposer'
+import jenyangStyles from '@/components/jenyang/jenyang.module.css'
 import styles from './CommentsSection.module.css'
 
 type NestedComment = DbComment & { replies: DbComment[] }
@@ -24,6 +28,41 @@ type Props = {
 }
 
 const AUTHOR_KEY = 'blog.comment.author'
+
+function usePersistedJenyangAuthor() {
+  const [author, setAuthor] = useState('')
+
+  useEffect(() => {
+    let next = ''
+    try {
+      const saved = localStorage.getItem(AUTHOR_KEY)
+      if (saved && !isLegacyJenyangAuthor(saved)) {
+        next = saved
+      } else {
+        next = randomJenyangNickname().displayName
+      }
+    } catch {
+      next = randomJenyangNickname().displayName
+    }
+    setAuthor(next)
+    try {
+      if (next) localStorage.setItem(AUTHOR_KEY, next)
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  const setAuthorPersist = useCallback((name: string) => {
+    setAuthor(name)
+    try {
+      if (name.trim()) localStorage.setItem(AUTHOR_KEY, name)
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  return [author, setAuthorPersist] as const
+}
 
 function nestComments(rows: DbComment[]): NestedComment[] {
   const roots = rows
@@ -69,7 +108,7 @@ export default function CommentsSection({ articleSlug }: Props) {
   const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
   const [error, setError] = useState('')
-  const [author, setAuthor] = useState('')
+  const [author, setAuthorPersist] = usePersistedJenyangAuthor()
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [replyTo, setReplyTo] = useState<string | null>(null)
@@ -100,15 +139,6 @@ export default function CommentsSection({ articleSlug }: Props) {
 
   const nested = useMemo(() => nestComments(rows), [rows])
   const total = rows.length
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(AUTHOR_KEY)
-      if (saved) setAuthor(saved)
-    } catch {
-      /* ignore */
-    }
-  }, [])
 
   const refresh = useCallback(async (): Promise<boolean> => {
     try {
@@ -307,51 +337,30 @@ export default function CommentsSection({ articleSlug }: Props) {
               Live
             </span>
           )}
-          <span>{backend === 'local' ? t.local : 'Supabase'}</span>
+          <span>
+            {backend === 'local' ? t.local : backend === 'supabase' ? 'Supabase' : ''}
+          </span>
         </div>
       </div>
 
-      <form className={styles.form} onSubmit={onSubmitRoot}>
-        <div className={styles.formRow}>
-          <input
-            className={styles.input}
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder={t.namePlaceholder}
-            maxLength={40}
-            required
-            disabled={submitting}
-            autoComplete="nickname"
-          />
-          <div />
-        </div>
-        <textarea
-          className={styles.textarea}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          onKeyDown={onCmdEnter(() => {
-            void submit(null, body)
-          })}
-          placeholder={t.commentPlaceholder}
-          maxLength={4000}
-          required
-          disabled={submitting}
-        />
-        <div className={styles.formActions}>
-          <span className={styles.hint}>
-            {t.hint}
-            {backend === 'local' ? ` · ${t.localStorageHint}` : ` · ${t.realtimeHint}`}
-          </span>
-          <button type="submit" className={styles.submit} disabled={submitting}>
-            {submitting ? t.submittingButton : t.submitButton}
-          </button>
-        </div>
-        {error && (
-          <p className={styles.error} role="alert">
-            {error}
-          </p>
-        )}
-      </form>
+      <CommentComposer
+        body={body}
+        author={author}
+        submitting={submitting}
+        error={error}
+        labels={{
+          commentPlaceholder: t.commentPlaceholder,
+          namePlaceholder: t.namePlaceholder,
+          submitButton: t.submitButton,
+          submittingButton: t.submittingButton,
+        }}
+        onBodyChange={setBody}
+        onAuthorChange={setAuthorPersist}
+        onSubmit={onSubmitRoot}
+        onCmdEnter={onCmdEnter(() => {
+          void submit(null, body)
+        })}
+      />
 
       {loading ? (
         <p className={styles.empty}>{t.loading}</p>
@@ -367,6 +376,11 @@ export default function CommentsSection({ articleSlug }: Props) {
           {nested.map((c) => (
             <article key={c.id} className={styles.item}>
               <div className={styles.itemMeta}>
+                <JenyangAvatar
+                  name={c.author}
+                  size={28}
+                  className={jenyangStyles.commentAvatar}
+                />
                 <span className={styles.author}>{c.author}</span>
                 <time className={styles.time} dateTime={c.created_at}>
                   {formatTime(c.created_at)}
@@ -449,6 +463,11 @@ export default function CommentsSection({ articleSlug }: Props) {
                   {c.replies.map((r) => (
                     <article key={r.id} className={styles.item}>
                       <div className={styles.itemMeta}>
+                        <JenyangAvatar
+                          name={r.author}
+                          size={24}
+                          className={jenyangStyles.commentAvatar}
+                        />
                         <span className={styles.author}>{r.author}</span>
                         <time className={styles.time} dateTime={r.created_at}>
                           {formatTime(r.created_at)}

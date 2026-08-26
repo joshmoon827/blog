@@ -1,0 +1,18 @@
+/* Overflow lives here, not on motion.div — Framer sets overflowX:hidden
+   when animating y, which hydrates differently from SSR. */
+.shell {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+}
+
+.stage {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+}

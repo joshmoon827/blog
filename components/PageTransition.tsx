@@ -1,10 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import styles from './PageTransition.module.css'
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [hasMounted, setHasMounted] = useState(false)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
   /* Writer chrome uses position:fixed; Framer will-change:transform creates a
      containing block that collapses height — skip transition on /newrite. */
   const isWriter = pathname === '/newrite' || pathname.startsWith('/newrite/')
@@ -19,14 +27,18 @@ export default function PageTransition({ children }: { children: React.ReactNode
   }
 
   return (
-    <motion.div
-      key={pathname}
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-      style={{ willChange: 'opacity, transform', overflowX: 'hidden' }}
-    >
-      {children}
-    </motion.div>
+    <div className={styles.shell}>
+      <motion.div
+        className={styles.stage}
+        key={pathname}
+        /* Opacity only: x/y makes Motion inject overflowX:hidden (SSR mismatch
+           and clips covers that punch under the header). */
+        initial={hasMounted ? { opacity: 0 } : { opacity: 1 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        {children}
+      </motion.div>
+    </div>
   )
 }

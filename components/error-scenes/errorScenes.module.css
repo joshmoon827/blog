@@ -1,0 +1,258 @@
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+/* Production error: center stage in the body band (header ↔ footer) */
+.shell {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+}
+
+.shell > .wrap {
+  width: 100%;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0 0 1.5rem;
+}
+.kicker {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.switcher {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+}
+.ver {
+  min-width: 48px;
+  min-height: 40px;
+  padding: 0 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.ver[aria-pressed='true'] {
+  background: var(--text);
+  color: var(--bg);
+}
+.selected {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+.scene {
+  min-height: 58vh;
+}
+.digits {
+  display: flex;
+  gap: 0.06em;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(4.4rem, 16vw, 10.5rem);
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.86;
+}
+.digits[data-wide] {
+  flex-wrap: wrap;
+  font-size: clamp(2.4rem, 9vw, 5.8rem);
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+}
+.digit {
+  display: inline-block;
+  will-change: transform;
+}
+.copy {
+  max-width: 34rem;
+  margin: 1.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0;
+}
+.btn,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn {
+  background: var(--text);
+  color: var(--bg);
+}
+.btnGhost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+.splitDigits {
+  display: flex;
+  gap: 0.02em;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(6rem, 22vw, 14rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+  justify-self: start;
+}
+.splitDigits[data-wide] {
+  flex-wrap: wrap;
+  max-width: 100%;
+  font-size: clamp(2.6rem, 10vw, 7rem);
+  letter-spacing: -0.05em;
+  line-height: 0.88;
+}
+.splitBody {
+  width: 100%;
+  max-width: 100%;
+  justify-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+.splitCopy {
+  width: 100%;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  text-wrap: balance;
+}
+.splitActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0;
+  width: 100%;
+}
+.clipStage {
+  position: relative;
+  overflow: hidden;
+  min-height: 62vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.marquee {
+  position: absolute;
+  inset: 32% 0 auto;
+  display: flex;
+  width: max-content;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.marquee span {
+  padding: 0 2.5rem;
+  white-space: nowrap;
+}
+.clipMark {
+  position: relative;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(5rem, 18vw, 12rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.85;
+}
+.clipMark[data-wide] {
+  font-size: clamp(2.4rem, 10vw, 6.5rem);
+  letter-spacing: -0.05em;
+}
+.clipCopy {
+  position: relative;
+  margin-top: 1.25rem;
+}
+.cached {
+  margin-top: 2.5rem;
+}
+.cachedTitle {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.cachedListMobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .cachedGridDesktop {
+    display: none;
+  }
+  .cachedListMobile {
+    display: block;
+  }
+}
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+  .splitBody {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .splitActions {
+    justify-content: flex-start;
+  }
+  .selected {
+    margin-left: 0;
+    width: 100%;
+  }
+}

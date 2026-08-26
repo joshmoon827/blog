@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import ErrorPageView from '@/components/error-scenes/ErrorPageView'
 
+export const instant = false
+
 export const metadata: Metadata = {
-  title: 'Not Found',
+  title: 'Offline',
   robots: { index: false, follow: false },
 }
 
-export default function NotFound() {
-  return <ErrorPageView kind="404" />
+export default function OfflinePage() {
+  return <ErrorPageView kind="offline" />
 }

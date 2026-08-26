@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
   // Login is local-only — never serve on the public deploy.
   if (pathname === '/login' || pathname.startsWith('/login/')) {
     if (!enabled) {
-      return NextResponse.redirect(new URL('/', req.url))
+      return NextResponse.rewrite(new URL('/auth/forbidden', req.url))
     }
     return NextResponse.next()
   }
@@ -60,7 +60,7 @@ export async function middleware(req: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ error: 'Authoring disabled' }, { status: 403 })
     }
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.rewrite(new URL('/auth/forbidden', req.url))
   }
 
   const session = await verifySessionToken(req.cookies.get(AUTH_COOKIE)?.value)
@@ -70,9 +70,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const login = new URL('/login', req.url)
-  login.searchParams.set('next', pathname)
-  return NextResponse.redirect(login)
+  return NextResponse.rewrite(new URL('/auth/unauthorized', req.url))
 }
 
 export const config = {

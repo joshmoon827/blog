@@ -189,14 +189,14 @@ export default function BodyImage({
       {editable ? <span className={styles.badge}>EDIT</span> : null}
 
       {menu ? (
-        <div
+        <span
           className={styles.menu}
           style={{ left: menu.x, top: menu.y }}
           role="menu"
           onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <p className={styles.menuTitle}>이미지 정렬</p>
+          <span className={styles.menuTitle}>이미지 정렬</span>
           {BODY_IMAGE_ALIGN_OPTIONS.map((opt) => (
             <button
               key={opt.id}
@@ -215,7 +215,7 @@ export default function BodyImage({
           ))}
           {onEdit ? (
             <>
-              <div className={styles.menuSep} />
+              <span className={styles.menuSep} />
               <button
                 type="button"
                 role="menuitem"
@@ -229,7 +229,7 @@ export default function BodyImage({
               </button>
             </>
           ) : null}
-        </div>
+        </span>
       ) : null}
     </span>
   )

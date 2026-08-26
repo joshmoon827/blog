@@ -80,6 +80,7 @@
 }
 
 .menu {
+  display: block;
   position: fixed;
   z-index: 90;
   min-width: 11rem;
@@ -91,6 +92,7 @@
 }
 
 .menuTitle {
+  display: block;
   margin: 0;
   padding: 0.35rem 0.55rem 0.25rem;
   font-size: 0.68rem;
@@ -127,6 +129,7 @@
 }
 
 .menuSep {
+  display: block;
   height: 1px;
   margin: 0.25rem 0.35rem;
   background: var(--border);

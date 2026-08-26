@@ -47,7 +47,7 @@ export default function ImageCarousel({
   const ringInsetRatio = settings.ringInsetPercent / 100
 
   useEffect(() => {
-    if (!edgeMatte) {
+    if (!edgeMatte || !src) {
       setMatte(null)
       setPadded(false)
       return
@@ -108,15 +108,17 @@ export default function ImageCarousel({
             : undefined
         }
       >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 33vw"
-          className={styles.img}
-          style={{ objectFit: padded ? 'contain' : 'cover' }}
-          priority={priority}
-        />
+        {src ? (
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 33vw"
+            className={styles.img}
+            style={{ objectFit: padded ? 'contain' : 'cover' }}
+            priority={priority}
+          />
+        ) : null}
       </div>
     </div>
   )

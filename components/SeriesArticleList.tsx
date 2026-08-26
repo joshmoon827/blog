@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Article } from '@/data/articles'
+import CoverListThumb from '@/components/CoverListThumb'
 import { useLanguage } from '@/components/LocalizedText'
 import styles from './SeriesArticleList.module.css'
 
@@ -48,15 +48,11 @@ export default function SeriesArticleList({ articles, className }: Props) {
                   </p>
                 ) : null}
               </div>
-              <div className={styles.thumb}>
-                <Image
-                  src={article.image}
-                  alt=""
-                  fill
-                  sizes="(max-width: 640px) 28vw, 200px"
-                  className={styles.thumbImg}
-                />
-              </div>
+              <CoverListThumb
+                src={article.image}
+                sizes="(max-width: 640px) 28vw, 200px"
+                className={styles.thumb}
+              />
             </Link>
           </li>
         )

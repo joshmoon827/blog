@@ -1,0 +1,17 @@
+.frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.imgCover {
+  object-fit: cover;
+  object-position: center;
+}
+
+.imgPadded {
+  object-fit: contain;
+  object-position: center;
+  left: 10% !important;
+  right: 10% !important;
+  width: 80% !important;
+}

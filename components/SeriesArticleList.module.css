@@ -83,9 +83,6 @@
   background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 
-.thumbImg {
-  object-fit: cover;
-}
 
 @media (max-width: 640px) {
   .list {

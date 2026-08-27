@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import CoverListThumb from '@/components/CoverListThumb'
 import { useLanguage } from '@/components/LocalizedText'
 import HomeCategoryArticleList, {
   type HomeCategoryArticle,
@@ -21,10 +21,16 @@ type Props = {
   slides: HomeCategorySlide[]
 }
 
+type LayoutPhase = 'intro' | 'split'
+
+const INTRO_MS = 850
+const DESKTOP_MQ = '(min-width: 641px)'
+
 export default function HomeCategorySlides({ slides }: Props) {
   const language = useLanguage()
   const trackRef = useRef<HTMLDivElement>(null)
   const [index, setIndex] = useState(0)
+  const [phase, setPhase] = useState<LayoutPhase>('intro')
 
   const onScroll = useCallback(() => {
     const el = trackRef.current
@@ -51,7 +57,25 @@ export default function HomeCategorySlides({ slides }: Props) {
 
   useEffect(() => {
     syncHeight(index)
-  }, [index, slides, syncHeight])
+  }, [index, slides, syncHeight, phase])
+
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const desktop = window.matchMedia(DESKTOP_MQ).matches
+    if (!desktop || reduced) {
+      setPhase('split')
+      return
+    }
+    setPhase('intro')
+    const id = window.setTimeout(() => setPhase('split'), INTRO_MS)
+    return () => window.clearTimeout(id)
+  }, [index])
+
+  useEffect(() => {
+    if (phase !== 'split') return
+    const id = window.requestAnimationFrame(() => syncHeight(index))
+    return () => window.cancelAnimationFrame(id)
+  }, [phase, index, syncHeight])
 
   useEffect(() => {
     const onResize = () => {
@@ -83,20 +107,28 @@ export default function HomeCategorySlides({ slides }: Props) {
               className={styles.slide}
               aria-label={title}
             >
-              <div className={styles.inner}>
-                <header className={styles.heading}>
-                  <div className={styles.titleRow}>
-                    {slide.coverImage ? (
-                      <span className={styles.mark}>
-                        <Image
-                          src={slide.coverImage}
-                          alt=""
-                          fill
-                          sizes="64px"
-                          className={styles.markImg}
-                        />
-                      </span>
-                    ) : null}
+              <div
+                className={styles.inner}
+                data-phase={phase}
+              >
+                <aside className={styles.coverCol}>
+                  {slide.coverImage ? (
+                    <Link
+                      href={`/category/${slide.slug}`}
+                      className={styles.coverLink}
+                      aria-label={`${title} 카테고리`}
+                    >
+                      <CoverListThumb
+                        src={slide.coverImage}
+                        alt=""
+                        sizes="(max-width: 640px) 100vw, 40vw"
+                        className={styles.coverFrame}
+                      />
+                    </Link>
+                  ) : null}
+                </aside>
+                <div className={styles.mainCol}>
+                  <header className={styles.heading}>
                     <div className={styles.titleStack}>
                       <p className={styles.eyebrow}>
                         <Link href="/category">Category</Link>
@@ -105,12 +137,14 @@ export default function HomeCategorySlides({ slides }: Props) {
                       </p>
                       <h2 className={styles.headingTitle}>{title}</h2>
                     </div>
+                  </header>
+                  <div className={styles.listBlock}>
+                    <HomeCategoryArticleList articles={preview} />
+                    <Link href={`/category/${slide.slug}`} className={styles.go}>
+                      {`${title}카테고리로 이동하기`}
+                    </Link>
                   </div>
-                </header>
-                <HomeCategoryArticleList articles={preview} />
-                <Link href={`/category/${slide.slug}`} className={styles.go}>
-                  {`${title}카테고리로 이동하기`}
-                </Link>
+                </div>
               </div>
             </article>
           )

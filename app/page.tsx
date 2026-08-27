@@ -127,9 +127,9 @@ function withBodyExcerpt(article: ReturnType<typeof getListedArticles>[number]):
   const full = readOne(article.slug)
   return {
     ...article,
-    excerpt: getArticleBodyExcerpt(full?.body ?? '', 300),
+    excerpt: getArticleBodyExcerpt(full?.body ?? '', 100),
     excerpt_en: full?.body_en
-      ? getArticleBodyExcerpt(full.body_en, 300)
+      ? getArticleBodyExcerpt(full.body_en, 100)
       : undefined,
   }
 }

@@ -16,10 +16,10 @@ type Rgb = { r: number; g: number; b: number }
 const WATERMARK_CORNER_RATIO = 0.16
 
 /**
- * WCAG relative luminance threshold: padColor above this is a light cover
- * (header foreground black); at or below is dark (header foreground white).
+ * WCAG relative luminance baseline: above this is clearly a light cover.
+ * Vivid mid-bright colors are handled separately in isCoverLightTone().
  */
-export const COVER_LUMINANCE_THRESHOLD = 0.5
+export const COVER_LUMINANCE_THRESHOLD = 0.42
 
 export type CoverTone = 'light' | 'dark'
 
@@ -57,13 +57,42 @@ export function parseCssRgb(css: string | null | undefined): Rgb | null {
   }
 }
 
+function rgbToHsl(r: number, g: number, b: number): { s: number; l: number } {
+  const rn = r / 255
+  const gn = g / 255
+  const bn = b / 255
+  const max = Math.max(rn, gn, bn)
+  const min = Math.min(rn, gn, bn)
+  const l = (max + min) / 2
+  if (max === min) return { s: 0, l }
+  const d = max - min
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+  return { s, l }
+}
+
+/** Light cover → black header text. Includes pale and vivid saturated brights. */
+export function isCoverLightTone(rgb: Rgb): boolean {
+  if (relativeLuminance(rgb.r, rgb.g, rgb.b) > COVER_LUMINANCE_THRESHOLD) {
+    return true
+  }
+
+  const { s, l } = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  // Saturated mid-bright (쨍한색): cyan, yellow, coral, lime, brand blues, etc.
+  if (s >= 0.25 && l >= 0.32) return true
+
+  const max = Math.max(rgb.r, rgb.g, rgb.b)
+  const avg = (rgb.r + rgb.g + rgb.b) / 3
+  // High-chroma brights that WCAG luminance underrates.
+  if (max >= 160 && avg >= 92) return true
+
+  return false
+}
+
 /** Light/dark from watermark padColor (same sample as probeCoverBorder). */
 export function coverToneFromCssColor(css: string | null | undefined): CoverTone | null {
   const rgb = parseCssRgb(css)
   if (!rgb) return null
-  return relativeLuminance(rgb.r, rgb.g, rgb.b) > COVER_LUMINANCE_THRESHOLD
-    ? 'light'
-    : 'dark'
+  return isCoverLightTone(rgb) ? 'light' : 'dark'
 }
 
 /** Default relative RGB distance threshold (0–1). Prefer opts / settings. */
@@ -446,7 +475,10 @@ export function coverToneFromElementTop(
   const bandH = Math.min(stripPx, rect.height)
   const cols = 7
   const rows = 3
-  let sum = 0
+  let sumR = 0
+  let sumG = 0
+  let sumB = 0
+  let lightCount = 0
   let n = 0
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
@@ -454,16 +486,24 @@ export function coverToneFromElementTop(
       const y = rect.top + ((row + 0.5) / rows) * bandH
       const rgb = colorAtPoint(root, x, y)
       if (!rgb) continue
-      sum += relativeLuminance(rgb.r, rgb.g, rgb.b)
+      sumR += rgb.r
+      sumG += rgb.g
+      sumB += rgb.b
+      if (isCoverLightTone(rgb)) lightCount += 1
       n += 1
     }
   }
-  if (!n) {
-    const fallback = firstOpaqueBackground(root)
-    if (!fallback) return null
-    return relativeLuminance(fallback.r, fallback.g, fallback.b) > COVER_LUMINANCE_THRESHOLD
+  if (n) {
+    if (lightCount / n >= 0.34) return 'light'
+    return isCoverLightTone({
+      r: sumR / n,
+      g: sumG / n,
+      b: sumB / n,
+    })
       ? 'light'
       : 'dark'
   }
-  return sum / n > COVER_LUMINANCE_THRESHOLD ? 'light' : 'dark'
+  const fallback = firstOpaqueBackground(root)
+  if (!fallback) return null
+  return isCoverLightTone(fallback) ? 'light' : 'dark'
 }

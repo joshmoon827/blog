@@ -12,15 +12,33 @@ import {
 type Props = {
   children: ReactNode
   className?: string
-  /** Optional photo URL if the painted stage cannot be sampled (CORS / empty). */
+  /** Optional cover image — same padColor probe as ArticleCoverBanner. */
   probeSrc?: string | null
   fallbackTone?: CoverTone
   /** Last resort when the stage has no opaque pixels (pretext). */
   matchHtmlTheme?: boolean
 }
 
+const MOBILE_MQ = '(max-width: 640px)'
+
 function htmlThemeTone(): CoverTone {
   return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
+}
+
+function displayAspect(el: HTMLElement | null): number | undefined {
+  if (!el || el.clientHeight <= 0) return undefined
+  return el.clientWidth / el.clientHeight
+}
+
+async function toneFromCoverProbe(
+  src: string,
+  el: HTMLElement | null,
+): Promise<CoverTone | null> {
+  const probe = await probeCoverBorder(src, {
+    displayAspect: displayAspect(el),
+  })
+  const color = probe?.padColor || probe?.dominant || probe?.average || null
+  return coverToneFromCssColor(color)
 }
 
 export default function HomeCoverHeaderOverlay({
@@ -36,30 +54,26 @@ export default function HomeCoverHeaderOverlay({
   useEffect(() => {
     let cancelled = false
     const el = ref.current
+    const mq = window.matchMedia(MOBILE_MQ)
 
-    const applyDom = (): boolean => {
-      if (!el || cancelled) return false
-      const next = coverToneFromElementTop(el, HEADER_OVERLAP_PX)
-      if (!next) return false
-      setTone(next)
-      return true
-    }
+    const syncTone = async () => {
+      if (cancelled || !el) return
 
-    const run = async () => {
-      if (applyDom()) return
       if (probeSrc) {
-        const aspect =
-          el && el.clientHeight > 0 ? el.clientWidth / el.clientHeight : undefined
-        const probe = await probeCoverBorder(probeSrc, {
-          displayAspect: aspect,
-        })
+        const fromProbe = await toneFromCoverProbe(probeSrc, el)
         if (cancelled) return
-        if (applyDom()) return
-        // Top of the crop — not watermark padColor (often a dark corner on a light mosaic).
-        const color = probe?.topColor || probe?.average || probe?.dominant
-        setTone(coverToneFromCssColor(color) ?? fallbackTone)
+        if (fromProbe) {
+          setTone(fromProbe)
+          return
+        }
+      }
+
+      const fromDom = coverToneFromElementTop(el, HEADER_OVERLAP_PX)
+      if (fromDom) {
+        setTone(fromDom)
         return
       }
+
       if (matchHtmlTheme) {
         setTone(htmlThemeTone())
         return
@@ -67,22 +81,26 @@ export default function HomeCoverHeaderOverlay({
       setTone(fallbackTone)
     }
 
-    void run()
+    void syncTone()
 
     const imgs = el ? [...el.querySelectorAll('img')] : []
     const onReady = () => {
-      if (!cancelled) applyDom()
+      if (!cancelled) void syncTone()
     }
     for (const img of imgs) {
       if (!img.complete) img.addEventListener('load', onReady)
     }
-    const ro = el ? new ResizeObserver(() => applyDom()) : null
+
+    const ro = el ? new ResizeObserver(() => void syncTone()) : null
     if (el) ro?.observe(el)
+
+    const onMqChange = () => void syncTone()
+    mq.addEventListener('change', onMqChange)
 
     let themeMo: MutationObserver | null = null
     if (matchHtmlTheme) {
       themeMo = new MutationObserver(() => {
-        if (!cancelled && !applyDom()) setTone(htmlThemeTone())
+        if (!cancelled) void syncTone()
       })
       themeMo.observe(document.documentElement, {
         attributes: true,
@@ -94,6 +112,7 @@ export default function HomeCoverHeaderOverlay({
       cancelled = true
       for (const img of imgs) img.removeEventListener('load', onReady)
       ro?.disconnect()
+      mq.removeEventListener('change', onMqChange)
       themeMo?.disconnect()
     }
   }, [fallbackTone, matchHtmlTheme, probeSrc])

@@ -281,7 +281,10 @@ export default function SeriesCards({
     )
     if (!headerOverlay) return mosaic
     return (
-      <HomeCoverHeaderOverlay fallbackTone="light">
+      <HomeCoverHeaderOverlay
+        probeSrc={items[0]?.image}
+        fallbackTone="light"
+      >
         {mosaic}
       </HomeCoverHeaderOverlay>
     )

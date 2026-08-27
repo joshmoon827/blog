@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AUTH_COOKIE, verifySessionToken } from '@/lib/auth-session'
 import { isAuthoringEnabled } from '@/lib/isAuthoringEnabled'
+import { isLocalToolsEnabled } from '@/lib/isLocalTools'
 
 const PROTECTED_PAGE_PREFIXES = ['/articles/new', '/newrite', '/drafts', '/settings']
 
@@ -22,6 +23,17 @@ function authoringOn(req: NextRequest) {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const enabled = authoringOn(req)
+
+  // Obsidian vault API — local dev tools only (GET included).
+  if (pathname === '/api/obsidian' || pathname.startsWith('/api/obsidian/')) {
+    if (!isLocalToolsEnabled()) {
+      return NextResponse.json(
+        { error: 'Obsidian vault access is disabled outside local development.' },
+        { status: 403 },
+      )
+    }
+    return NextResponse.next()
+  }
 
   // Login is local-only — never serve on the public deploy.
   if (pathname === '/login' || pathname.startsWith('/login/')) {

@@ -824,14 +824,15 @@ export default function ArticleView({ article: initial }: Props) {
       }
       error?: string
     }
-    if (!res.ok || typeof data.note?.body !== 'string') {
+    const note = data.note
+    if (!res.ok || !note || typeof note.body !== 'string') {
       throw new Error(data.error || `불러오기 실패 (${res.status})`)
     }
-    const errors = data.note.imageUpload?.errors
+    const errors = note.imageUpload?.errors
     if (errors?.length) {
       console.warn('[obsidian sync] image issues:', errors)
     }
-    return data.note
+    return { ...note, body: note.body }
   }
 
   const handleObsidianSync = async () => {

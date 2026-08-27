@@ -81,7 +81,7 @@ export default function HomeInteractiveBanner({
       className={className}
       probeSrc={probeSrc}
       fallbackTone={fallbackTone}
-      matchHtmlTheme={pretextReady}
+      matchHtmlTheme={Boolean(pretextReady)}
     >
       <section
         className={`${styles.stage}${pretextReady ? ` ${styles.stagePretext}` : ''}`}

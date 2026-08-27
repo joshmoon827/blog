@@ -30,10 +30,10 @@ API (local only):
 - `GET /api/obsidian/notes` — list `.md` notes under the vault
 - `GET /api/obsidian/notes?path=00_inbox/note.md` — load one note (path-traversal safe)
 
-Vault root: env `OBSIDIAN_VAULT` (supports `~/…`), default `~/okestro`.  
+Vault root: env `OBSIDIAN_VAULT` (supports `~/…`), default `data/obsidian-vault` under the repo (set `OBSIDIAN_VAULT=~/okestro` in `.env.local` for the usual vault).  
 Skipped folders: `.obsidian`, `.git`, `99_Attachments`, `node_modules`, `_System`, `Excalidraw`, tool dirs.
 
-Disabled in production unless `ALLOW_OBSIDIAN_IMPORT=1`.
+Disabled on the public deploy and on `next start` unless `NEXT_PUBLIC_LOCAL_TOOLS=1` (same gate as the Obsidian picker UI).
 
 ## Images
 

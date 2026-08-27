@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { notFound, redirect } from 'next/navigation'
 import { readAll, readOne } from '@/lib/localArticles'
 import { siteConfig } from '@/lib/siteConfig'
@@ -17,7 +18,7 @@ function resolveSlug(raw: string): string {
 
 export function generateStaticParams() {
   return readAll()
-    .filter((a) => !a.trashed)
+    .filter((a) => !a.trashed && !a.draft && !a.archived)
     .map((a) => ({ slug: a.slug }))
 }
 
@@ -105,7 +106,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <JsonLd data={blogPostingJsonLd} />
-      <ArticleView article={article} />
+      <Suspense fallback={null}>
+        <ArticleView article={article} />
+      </Suspense>
     </>
   )
 }

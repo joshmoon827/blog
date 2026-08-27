@@ -21,6 +21,9 @@ const SKIP_DIR_NAMES = new Set([
   '--help',
 ])
 
+/** Static default for bundler tracing; set OBSIDIAN_VAULT in .env.local for ~/okestro. */
+const DEFAULT_VAULT = path.join(process.cwd(), 'data', 'obsidian-vault')
+
 export type VaultNoteListItem = {
   path: string
   name: string
@@ -42,11 +45,31 @@ function expandHome(p: string): string {
   return p
 }
 
-/** Vault root: `OBSIDIAN_VAULT` env, else `~/okestro`. */
+function resolveDynamicPath(...segments: string[]): string {
+  return path.resolve(/* turbopackIgnore: true */ ...segments)
+}
+
+function pathExists(p: string): boolean {
+  return fs.existsSync(/* turbopackIgnore: true */ p)
+}
+
+function pathStat(p: string): fs.Stats {
+  return fs.statSync(/* turbopackIgnore: true */ p)
+}
+
+function readDirEntries(dir: string): fs.Dirent[] {
+  return fs.readdirSync(/* turbopackIgnore: true */ dir, { withFileTypes: true })
+}
+
+function readTextFile(p: string): string {
+  return fs.readFileSync(/* turbopackIgnore: true */ p, 'utf-8')
+}
+
+/** Vault root: `OBSIDIAN_VAULT` env, else `data/obsidian-vault` under cwd. */
 export function getVaultRoot(): string {
   const fromEnv = process.env.OBSIDIAN_VAULT?.trim()
-  const raw = fromEnv || path.join(os.homedir(), 'okestro')
-  return path.resolve(expandHome(raw))
+  if (fromEnv) return resolveDynamicPath(expandHome(fromEnv))
+  return DEFAULT_VAULT
 }
 
 /**
@@ -63,7 +86,7 @@ export function resolveVaultPath(relativeOrAbsolute: string): string {
 
   // Absolute path under vault → treat as vault file
   if (path.isAbsolute(raw) || raw.startsWith('/')) {
-    const abs = path.resolve(raw)
+    const abs = resolveDynamicPath(raw)
     const vaultWithSep = vault.endsWith(path.sep) ? vault : vault + path.sep
     if (abs !== vault && !abs.startsWith(vaultWithSep)) {
       throw Object.assign(new Error('Path is outside the vault'), { status: 403 })
@@ -76,7 +99,7 @@ export function resolveVaultPath(relativeOrAbsolute: string): string {
     throw Object.assign(new Error('Path traversal is not allowed'), { status: 400 })
   }
 
-  const abs = path.resolve(vault, cleaned)
+  const abs = resolveDynamicPath(vault, cleaned)
   const vaultWithSep = vault.endsWith(path.sep) ? vault : vault + path.sep
   if (abs !== vault && !abs.startsWith(vaultWithSep)) {
     throw Object.assign(new Error('Path is outside the vault'), { status: 403 })
@@ -95,7 +118,7 @@ function toVaultRelative(absPath: string, vault: string): string {
 
 export function listVaultNotes(options?: { max?: number }): VaultNoteListItem[] {
   const vault = getVaultRoot()
-  if (!fs.existsSync(vault) || !fs.statSync(vault).isDirectory()) {
+  if (!pathExists(vault) || !pathStat(vault).isDirectory()) {
     throw Object.assign(new Error(`Vault not found: ${vault}`), { status: 404 })
   }
 
@@ -106,7 +129,7 @@ export function listVaultNotes(options?: { max?: number }): VaultNoteListItem[] 
     if (notes.length >= max) return
     let entries: fs.Dirent[]
     try {
-      entries = fs.readdirSync(dir, { withFileTypes: true })
+      entries = readDirEntries(dir)
     } catch {
       return
     }
@@ -151,14 +174,14 @@ export async function readVaultNote(
   if (!abs.endsWith('.md')) {
     throw Object.assign(new Error('Only .md files are supported'), { status: 400 })
   }
-  if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
+  if (!pathExists(abs) || !pathStat(abs).isFile()) {
     throw Object.assign(
       new Error(`Note not found: ${relativeOrAbsolute}`),
       { status: 404 },
     )
   }
 
-  const source = fs.readFileSync(abs, 'utf-8')
+  const source = readTextFile(abs)
   const article = markdownFileToArticle(abs, source)
   const vault = getVaultRoot()
   const { body: rawBody } = parseMarkdownWithFrontmatter(source)
